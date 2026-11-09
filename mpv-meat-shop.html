@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MPV Meat | এমপিভি মাংস</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#12332A;--paddy:#2E7D4F;--mist:#EAF1E7;--bone:#FAFBF7;--turmeric:#F2B02E;--clay:#B8432B;--line:#cfdccb;
+--display:"Bricolage Grotesque","Hind Siliguri",system-ui,sans-serif;--body:"Hind Siliguri",system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:var(--bone);line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased;padding-bottom:76px}
+body.lock{overflow:hidden}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--turmeric);outline-offset:2px;border-radius:4px}
+en,bn{display:inline}
+html[lang="bn"] en{display:none}
+html[lang="en"] bn{display:none}
+html[lang="bn"] body{line-height:1.75}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--display);line-height:1.15;letter-spacing:-.015em}
+html[lang="bn"] h1,html[lang="bn"] h2,html[lang="bn"] h3{font-family:var(--body);letter-spacing:0;line-height:1.3}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.7rem 1.25rem;border-radius:999px;font-weight:600;text-decoration:none;border:2px solid transparent;cursor:pointer;min-height:46px;background:none;transition:background .15s}
+.btn-primary{background:var(--turmeric);color:var(--ink)}
+.btn-primary:hover{background:#ffc247}
+.btn-dark{background:var(--ink);color:var(--bone)}
+.btn-dark:hover{background:#1c4a3c}
+.btn-line{border-color:var(--paddy);color:var(--paddy)}
+.btn-line:hover{background:var(--paddy);color:#fff}
+.btn-ghost{border-color:var(--ink)}
+.btn-ghost:hover{background:var(--ink);color:var(--bone)}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+
+/* top strip + header */
+.strip{background:var(--ink);color:var(--bone);font-size:.88rem}
+.strip .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:38px}
+.strip a{text-decoration:none}
+.lang{display:flex;border:1.5px solid rgba(255,255,255,.55);border-radius:999px;overflow:hidden}
+.lang button{border:0;background:transparent;color:var(--bone);font-size:.85rem;font-weight:600;padding:.15rem .7rem;cursor:pointer;min-height:30px}
+.lang button[aria-pressed="true"]{background:var(--bone);color:var(--ink)}
+header.top{position:sticky;top:0;z-index:20;background:var(--bone);border-bottom:1px solid var(--line)}
+.bar{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;min-height:72px;padding:8px 0}
+.logo{display:flex;gap:.6rem;align-items:center;text-decoration:none;font-family:var(--display);font-weight:700;font-size:1.1rem;line-height:1.1}
+html[lang="bn"] .logo{font-family:var(--body)}
+.logo small{display:block;font-family:var(--body);font-weight:500;font-size:.72rem;color:var(--paddy)}
+.search{grid-column:1/-1;order:3;position:relative}
+.search input{width:100%;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:.65rem 1.1rem;min-height:46px}
+.search input:focus{border-color:var(--paddy);outline:none;box-shadow:0 0 0 3px rgba(46,125,79,.2)}
+.actions{display:flex;gap:8px;align-items:center}
+.cartbtn{position:relative;display:inline-flex;align-items:center;gap:.5rem;border:2px solid var(--ink);border-radius:999px;padding:.4rem .95rem;background:transparent;cursor:pointer;min-height:46px;font-weight:600}
+.cartbtn:hover{background:var(--ink);color:var(--bone)}
+.badge{background:var(--turmeric);color:var(--ink);border-radius:999px;min-width:22px;height:22px;padding:0 6px;display:inline-grid;place-items:center;font-size:.8rem;font-weight:700}
+.loginlink{display:none;text-decoration:none;font-weight:600}
+@media(min-width:860px){.bar{grid-template-columns:auto 1fr auto}.search{grid-column:auto;order:0;max-width:520px;margin:0 auto;width:100%}.loginlink{display:inline}}
+
+/* hero */
+.hero{background:linear-gradient(180deg,var(--mist),var(--bone));padding:34px 0 26px}
+.hero h1{font-size:clamp(1.9rem,5vw,3.1rem);font-weight:700;max-width:18ch}
+.hero p{margin-top:12px;max-width:54ch;color:#27493f}
+.trust{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;list-style:none;padding:0}
+.trust li{background:#fff;border:1px solid var(--line);border-radius:999px;padding:.4rem .95rem;font-weight:600;font-size:.93rem;display:flex;gap:.45rem;align-items:center}
+.trust svg{color:var(--paddy)}
+
+/* toolbar */
+.tools{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:22px 0 14px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:.4rem 1rem;cursor:pointer;white-space:nowrap;font-weight:500;min-height:42px}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bone)}
+.count{font-size:.92rem;color:#3e5e53}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding-bottom:40px}
+@media(min-width:760px){.grid{grid-template-columns:repeat(3,1fr);gap:18px}}
+@media(min-width:1040px){.grid{grid-template-columns:repeat(4,1fr)}}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.ph{aspect-ratio:1/1;position:relative;display:grid;place-items:center;cursor:pointer;border:0;width:100%}
+.ph span{font-size:.78rem;background:rgba(255,255,255,.75);padding:.1rem .6rem;border-radius:999px}
+.ph.c0{background:radial-gradient(circle at 30% 30%,#f9dfb8,#e3a45b 62%,#c97f3a)}
+.ph.c1{background:radial-gradient(circle at 70% 30%,#fbe6c8,#e8b57a 62%,#cf8d4d)}
+.ph.c2{background:radial-gradient(circle at 40% 65%,#f6d1a0,#dc9650 62%,#bb7230)}
+.ph.c3{background:radial-gradient(circle at 60% 40%,#f3c8b4,#d98a6c 62%,#b4593b)}
+.tagb{position:absolute;left:10px;top:10px;background:var(--ink);color:var(--bone);font-size:.75rem;border-radius:999px;padding:.1rem .6rem;font-weight:600}
+.tagb.low{background:var(--clay)}
+.cbody{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.cbody h3{font-size:1.02rem;font-family:var(--body);font-weight:600}
+.cbody h3 button{border:0;background:none;text-align:left;cursor:pointer;font-weight:600;padding:0}
+.cbody h3 button:hover{text-decoration:underline}
+.price{font-weight:700;font-size:1.1rem}
+.price small{font-weight:400;color:#3e5e53;font-size:.85rem}
+.avail{font-size:.85rem;color:#3e5e53}
+.row2{margin-top:auto;display:flex;gap:8px;align-items:center}
+.stepper{display:inline-flex;align-items:center;border:1.5px solid var(--line);border-radius:999px;background:#fff}
+.stepper button{width:40px;height:40px;border:0;background:none;font-size:1.25rem;cursor:pointer;border-radius:50%}
+.stepper button:hover{background:var(--mist)}
+.stepper output{min-width:54px;text-align:center;font-weight:600;font-size:.95rem}
+.card .btn{flex:1;min-height:42px;padding:.4rem .8rem}
+.empty{grid-column:1/-1;text-align:center;padding:50px 10px;color:#3e5e53}
+
+/* overlays */
+.scrim{position:fixed;inset:0;background:rgba(10,30,24,.55);z-index:40;display:none}
+.scrim.open{display:block}
+.panel{position:fixed;z-index:50;background:var(--bone);display:none;flex-direction:column}
+.panel.open{display:flex}
+.drawer{top:0;right:0;bottom:0;width:min(440px,100%)}
+.sheet{inset:0;overflow-y:auto}
+@media(min-width:860px){.sheet{inset:4vh 0 auto 50%;transform:translateX(-50%);width:min(940px,94vw);max-height:92vh;border-radius:20px}}
+.phead{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);gap:12px}
+.phead h2{font-size:1.3rem}
+.x{width:44px;height:44px;border:0;background:var(--mist);border-radius:50%;cursor:pointer;font-size:1.3rem;line-height:1}
+.pbody{padding:18px 20px;overflow-y:auto;flex:1}
+.pfoot{padding:16px 20px;border-top:1px solid var(--line);background:#fff}
+
+/* cart */
+.li{display:grid;grid-template-columns:64px 1fr auto;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+.li .sw{width:64px;height:64px;border-radius:12px}
+.li h3{font-size:1rem;font-family:var(--body)}
+.li .sub{font-size:.88rem;color:#3e5e53}
+.li .stepper button{width:34px;height:34px}
+.li .stepper output{min-width:46px;font-size:.88rem}
+.rm{border:0;background:none;color:var(--clay);cursor:pointer;font-size:.85rem;text-decoration:underline;padding:4px}
+.sumrow{display:flex;justify-content:space-between;padding:4px 0}
+.sumrow.total{font-weight:700;font-size:1.2rem;border-top:1px solid var(--line);margin-top:6px;padding-top:10px}
+.hint{font-size:.88rem;color:#3e5e53}
+
+/* detail */
+.dgrid{display:grid;gap:22px}
+@media(min-width:760px){.dgrid{grid-template-columns:1fr 1fr;gap:34px}}
+.dgrid .ph{border-radius:16px;cursor:default}
+.facts{display:grid;gap:10px;margin:16px 0}
+.fact{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.fact h3{font-size:.85rem;font-family:var(--body);color:var(--paddy);margin-bottom:4px}
+.fact dl{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;font-size:.95rem}
+.fact dt{color:#3e5e53}
+.trace{list-style:none;padding:0;margin-top:8px;display:grid;gap:0}
+.trace li{position:relative;padding:0 0 12px 26px;font-size:.93rem}
+.trace li::before{content:"";position:absolute;left:3px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--paddy)}
+.trace li::after{content:"";position:absolute;left:8px;top:18px;bottom:-4px;width:2px;background:var(--line)}
+.trace li:last-child::before{background:var(--turmeric)}
+.trace li:last-child::after{display:none}
+
+/* checkout */
+.steps3{display:flex;gap:6px;margin-bottom:22px}
+.steps3 div{flex:1;text-align:center;font-size:.88rem;font-weight:600;padding:8px 4px;border-bottom:4px solid var(--line);color:#5b7a6e}
+.steps3 div.on{border-color:var(--turmeric);color:var(--ink)}
+.steps3 div.done{border-color:var(--paddy);color:var(--paddy)}
+.cgrid{display:grid;gap:26px}
+@media(min-width:860px){.cgrid{grid-template-columns:1.3fr .7fr;gap:34px}}
+.form{display:grid;gap:14px}
+@media(min-width:560px){.form.two{grid-template-columns:1fr 1fr}.form .full{grid-column:1/-1}}
+label.f{display:grid;gap:4px;font-weight:600;font-size:.93rem}
+label.f input,label.f textarea{border:1.5px solid var(--line);border-radius:12px;padding:.65rem .85rem;background:#fff;min-height:46px;font-weight:400}
+label.f input:focus,label.f textarea:focus{border-color:var(--paddy);outline:none;box-shadow:0 0 0 3px rgba(46,125,79,.2)}
+label.f.bad input{border-color:var(--clay)}
+.err{color:var(--clay);font-size:.85rem;font-weight:500;min-height:0}
+.pays{display:grid;gap:10px}
+.pay{display:flex;gap:12px;align-items:center;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;cursor:pointer;min-height:58px}
+.pay input{accent-color:var(--paddy);width:20px;height:20px}
+.pay:has(input:checked){border-color:var(--paddy);box-shadow:0 0 0 3px rgba(46,125,79,.18)}
+.pay .logo-b{width:44px;height:30px;border-radius:6px;display:grid;place-items:center;font-size:.72rem;font-weight:700;color:#fff;flex:none}
+.pay b{display:block}
+.pay small{color:#3e5e53}
+.box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
+.nav2{display:flex;gap:10px;justify-content:space-between;margin-top:22px;flex-wrap:wrap}
+.ok{text-align:center;padding:10px 0 4px}
+.ok .tick{width:64px;height:64px;border-radius:50%;background:var(--paddy);color:#fff;display:grid;place-items:center;margin:0 auto 14px;font-size:2rem}
+.oid{display:inline-block;font-family:var(--display);font-weight:700;letter-spacing:.05em;background:var(--ink);color:var(--turmeric);border-radius:10px;padding:.35rem .9rem;margin:8px 0}
+
+/* sticky mobile cart bar */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:var(--ink)}
+.dock button{width:100%;display:flex;justify-content:space-between;align-items:center}
+.dock[hidden]{display:none}
+@media(min-width:860px){.dock{display:none}body{padding-bottom:0}}
+footer{background:#0c241d;color:#d7e4d8;padding:30px 0;font-size:.92rem}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer a{text-decoration:none}footer a:hover{text-decoration:underline}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="strip"><div class="wrap">
+  <span><en>Antibiotic-free chicken from MPV farmers</en><bn>এমপিভি কৃষকদের অ্যান্টিবায়োটিকমুক্ত মুরগি</bn></span>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-set="en" aria-pressed="true">EN</button>
+    <button type="button" data-set="bn" aria-pressed="false">বাংলা</button>
+  </div>
+</div></div>
+
+<header class="top">
+  <div class="wrap bar">
+    <a class="logo" href="#" aria-label="MPV Meat home">
+      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#12332A"/><path d="M8 27c4-9 8-12 12-12s8 3 12 12" fill="none" stroke="#2E7D4F" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="14" r="4.2" fill="#F2B02E"/><path d="M8 31h24" stroke="#EAF1E7" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <span>MPV <en>Meat</en><bn>মাংস</bn><small><en>by Model Poultry Village</en><bn>মডেল পোল্ট্রি ভিলেজ থেকে</bn></small></span>
+    </a>
+    <div class="actions" style="grid-column:3;grid-row:1">
+      <a class="loginlink" href="#"><en>Log in</en><bn>লগ ইন</bn></a>
+      <button class="cartbtn" id="openCart" type="button" aria-label="Open cart">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.8L20 7H6"/></svg>
+        <span class="badge" id="cartCount">0</span>
+      </button>
+    </div>
+    <div class="search"><input id="q" type="search" aria-label="Search products"></div>
+  </div>
+</header>
+
+<main>
+  <section class="hero"><div class="wrap">
+    <h1><en>Fresh chicken you can trace to the farm.</en><bn>খামার পর্যন্ত ট্রেস করা যায় এমন তাজা মুরগি।</bn></h1>
+    <p><en>Order whole chicken and cuts from MPV farmers. Scan the QR code on your pack to see the farm, the farmer and the batch.</en><bn>এমপিভি কৃষকদের কাছ থেকে পুরো মুরগি ও বিভিন্ন কাট অর্ডার করুন। প্যাকেটের কিউআর কোড স্ক্যান করে খামার, কৃষক ও ব্যাচের তথ্য দেখুন।</bn></p>
+    <ul class="trust">
+      <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><en>Antibiotic-free</en><bn>অ্যান্টিবায়োটিকমুক্ত</bn></li>
+      <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><en>Chicken Passport on every batch</en><bn>প্রতিটি ব্যাচে চিকেন পাসপোর্ট</bn></li>
+      <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><en>bKash, Nagad, Rocket or cash on delivery</en><bn>বিকাশ, নগদ, রকেট বা ক্যাশ অন ডেলিভারি</bn></li>
+    </ul>
+  </div></section>
+
+  <div class="wrap">
+    <div class="tools">
+      <div class="chips" id="chips" role="group" aria-label="Categories"></div>
+      <span class="count" id="count" aria-live="polite"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</main>
+
+<footer><div class="wrap">
+  <span>© 2026 Model Poultry Village</span>
+  <span><a href="mpv-about-enhanced_final_.html"><en>About MPV</en><bn>এমপিভি পরিচিতি</bn></a> · <a href="mpv-training.html"><en>Training</en><bn>প্রশিক্ষণ</bn></a> · <a href="#"><en>Contact</en><bn>যোগাযোগ</bn></a></span>
+</div></footer>
+
+<div class="dock" id="dock" hidden><button class="btn btn-primary" id="dockBtn" type="button"><span id="dockLeft"></span><span id="dockRight"></span></button></div>
+
+<div class="scrim" id="scrim"></div>
+
+<aside class="panel drawer" id="cartPanel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+  <div class="phead"><h2 id="cartTitle"><en>Your cart</en><bn>আপনার কার্ট</bn></h2><button class="x" type="button" data-close aria-label="Close">×</button></div>
+  <div class="pbody" id="cartBody"></div>
+  <div class="pfoot" id="cartFoot"></div>
+</aside>
+
+<div class="panel sheet" id="detailPanel" role="dialog" aria-modal="true" aria-labelledby="dTitle"></div>
+<div class="panel sheet" id="checkoutPanel" role="dialog" aria-modal="true" aria-labelledby="coTitle"></div>
+
+<script>
+(function(){
+var html=document.documentElement;
+function L(){return html.lang}
+function t(en,bn){return L()==='bn'?bn:en}
+function num(n,dec){return n.toLocaleString(L()==='bn'?'bn-BD':'en-US',{minimumFractionDigits:dec||0,maximumFractionDigits:dec||0})}
+function kg(n){return num(n,n%1?1:0)+' '+t('kg','কেজি')}
+function tk(n){return '৳'+num(n)}
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function $(id){return document.getElementById(id)}
+
+/* ---- data (sample content) ---- */
+var CATS=[
+ {id:'all',en:'All',bn:'সব'},
+ {id:'whole',en:'Whole chicken',bn:'পুরো মুরগি'},
+ {id:'cuts',en:'Cuts',bn:'কাট'},
+ {id:'organs',en:'Liver and gizzard',bn:'কলিজা ও পাকস্থলী'}
+];
+var P=[
+ {id:'whole',cat:'whole',en:'Whole chicken',bn:'পুরো মুরগি',price:290,stock:120,batch:'MPV-BAR-2026-001',dEn:'A cleaned, dressed whole broiler raised without antibiotics.',dBn:'অ্যান্টিবায়োটিক ছাড়া পালিত পরিষ্কার ও প্রক্রিয়াজাত পুরো ব্রয়লার।'},
+ {id:'breast',cat:'cuts',en:'Breast',bn:'ব্রেস্ট',price:360,stock:45,batch:'MPV-BAR-2026-001',dEn:'Breast meat from MPV broilers.',dBn:'এমপিভি ব্রয়লারের ব্রেস্টের মাংস।'},
+ {id:'leg',cat:'cuts',en:'Leg piece',bn:'লেগ পিস',price:330,stock:60,batch:'MPV-BAR-2026-002',dEn:'Whole leg piece, thigh and drumstick together.',dBn:'রান ও ড্রামস্টিকসহ পুরো লেগ পিস।'},
+ {id:'drum',cat:'cuts',en:'Drumstick',bn:'ড্রামস্টিক',price:340,stock:40,batch:'MPV-BAR-2026-002',dEn:'Drumsticks from MPV broilers.',dBn:'এমপিভি ব্রয়লারের ড্রামস্টিক।'},
+ {id:'thigh',cat:'cuts',en:'Thigh',bn:'থাই',price:335,stock:38,batch:'MPV-BAR-2026-002',dEn:'Thigh pieces from MPV broilers.',dBn:'এমপিভি ব্রয়লারের থাই পিস।'},
+ {id:'wing',cat:'cuts',en:'Wing',bn:'উইং',price:240,stock:50,batch:'MPV-BAR-2026-003',dEn:'Chicken wings from MPV broilers.',dBn:'এমপিভি ব্রয়লারের উইং।'},
+ {id:'liver',cat:'organs',en:'Liver',bn:'কলিজা',price:220,stock:6,batch:'MPV-BAR-2026-003',dEn:'Chicken liver from MPV broilers.',dBn:'এমপিভি ব্রয়লারের কলিজা।'},
+ {id:'gizzard',cat:'organs',en:'Gizzard',bn:'পাকস্থলী (গিজার্ড)',price:210,stock:18,batch:'MPV-BAR-2026-003',dEn:'Cleaned chicken gizzard from MPV broilers.',dBn:'এমপিভি ব্রয়লারের পরিষ্কার গিজার্ড।'}
+];
+function prod(id){return P.filter(function(p){return p.id===id})[0]}
+
+var PAY=[
+ {id:'bkash',en:'bKash',bn:'বিকাশ',c:'#D12053',dEn:'Pay on the bKash payment page',dBn:'বিকাশ পেমেন্ট পেজে মূল্য দিন'},
+ {id:'nagad',en:'Nagad',bn:'নগদ',c:'#E2531F',dEn:'Pay on the Nagad payment page',dBn:'নগদ পেমেন্ট পেজে মূল্য দিন'},
+ {id:'rocket',en:'Rocket',bn:'রকেট',c:'#8C3494',dEn:'Pay on the Rocket payment page',dBn:'রকেট পেমেন্ট পেজে মূল্য দিন'},
+ {id:'bank',en:'Bank transfer',bn:'ব্যাংক ট্রান্সফার',c:'#12332A',dEn:'Bank details are shown after you place the order',dBn:'অর্ডার দেওয়ার পর ব্যাংকের তথ্য দেখানো হবে'},
+ {id:'cod',en:'Cash on delivery',bn:'ক্যাশ অন ডেলিভারি',c:'#2E7D4F',dEn:'Pay in cash when your order arrives',dBn:'অর্ডার পৌঁছালে নগদে মূল্য দিন'}
+];
+
+/* ---- state ---- */
+var cart={},cat='all',query='',draft={qty:{}},checkout={step:1,info:{},pay:'bkash',order:null},detailId=null;
+function cartCount(){return Object.keys(cart).length}
+function subtotal(){var s=0;for(var k in cart){s+=prod(k).price*cart[k]}return Math.round(s)}
+function step(p,q,dir){var n=q+dir*0.5;if(n<0.5)n=0.5;if(n>p.stock)n=p.stock;return n}
+
+/* ---- overlays ---- */
+var scrim=$('scrim'),openPanel=null,lastFocus=null;
+function open(id){
+  close();lastFocus=document.activeElement;
+  openPanel=$(id);openPanel.classList.add('open');scrim.classList.add('open');document.body.classList.add('lock');
+  var f=openPanel.querySelector('button,input');if(f)f.focus();
+}
+function close(){
+  if(!openPanel)return;
+  openPanel.classList.remove('open');scrim.classList.remove('open');document.body.classList.remove('lock');openPanel=null;
+  if(lastFocus&&lastFocus.focus)lastFocus.focus();
+}
+scrim.addEventListener('click',close);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('[data-close]'))close()});
+
+/* ---- product grid ---- */
+function swatch(i){return 'c'+(i%4)}
+function renderChips(){
+  $('chips').innerHTML=CATS.map(function(c){
+    return '<button class="chip" type="button" data-cat="'+c.id+'" aria-pressed="'+(cat===c.id)+'">'+t(c.en,c.bn)+'</button>';
+  }).join('');
+}
+function renderGrid(){
+  var q=query.trim().toLowerCase();
+  var list=P.filter(function(p){
+    return (cat==='all'||p.cat===cat)&&(!q||p.en.toLowerCase().indexOf(q)>-1||p.bn.indexOf(q)>-1);
+  });
+  $('count').textContent=num(list.length)+' '+t('products','টি পণ্য');
+  if(!list.length){$('grid').innerHTML='<p class="empty">'+t('No product matches your search. Try another name or choose All.','কোনো পণ্য মেলেনি। অন্য নাম লিখুন বা “সব” বেছে নিন।')+'</p>';return}
+  $('grid').innerHTML=list.map(function(p){
+    var i=P.indexOf(p),q2=draft.qty[p.id]||1,low=p.stock<=10;
+    return '<article class="card"><button class="ph '+swatch(i)+'" type="button" data-open="'+p.id+'" aria-label="'+t('View','দেখুন')+' '+esc(t(p.en,p.bn))+'"><span class="tagb'+(low?' low':'')+'">'+(low?t('Few left','অল্প বাকি'):t('In stock','স্টকে আছে'))+'</span><span>'+t('Product photo','পণ্যের ছবি')+'</span></button>'+
+    '<div class="cbody"><h3><button type="button" data-open="'+p.id+'">'+t(p.en,p.bn)+'</button></h3>'+
+    '<div class="price">'+tk(p.price)+' <small>/ '+t('kg','কেজি')+'</small></div>'+
+    '<div class="avail">'+kg(p.stock)+' '+t('available','আছে')+'</div>'+
+    '<div class="row2"><div class="stepper" role="group" aria-label="'+t('Quantity','পরিমাণ')+'"><button type="button" data-dec="'+p.id+'" aria-label="'+t('Less','কমান')+'">−</button><output>'+kg(q2)+'</output><button type="button" data-inc="'+p.id+'" aria-label="'+t('More','বাড়ান')+'">+</button></div></div>'+
+    '<button class="btn btn-line" type="button" data-add="'+p.id+'">'+(cart[p.id]?t('Update cart','কার্ট হালনাগাদ'):t('Add to cart','কার্টে যোগ করুন'))+'</button></div></article>';
+  }).join('');
+}
+
+/* ---- cart ---- */
+function addToCart(id,q){cart[id]=q;renderAll()}
+function renderCartBadge(){
+  $('cartCount').textContent=num(cartCount());
+  var d=$('dock');
+  if(cartCount()){d.hidden=false;$('dockLeft').textContent=t('View cart','কার্ট দেখুন')+' ('+num(cartCount())+')';$('dockRight').textContent=tk(subtotal())}
+  else d.hidden=true;
+}
+function renderCart(){
+  var ids=Object.keys(cart);
+  if(!ids.length){
+    $('cartBody').innerHTML='<div class="empty" style="padding:40px 0"><p><strong>'+t('Your cart is empty.','আপনার কার্ট খালি।')+'</strong></p><p>'+t('Add a product to start your order.','অর্ডার শুরু করতে একটি পণ্য যোগ করুন।')+'</p></div>';
+    $('cartFoot').innerHTML='<button class="btn btn-dark btn-block" type="button" data-close>'+t('Browse products','পণ্য দেখুন')+'</button>';return;
+  }
+  $('cartBody').innerHTML=ids.map(function(id){
+    var p=prod(id),i=P.indexOf(p);
+    return '<div class="li"><div class="sw ph '+swatch(i)+'" style="aspect-ratio:auto;cursor:default"></div><div><h3>'+t(p.en,p.bn)+'</h3><div class="sub">'+tk(p.price)+' / '+t('kg','কেজি')+'</div><div class="stepper" style="margin-top:6px"><button type="button" data-cdec="'+id+'" aria-label="'+t('Less','কমান')+'">−</button><output>'+kg(cart[id])+'</output><button type="button" data-cinc="'+id+'" aria-label="'+t('More','বাড়ান')+'">+</button></div></div><div style="text-align:right"><strong>'+tk(Math.round(p.price*cart[id]))+'</strong><br><button class="rm" type="button" data-rm="'+id+'">'+t('Remove','সরান')+'</button></div></div>';
+  }).join('');
+  $('cartFoot').innerHTML='<div class="sumrow total"><span>'+t('Subtotal','মোট (পণ্য)')+'</span><span>'+tk(subtotal())+'</span></div><p class="hint" style="margin:6px 0 12px">'+t('Delivery charge is confirmed with your order.','ডেলিভারি চার্জ অর্ডারের সঙ্গে নিশ্চিত করা হবে।')+'</p><button class="btn btn-primary btn-block" type="button" id="goCheckout">'+t('Checkout','চেকআউট')+'</button>';
+}
+
+/* ---- product detail ---- */
+function renderDetail(id){
+  var p=prod(id),i=P.indexOf(p),q=cart[id]||draft.qty[id]||1;
+  $('detailPanel').innerHTML=
+  '<div class="phead"><h2 id="dTitle">'+t(p.en,p.bn)+'</h2><button class="x" type="button" data-close aria-label="Close">×</button></div>'+
+  '<div class="pbody"><div class="dgrid"><div class="ph '+swatch(i)+'" style="aspect-ratio:1/1"><span>'+t('Product photo','পণ্যের ছবি')+'</span></div><div>'+
+  '<div class="price" style="font-size:1.6rem">'+tk(p.price)+' <small>/ '+t('kg','কেজি')+'</small></div>'+
+  '<p class="avail" style="margin-top:2px">'+kg(p.stock)+' '+t('available','আছে')+'</p>'+
+  '<p style="margin-top:12px">'+t(p.dEn,p.dBn)+'</p>'+
+  '<div class="facts"><div class="fact"><h3>'+t('Farm','খামার')+'</h3><dl><dt>'+t('Farmer','কৃষক')+'</dt><dd>'+t('Farmer name','কৃষকের নাম')+'</dd><dt>'+t('Village','গ্রাম')+'</dt><dd>'+t('Village name','গ্রামের নাম')+'</dd></dl></div>'+
+  '<div class="fact"><h3>'+t('Batch','ব্যাচ')+'</h3><dl><dt>'+t('Batch ID','ব্যাচ আইডি')+'</dt><dd>'+p.batch+'</dd><dt>'+t('Production date','উৎপাদনের তারিখ')+'</dt><dd>'+t('Date','তারিখ')+'</dd><dt>'+t('Processing date','প্রক্রিয়াকরণের তারিখ')+'</dt><dd>'+t('Date','তারিখ')+'</dd></dl></div>'+
+  '<div class="fact"><h3>'+t('Chicken Passport','চিকেন পাসপোর্ট')+'</h3><p class="hint">'+t('Scan the QR code on your pack, or open the passport for this batch.','প্যাকেটের কিউআর কোড স্ক্যান করুন, অথবা এই ব্যাচের পাসপোর্ট খুলুন।')+'</p><ol class="trace" id="trace" hidden><li>'+t('Farm and farmer','খামার ও কৃষক')+'</li><li>'+t('Batch','ব্যাচ')+' '+p.batch+'</li><li>'+t('Processing','প্রক্রিয়াকরণ')+'</li><li>'+t('Delivered to you','আপনার কাছে পৌঁছেছে')+'</li></ol><button class="btn btn-line" type="button" id="togglePass" style="margin-top:8px;min-height:40px;padding:.3rem 1rem">'+t('View passport','পাসপোর্ট দেখুন')+'</button></div></div>'+
+  '<div class="row2" style="gap:12px;flex-wrap:wrap"><div class="stepper"><button type="button" id="dDec" aria-label="'+t('Less','কমান')+'">−</button><output id="dQty" data-q="'+q+'">'+kg(q)+'</output><button type="button" id="dInc" aria-label="'+t('More','বাড়ান')+'">+</button></div><button class="btn btn-primary" style="flex:1" type="button" id="dAdd">'+(cart[id]?t('Update cart','কার্ট হালনাগাদ'):t('Add to cart','কার্টে যোগ করুন'))+'</button></div>'+
+  '</div></div></div>';
+}
+
+/* ---- checkout ---- */
+function renderCheckout(){
+  var s=checkout.step,body='';
+  var steps='<div class="steps3"><div class="'+(s===1?'on':'done')+'">1. '+t('Delivery','ডেলিভারি')+'</div><div class="'+(s===2?'on':s>2?'done':'')+'">2. '+t('Payment','পেমেন্ট')+'</div><div class="'+(s===3?'on':s>3?'done':'')+'">3. '+t('Confirm','নিশ্চিত করুন')+'</div></div>';
+  var lines=Object.keys(cart).map(function(id){var p=prod(id);return '<div class="sumrow"><span>'+t(p.en,p.bn)+' × '+kg(cart[id])+'</span><span>'+tk(Math.round(p.price*cart[id]))+'</span></div>'}).join('');
+  var summary='<div class="box"><h3 style="margin-bottom:8px">'+t('Order summary','অর্ডারের সারাংশ')+'</h3>'+lines+'<div class="sumrow total"><span>'+t('Subtotal','মোট (পণ্য)')+'</span><span>'+tk(subtotal())+'</span></div><p class="hint" style="margin-top:6px">'+t('Delivery charge is confirmed with your order.','ডেলিভারি চার্জ অর্ডারের সঙ্গে নিশ্চিত করা হবে।')+'</p></div>';
+  var I=checkout.info;
+  if(s===1){
+    body=steps+'<div class="cgrid"><div><h3 style="margin-bottom:12px">'+t('Delivery information','ডেলিভারির তথ্য')+'</h3>'+
+    '<div class="form two" id="infoForm">'+
+    fld('name',t('Full name','পুরো নাম'),I.name,'text','full')+
+    fld('mobile',t('Mobile number','মোবাইল নম্বর'),I.mobile,'tel','','01XXXXXXXXX')+
+    fld('email',t('Email (optional)','ইমেইল (ঐচ্ছিক)'),I.email,'email')+
+    fld('district',t('District','জেলা'),I.district,'text')+
+    fld('upazila',t('Upazila','উপজেলা'),I.upazila,'text')+
+    fld('address',t('Full address','পূর্ণ ঠিকানা'),I.address,'text','full')+
+    '<label class="f full"><span>'+t('Note for delivery (optional)','ডেলিভারির নোট (ঐচ্ছিক)')+'</span><textarea name="note" rows="2">'+esc(I.note||'')+'</textarea></label></div>'+
+    '<p class="hint" style="margin-top:10px">'+t('Have an account?','অ্যাকাউন্ট আছে?')+' <a href="#">'+t('Log in','লগ ইন')+'</a>. '+t('You can also order as a guest.','অতিথি হিসেবেও অর্ডার করতে পারবেন।')+'</p>'+
+    '<div class="nav2"><button class="btn btn-ghost" type="button" data-close>'+t('Back to cart','কার্টে ফিরুন')+'</button><button class="btn btn-primary" type="button" id="toPay">'+t('Continue to payment','পেমেন্টে যান')+'</button></div></div>'+summary+'</div>';
+  }else if(s===2){
+    body=steps+'<div class="cgrid"><div><h3 style="margin-bottom:12px">'+t('Choose a payment method','পেমেন্ট পদ্ধতি বেছে নিন')+'</h3><div class="pays">'+
+    PAY.map(function(m){return '<label class="pay"><input type="radio" name="pay" value="'+m.id+'"'+(checkout.pay===m.id?' checked':'')+'><span class="logo-b" style="background:'+m.c+'" aria-hidden="true">'+(m.id==='cod'?'৳':m.id==='bank'?'BANK':m.en.slice(0,3).toUpperCase())+'</span><span><b>'+t(m.en,m.bn)+'</b><small>'+t(m.dEn,m.dBn)+'</small></span></label>'}).join('')+
+    '</div><div class="nav2"><button class="btn btn-ghost" type="button" id="backInfo">'+t('Back','পেছনে')+'</button><button class="btn btn-primary" type="button" id="toReview">'+t('Review order','অর্ডার দেখুন')+'</button></div></div>'+summary+'</div>';
+  }else if(s===3){
+    var m=PAY.filter(function(x){return x.id===checkout.pay})[0];
+    body=steps+'<div class="cgrid"><div><h3 style="margin-bottom:12px">'+t('Check your order','অর্ডার যাচাই করুন')+'</h3>'+
+    '<div class="box"><h3 style="font-size:.9rem;color:var(--paddy);margin-bottom:6px">'+t('Deliver to','ডেলিভারির ঠিকানা')+'</h3><p><strong>'+esc(I.name)+'</strong> · '+esc(I.mobile)+'<br>'+esc(I.address)+', '+esc(I.upazila)+', '+esc(I.district)+(I.note?'<br><em>'+esc(I.note)+'</em>':'')+'</p></div>'+
+    '<div class="box" style="margin-top:10px"><h3 style="font-size:.9rem;color:var(--paddy);margin-bottom:6px">'+t('Payment','পেমেন্ট')+'</h3><p><strong>'+t(m.en,m.bn)+'</strong><br><span class="hint">'+t(m.dEn,m.dBn)+'</span></p></div>'+
+    '<div class="nav2"><button class="btn btn-ghost" type="button" id="backPay">'+t('Back','পেছনে')+'</button><button class="btn btn-primary" type="button" id="place">'+t('Place order','অর্ডার দিন')+'</button></div></div>'+summary+'</div>';
+  }else{
+    var o=checkout.order;
+    body='<div class="ok"><div class="tick" aria-hidden="true">✓</div><h2>'+t('Order placed','অর্ডার সম্পন্ন হয়েছে')+'</h2><p>'+t('Your order ID is','আপনার অর্ডার আইডি')+'</p><div class="oid">'+o.id+'</div><p class="hint" style="max-width:46ch;margin:0 auto">'+t('Keep this ID. When your pack arrives, scan its QR code to open the Chicken Passport.','এই আইডি সংরক্ষণ করুন। প্যাকেট পৌঁছালে কিউআর কোড স্ক্যান করে চিকেন পাসপোর্ট দেখুন।')+'</p></div>'+
+    '<div style="max-width:460px;margin:22px auto 0">'+o.summary+'<div class="nav2" style="justify-content:center"><button class="btn btn-dark" type="button" data-close>'+t('Continue shopping','কেনাকাটা চালিয়ে যান')+'</button></div></div>';
+  }
+  $('checkoutPanel').innerHTML='<div class="phead"><h2 id="coTitle">'+(s===4?t('Thank you','ধন্যবাদ'):t('Checkout','চেকআউট'))+'</h2><button class="x" type="button" data-close aria-label="Close">×</button></div><div class="pbody">'+body+'</div>';
+}
+function fld(name,label,val,type,cls,ph){
+  return '<label class="f '+(cls||'')+'" data-f="'+name+'"><span>'+label+'</span><input name="'+name+'" type="'+type+'" value="'+esc(val||'')+'"'+(ph?' placeholder="'+ph+'"':'')+' autocomplete="off"><span class="err"></span></label>';
+}
+function readInfo(){
+  var f=$('infoForm'),o={};
+  ['name','mobile','email','district','upazila','address','note'].forEach(function(k){var el=f.querySelector('[name="'+k+'"]');o[k]=el?el.value.trim():''});
+  return o;
+}
+function validate(){
+  var o=readInfo(),ok=true;
+  var rules={name:o.name.length>1,mobile:/^01\d{9}$/.test(o.mobile.replace(/[\s-]/g,'')),district:!!o.district,upazila:!!o.upazila,address:o.address.length>4};
+  var msgs={name:t('Enter your full name.','পুরো নাম লিখুন।'),mobile:t('Enter an 11-digit mobile number starting with 01.','০১ দিয়ে শুরু ১১ সংখ্যার মোবাইল নম্বর লিখুন।'),district:t('Enter your district.','জেলার নাম লিখুন।'),upazila:t('Enter your upazila.','উপজেলার নাম লিখুন।'),address:t('Enter your full address.','পূর্ণ ঠিকানা লিখুন।')};
+  Object.keys(rules).forEach(function(k){
+    var lab=$('infoForm').querySelector('[data-f="'+k+'"]');
+    lab.classList.toggle('bad',!rules[k]);
+    lab.querySelector('.err').textContent=rules[k]?'':msgs[k];
+    if(!rules[k])ok=false;
+  });
+  o.mobile=o.mobile.replace(/[\s-]/g,'');
+  checkout.info=o;
+  return ok;
+}
+
+/* ---- events ---- */
+document.addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  var d=b.dataset;
+  if(d.cat){cat=d.cat;renderChips();renderGrid();return}
+  if(d.open){detailId=d.open;renderDetail(detailId);open('detailPanel');return}
+  if(d.dec||d.inc){var id=d.dec||d.inc,p=prod(id);draft.qty[id]=step(p,draft.qty[id]||1,d.inc?1:-1);renderGrid();var f=document.querySelector('[data-'+(d.inc?'inc':'dec')+'="'+id+'"]');if(f)f.focus();return}
+  if(d.add){addToCart(d.add,draft.qty[d.add]||cart[d.add]||1);toast(b);return}
+  if(d.cdec||d.cinc){var id2=d.cdec||d.cinc;cart[id2]=step(prod(id2),cart[id2],d.cinc?1:-1);renderAll();var g=document.querySelector('[data-'+(d.cinc?'cinc':'cdec')+'="'+id2+'"]');if(g)g.focus();return}
+  if(d.rm){delete cart[d.rm];renderAll();return}
+  if(b.id==='openCart'||b.id==='dockBtn'){renderCart();open('cartPanel');return}
+  if(b.id==='goCheckout'){checkout.step=1;renderCheckout();open('checkoutPanel');return}
+  if(b.id==='togglePass'){var tr=$('trace');tr.hidden=!tr.hidden;b.textContent=tr.hidden?t('View passport','পাসপোর্ট দেখুন'):t('Hide passport','পাসপোর্ট লুকান');return}
+  if(b.id==='dDec'||b.id==='dInc'){var q=+$('dQty').dataset.q;q=step(prod(detailId),q,b.id==='dInc'?1:-1);$('dQty').dataset.q=q;$('dQty').textContent=kg(q);draft.qty[detailId]=q;return}
+  if(b.id==='dAdd'){addToCart(detailId,+$('dQty').dataset.q);close();return}
+  if(b.id==='toPay'){if(validate()){checkout.step=2;renderCheckout()}return}
+  if(b.id==='backInfo'){checkout.step=1;renderCheckout();return}
+  if(b.id==='toReview'){var r=document.querySelector('input[name="pay"]:checked');if(r)checkout.pay=r.value;checkout.step=3;renderCheckout();return}
+  if(b.id==='backPay'){checkout.step=2;renderCheckout();return}
+  if(b.id==='place'){
+    var id3='MPV-ORD-'+String(Math.floor(Math.random()*90000)+10000);
+    var lines=Object.keys(cart).map(function(k){var p=prod(k);return '<div class="sumrow"><span>'+t(p.en,p.bn)+' × '+kg(cart[k])+'</span><span>'+tk(Math.round(p.price*cart[k]))+'</span></div>'}).join('');
+    var m=PAY.filter(function(x){return x.id===checkout.pay})[0];
+    checkout.order={id:id3,summary:'<div class="box">'+lines+'<div class="sumrow total"><span>'+t('Subtotal','মোট (পণ্য)')+'</span><span>'+tk(subtotal())+'</span></div><p class="hint" style="margin-top:6px">'+t('Payment','পেমেন্ট')+': '+t(m.en,m.bn)+'</p></div>'};
+    cart={};checkout.step=4;renderAll();renderCheckout();return;
+  }
+});
+$('q').addEventListener('input',function(e){query=e.target.value;renderGrid()});
+document.addEventListener('change',function(e){if(e.target.name==='pay')checkout.pay=e.target.value});
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){
+  html.setAttribute('lang',b.dataset.set);
+  document.querySelectorAll('.lang button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+  if(openPanel&&openPanel.id==='checkoutPanel'&&checkout.step===1)checkout.info=readInfo();
+  renderAll();
+  if(openPanel){if(openPanel.id==='detailPanel')renderDetail(detailId);if(openPanel.id==='checkoutPanel')renderCheckout()}
+});});
+function toast(btn){
+  var nb=document.querySelector('[data-add="'+btn.dataset.add+'"]');
+  if(nb){nb.textContent=t('Added ✓','যোগ হয়েছে ✓');nb.focus()}
+  setTimeout(function(){renderGrid()},1000);
+}
+function renderAll(){
+  $('q').placeholder=t('Search chicken, wings, liver…','মুরগি, উইং, কলিজা খুঁজুন…');
+  renderChips();renderGrid();renderCartBadge();
+  if(openPanel&&openPanel.id==='cartPanel')renderCart();
+}
+renderAll();
+})();
+</script>
+</body>
+</html>

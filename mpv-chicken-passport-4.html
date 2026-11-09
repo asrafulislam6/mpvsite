@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MPV Chicken Passport | এমপিভি চিকেন পাসপোর্ট</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#063F32;
+  --paddy:#006747;
+  --mist:#EAF1E7;
+  --bone:#FAFBF7;
+  --turmeric:#F7D37B;
+  --clay:#B8432B;
+  --line:#cfdccb;
+  --display:"Bricolage Grotesque","Hind Siliguri",system-ui,sans-serif;
+  --body:"Hind Siliguri",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:var(--bone);line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--turmeric);outline-offset:3px;border-radius:4px}
+en,bn{display:inline}
+html[lang="bn"] en{display:none}
+html[lang="en"] bn{display:none}
+html[lang="bn"] body{line-height:1.75}
+.wrap{max-width:900px;margin:0 auto;padding:0 18px}
+h1,h2,h3{font-family:var(--display);line-height:1.15;letter-spacing:-.015em}
+html[lang="bn"] h1,html[lang="bn"] h2,html[lang="bn"] h3{font-family:var(--body);letter-spacing:0;line-height:1.3}
+
+/* ── strip ── */
+.strip{background:var(--ink);color:rgba(255,255,255,.85);font-size:.88rem}
+.sbar{display:flex;justify-content:space-between;align-items:center;min-height:40px;gap:10px}
+.strip a{color:rgba(255,255,255,.85);text-decoration:none;font-weight:500}
+.strip a:hover{text-decoration:underline}
+.lang{display:flex;border:1.5px solid rgba(255,255,255,.45);border-radius:999px;overflow:hidden}
+.lang button{border:0;background:transparent;color:#fff;font:.88rem/1 var(--body);font-weight:600;padding:.15rem .7rem;cursor:pointer;min-height:30px}
+.lang button[aria-pressed="true"]{background:#fff;color:var(--ink)}
+
+/* ── search bar (for manual lookup) ── */
+.lookup{background:var(--paddy);padding:28px 0 32px}
+.lookup h1{color:#fff;font-size:clamp(1.4rem,4vw,2rem);font-weight:700;margin-bottom:6px}
+.lookup p{color:rgba(255,255,255,.85);font-size:.98rem;margin-bottom:18px;max-width:50ch}
+.srow{display:flex;gap:0;max-width:540px}
+.srow input{flex:1;border:0;border-radius:14px 0 0 14px;padding:.75rem 1.1rem;font:inherit;font-size:1rem;min-height:52px;background:#fff;color:var(--ink)}
+.srow input:focus{outline:3px solid var(--turmeric);outline-offset:-2px;z-index:1;position:relative}
+.srow button{background:var(--turmeric);border:0;border-radius:0 14px 14px 0;padding:0 1.3rem;font:inherit;font-weight:700;cursor:pointer;min-height:52px;color:var(--ink)}
+.srow button:hover{background:#ffc247}
+.hint{color:rgba(255,255,255,.7);font-size:.88rem;margin-top:10px}
+.hint strong{color:#fff}
+
+/* ── states ── */
+#state-empty{padding:50px 0;text-align:center;color:#3e5e53}
+#state-error{display:none;margin:28px auto;max-width:560px;background:#fff2f0;border:1.5px solid #f5b8ae;border-radius:14px;padding:18px 20px}
+#state-error h2{color:var(--clay);font-size:1.1rem;margin-bottom:4px}
+#state-result{display:none;padding:32px 0 60px}
+
+/* ── passport cover: booklet-inspired, decorative (not an official government document) ── */
+.cover{background:linear-gradient(135deg,#006747 0%,#00543f 48%,#004a37 100%);color:#f8d98a;border-radius:18px;padding:13px;position:relative;overflow:hidden;margin-bottom:28px;box-shadow:0 18px 42px rgba(0,57,42,.24);border:1px solid #e4c36f}
+.cover::before{content:"";position:absolute;inset:7px;border:1px solid rgba(247,211,123,.8);border-radius:12px;pointer-events:none;z-index:1;background:repeating-radial-gradient(ellipse at 50% 48%,transparent 0 10px,rgba(247,211,123,.055) 10.5px 11px,transparent 11.5px 18px)}
+.cover::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.24;background:repeating-radial-gradient(ellipse at 50% 45%,transparent 0 8px,rgba(247,211,123,.45) 8.4px 8.9px,transparent 9.5px 15px),repeating-linear-gradient(35deg,transparent 0 17px,rgba(247,211,123,.08) 18px 19px,transparent 20px 34px);mask-image:radial-gradient(ellipse at center,black 0%,rgba(0,0,0,.8) 55%,transparent 95%)}
+.cover-inner{position:relative;z-index:2;padding:18px 17px 15px}
+.cover-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;border-bottom:1px solid rgba(224,197,126,.5);padding-bottom:15px}
+.cover-logo{display:flex;align-items:center;gap:.7rem}
+.cover-logo svg{flex:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.25))}
+.cover-logo span{font-family:var(--display);font-weight:700;font-size:1.05rem;line-height:1.15}
+html[lang="bn"] .cover-logo span{font-family:var(--body)}
+.cover-logo small{display:block;font-weight:400;font-size:.75rem;opacity:.82;margin-top:4px}
+.passport-heading{text-align:center;text-transform:uppercase;letter-spacing:.16em;font-size:.72rem;font-weight:700;color:#f8d98a;margin:18px 0 3px}
+html[lang="bn"] .passport-heading{letter-spacing:0}
+.passport-subheading{text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(1.2rem,4vw,1.75rem);letter-spacing:.07em;color:#f8d98a}
+html[lang="bn"] .passport-subheading{font-family:var(--body);letter-spacing:0}
+.passport-emblem{width:64px;height:64px;border:1.5px solid #d8bd79;border-radius:50%;display:grid;place-items:center;margin:14px auto 10px;background:radial-gradient(circle,#295b48,#10382e 72%);box-shadow:0 0 0 4px rgba(216,189,121,.12),inset 0 0 0 4px rgba(216,189,121,.15)}
+.passport-emblem svg{width:35px;height:35px}
+.stamp{display:inline-flex;align-items:center;gap:.4rem;background:rgba(224,197,126,.12);color:#f2dfaa;border-radius:4px;padding:.35rem .65rem;font-weight:700;font-size:.78rem;border:1px solid rgba(224,197,126,.7);text-transform:uppercase;letter-spacing:.04em}
+.passport-id-label{text-align:center;color:#f8d98a;text-transform:uppercase;letter-spacing:.18em;font-size:.7rem;margin-top:16px}
+.pid{font-family:var(--display);font-weight:700;letter-spacing:.09em;color:#fff;font-size:clamp(1.05rem,3.8vw,1.5rem);margin:5px 0 4px;text-align:center;overflow-wrap:anywhere;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+html[lang="bn"] .pid{font-family:var(--body);letter-spacing:.02em}
+.cover-meta{text-align:center;font-size:.93rem;opacity:.86}
+.cover-foot{margin-top:19px;padding:15px 10px 5px;border-top:1px solid rgba(224,197,126,.5);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.cover-stat{text-align:center;min-width:0}
+.cover-stat strong{display:block;font-family:var(--display);font-size:clamp(1rem,3vw,1.4rem);color:#f8d98a;overflow-wrap:anywhere}
+html[lang="bn"] .cover-stat strong{font-family:var(--body)}
+.cover-stat span{font-size:.78rem;opacity:.82}
+.passport-mrz{position:relative;z-index:2;margin:10px 4px 1px;background:#f0e8d3;color:#183a30;border-radius:4px;padding:10px 11px;font:700 .68rem/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.07em;overflow-wrap:anywhere}
+.passport-mrz small{display:block;font:600 .6rem/1.4 var(--body);letter-spacing:0;text-align:center;color:#4a5c4e;margin-top:3px}
+@media(min-width:600px){.cover-inner{padding:22px 26px 18px}.passport-emblem{width:72px;height:72px}}
+
+/* ── interactive booklet opening ── */
+.cover{cursor:pointer;transition:transform .25s ease,box-shadow .25s ease}
+.cover:hover{transform:translateY(-3px);box-shadow:0 24px 48px rgba(10,43,32,.28)}
+.cover:focus-visible{outline:4px solid var(--turmeric);outline-offset:5px}
+.cover-open-hint{text-align:center;color:#f8d98a;font-size:.82rem;margin-top:12px;position:relative;z-index:2}
+#passportInside{display:none;margin:0 auto 28px;perspective:1400px;animation:bookReveal .55s cubic-bezier(.2,.75,.25,1) both}
+@keyframes bookReveal{from{opacity:0;transform:rotateY(-8deg) translateY(14px)}to{opacity:1;transform:rotateY(0) translateY(0)}}
+.passport-spread{display:grid;grid-template-columns:1fr 1fr;border-radius:12px;overflow:hidden;box-shadow:0 18px 45px rgba(20,45,32,.2);border:1px solid #c8b987;background:#f5f0df;position:relative}
+.passport-page{position:relative;isolation:isolate;min-width:0;padding:clamp(16px,3.4vw,30px);min-height:360px;background-color:#f4f3df;background-image:repeating-radial-gradient(ellipse at 50% 48%,transparent 0 13px,rgba(0,103,71,.13) 13.5px 14.1px,transparent 15px 22px),repeating-linear-gradient(135deg,transparent 0 21px,rgba(202,91,117,.055) 22px 23px,transparent 24px 42px);}
+.passport-page:first-child{border-right:1px solid #c8b987;box-shadow:inset -7px 0 12px rgba(69,66,43,.07)}
+.passport-page:last-child{box-shadow:inset 7px 0 12px rgba(69,66,43,.06)}
+.passport-page::before{content:"";position:absolute;inset:8px;border:1px solid rgba(0,103,71,.42);pointer-events:none;z-index:-1;background:repeating-radial-gradient(ellipse at 50% 50%,transparent 0 23px,rgba(0,103,71,.035) 23.5px 24px,transparent 24.5px 34px)}
+.page-content{position:relative;z-index:1}.passport-page .page-content::after{content:"MPV";position:absolute;z-index:-1;left:50%;top:42%;transform:translate(-50%,-50%) rotate(-24deg);font:700 clamp(3rem,9vw,6rem)/1 var(--display);letter-spacing:.12em;color:rgba(0,103,71,.055);white-space:nowrap;pointer-events:none}
+.page-kicker{text-align:center;font-size:.68rem;letter-spacing:.12em;font-weight:700;color:#356b4a;text-transform:uppercase;margin-bottom:8px}
+html[lang="bn"] .page-kicker{letter-spacing:0}
+.page-emblem{width:88px;height:88px;border:2px solid #39734e;border-radius:50%;display:grid;place-items:center;margin:15px auto;background:rgba(255,255,255,.28);box-shadow:inset 0 0 0 5px rgba(57,115,78,.09)}
+.page-emblem svg{width:57px;height:57px}
+.page-org{text-align:center;font-weight:700;font-size:clamp(1rem,2.6vw,1.35rem);line-height:1.35;color:#173e2d;margin:10px 0}
+.page-org-en{display:block;font-family:var(--display);font-size:.76rem;letter-spacing:.08em;margin-top:6px}
+.page-document-title{text-align:center;color:#356b4a;font-size:.76rem;font-weight:700;letter-spacing:.1em;border-top:1px solid #b8c9ac;border-bottom:1px solid #b8c9ac;padding:8px 2px;margin:15px 0}
+html[lang="bn"] .page-document-title{letter-spacing:0}
+.page-id-label{font-size:.68rem;color:#54705c;margin-top:16px}
+.page-id{font:700 clamp(.75rem,2vw,1rem)/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere;color:#173e2d;border-bottom:1px dashed #91aa92;padding-bottom:8px}
+.page-fields{display:grid;grid-template-columns:1fr;gap:9px;margin-top:13px}
+.page-field{border-bottom:1px dotted #a8b99f;padding-bottom:6px}
+.page-field span{display:block;color:#58715d;font-size:.7rem}
+.page-field strong{display:block;font-size:.91rem;overflow-wrap:anywhere;color:#173e2d}
+.page-seal{width:62px;height:62px;border:2px double #a18445;border-radius:50%;display:grid;place-items:center;color:#92763e;font-size:.58rem;font-weight:700;text-align:center;line-height:1.1;transform:rotate(-12deg);margin:15px auto 4px;background:rgba(226,197,126,.12)}
+.page-note{font-size:.68rem;text-align:center;color:#657867;margin-top:9px}
+.page-footer{position:absolute;bottom:18px;left:20px;right:20px;text-align:center;font:600 .62rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;color:#506b57;overflow-wrap:anywhere}
+.passport-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0 28px}
+.passport-actions p{font-size:.9rem;color:#3e5e53;flex:1;min-width:160px}
+.passport-actions .btn{border:0}
+@media(max-width:560px){.passport-spread{grid-template-columns:1fr}.passport-page{min-height:310px}.passport-page:first-child{border-right:0;border-bottom:1px solid #c8b987;box-shadow:inset 0 -7px 12px rgba(69,66,43,.05)}.passport-page:last-child{box-shadow:inset 0 7px 12px rgba(69,66,43,.04)}.page-footer{position:static;margin-top:22px}}
+@media(prefers-reduced-motion:reduce){#passportInside{animation:none}.cover{transition:none}}
+
+/* ── layout ── */
+.body-grid{display:grid;gap:22px}
+@media(min-width:780px){.body-grid{grid-template-columns:1fr 1.15fr;gap:32px;align-items:start}}
+
+/* ── trace timeline ── */
+.timeline{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 20px}
+.timeline h2{font-size:1.05rem;margin-bottom:20px;color:var(--paddy)}
+.tl{list-style:none;padding:0}
+.tl li{position:relative;padding:0 0 28px 44px}
+.tl li:last-child{padding-bottom:0}
+.tl li::before{content:"";position:absolute;left:15px;top:30px;bottom:0;width:2px;background:var(--line)}
+.tl li:last-child::before{display:none}
+.tl .dot{position:absolute;left:0;top:2px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;flex:none}
+.tl .dot svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.tl li.done .dot{background:var(--paddy)}
+.tl li.here .dot{background:var(--turmeric)}
+.tl li.here .dot svg{stroke:var(--ink)}
+.tl li.pending .dot{background:#d5e4d0}
+.tl li.pending .dot svg{stroke:#7da88b}
+.tl-label{font-weight:700;font-size:1rem;line-height:1.2}
+.tl-date{font-size:.88rem;color:#3e5e53;margin-top:2px}
+.tl-detail{background:var(--mist);border-radius:10px;padding:10px 12px;margin-top:8px;font-size:.92rem;display:grid;gap:4px}
+.tl-detail span{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tl-detail span b{font-weight:600}
+
+/* ── right column cards ── */
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px}
+.card+.card{margin-top:18px}
+.card-h{font-size:1rem;font-weight:700;color:var(--paddy);margin-bottom:12px;display:flex;align-items:center;gap:.5rem}
+.card-h svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.farmer-row{display:grid;grid-template-columns:76px 1fr;gap:14px;align-items:center}
+.farmer-avatar{width:76px;height:76px;border-radius:14px;background:repeating-linear-gradient(135deg,var(--mist) 0 12px,#daecd4 12px 24px);display:grid;place-items:center;font-size:.8rem;color:#3e5e53;text-align:center;line-height:1.3}
+.farmer-name{font-weight:700;font-size:1.1rem}
+.farmer-loc{font-size:.93rem;color:#3e5e53;margin-top:2px}
+.farmer-link{display:inline-block;margin-top:8px;font-size:.9rem;font-weight:600;color:var(--paddy);text-decoration:none;border-bottom:2px solid var(--turmeric)}
+.farmer-link:hover{color:var(--ink)}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:3px 18px;font-size:.95rem}
+.dl dt{color:#3e5e53}
+.dl dd{font-weight:600}
+
+/* ── biosecurity indicators ── */
+.bio-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.bio-score{font-family:var(--display);font-size:2rem;font-weight:700;color:var(--paddy);line-height:1}
+html[lang="bn"] .bio-score{font-family:var(--body)}
+.bio-score small{font-family:var(--body);font-size:.85rem;color:#3e5e53;font-weight:400}
+.bar-wrap{height:8px;background:var(--mist);border-radius:999px;margin-bottom:14px;overflow:hidden}
+.bar-fill{height:100%;border-radius:999px;background:var(--paddy);transition:width .6s cubic-bezier(.22,1,.36,1)}
+.bio-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.bio-item{display:flex;gap:8px;align-items:flex-start;font-size:.88rem;padding:6px;border-radius:8px}
+.bio-item.ok{background:var(--mist)}
+.bio-item.no{background:#fff2f0;color:#7a3528}
+.bio-item svg{width:16px;height:16px;flex:none;margin-top:2px;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.bio-item.ok svg{stroke:var(--paddy)}
+.bio-item.no svg{stroke:var(--clay)}
+
+/* ── CTA ── */
+.cta-box{background:var(--paddy);border-radius:18px;padding:24px 22px;color:#fff;display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:18px}
+.cta-box p{flex:1;min-width:160px}
+.cta-box p strong{display:block;font-size:1.05rem;margin-bottom:4px}
+.cta-box p span{font-size:.92rem;opacity:.88}
+.btn{display:inline-flex;align-items:center;gap:.45rem;padding:.72rem 1.3rem;border-radius:999px;font:inherit;font-weight:700;border:2px solid transparent;cursor:pointer;text-decoration:none;min-height:46px;background:none;transition:background .15s}
+.btn-y{background:var(--turmeric);color:var(--ink)}
+.btn-y:hover{background:#ffc247}
+.btn-outline{border-color:#fff;color:#fff}
+.btn-outline:hover{background:#fff;color:var(--paddy)}
+
+/* ── empty / error ── */
+#state-empty p{margin-top:8px;max-width:44ch}
+
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.bar-fill{transition:none}}
+</style>
+</head>
+<body>
+
+<!-- strip -->
+<div class="strip"><div class="wrap sbar">
+  <a href="#">← <en>Back to MPV Meat shop</en><bn>এমপিভি মাংসের দোকানে ফিরুন</bn></a>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-set="en" aria-pressed="true">EN</button>
+    <button type="button" data-set="bn" aria-pressed="false">বাংলা</button>
+  </div>
+</div></div>
+
+<!-- search / lookup -->
+<div class="lookup">
+  <div class="wrap">
+    <h1><en>Chicken Passport</en><bn>চিকেন পাসপোর্ট</bn></h1>
+    <p><en>Enter the unique package Passport ID to trace this pack back to its farm, farmer, production batch and processing record.</en><bn>এই প্যাকেটের ইউনিক পাসপোর্ট আইডি লিখুন। খামার, কৃষক, উৎপাদন ব্যাচ ও প্রক্রিয়াকরণের তথ্য দেখুন।</bn></p>
+    <div class="srow" role="search">
+      <input id="pidInput" type="text" inputmode="text" autocomplete="off" spellcheck="false">
+      <button type="button" id="lookupBtn"><en>Look up</en><bn>খুঁজুন</bn></button>
+    </div>
+    <p class="hint" id="sampleHint"><en>Try a sample package: <strong>MPV-PKG-2026-000001</strong> or <strong>MPV-PKG-2026-000002</strong></en><bn>নমুনা প্যাকেট আইডি: <strong>MPV-PKG-2026-000001</strong> অথবা <strong>MPV-PKG-2026-000002</strong></bn></p>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- empty state (default) -->
+  <div id="state-empty">
+    <p><strong><en>Find the Passport ID on your pack</en><bn>প্যাকেটে পাসপোর্ট আইডি খুঁজুন</bn></strong></p>
+    <p><en>Each package has its own ID printed near its QR code, in the format MPV-PKG-YYYY-NNNNNN. Scan the QR code to open this package passport directly.</en><bn>প্রতিটি প্যাকেটের আলাদা আইডি QR কোডের কাছে ছাপা থাকে: MPV-PKG-YYYY-NNNNNN। QR কোড স্ক্যান করলে নির্দিষ্ট প্যাকেটের পাসপোর্ট খুলবে।</bn></p>
+  </div>
+
+  <!-- error state -->
+  <div id="state-error" role="alert">
+    <h2><en>Passport not found</en><bn>পাসপোর্ট পাওয়া যায়নি</bn></h2>
+    <p id="errMsg"></p>
+  </div>
+
+  <!-- result -->
+  <div id="state-result" aria-live="polite">
+
+    <!-- passport cover -->
+    <div class="cover" id="cover" role="button" tabindex="0" aria-controls="passportInside" aria-expanded="false" aria-label="Open the MPV Chicken Passport">
+      <div class="cover-inner">
+      <div class="cover-top">
+        <div class="cover-logo">
+          <svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#2E7D4F"/><path d="M8 27c4-9 8-12 12-12s8 3 12 12" fill="none" stroke="#EAF1E7" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="14" r="4.2" fill="#F2B02E"/><path d="M8 31h24" stroke="#EAF1E7" stroke-width="2.4" stroke-linecap="round"/></svg>
+          <span><en>Model Poultry Village</en><bn>মডেল পোল্ট্রি ভিলেজ</bn><small><en>Package traceability · Bangladesh</en><bn>প্যাকেটভিত্তিক ট্রেসেবিলিটি · বাংলাদেশ</bn></small></span>
+        </div>
+        <div class="stamp" id="coverStamp">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+          <en>Passport Published</en><bn>পাসপোর্ট প্রকাশিত</bn>
+        </div>
+      </div>
+      <div class="passport-heading"><en>Model Poultry Village · Bangladesh</en><bn>মডেল পোল্ট্রি ভিলেজ · বাংলাদেশ</bn></div>
+      <div class="passport-subheading"><en>Chicken Passport</en><bn>চিকেন পাসপোর্ট</bn></div>
+      <div class="passport-emblem" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="21" stroke="#e2c57e" stroke-width="1.4"/><path d="M10 29c5-8 9-11 14-11s9 3 14 11" stroke="#e8d8a9" stroke-width="2.4" stroke-linecap="round"/><circle cx="24" cy="14" r="4" fill="#e2c57e"/><path d="M12 34h24M16 38h16" stroke="#e8d8a9" stroke-width="2" stroke-linecap="round"/></svg></div>
+      <div class="passport-id-label"><en>Unique package passport ID</en><bn>প্যাকেটের ইউনিক পাসপোর্ট আইডি</bn></div>
+      <div class="pid" id="coverPid"></div>
+      <div class="cover-meta" id="coverMeta"></div>
+      <div class="cover-foot" id="coverFoot"></div>
+      <div class="passport-mrz" id="passportMrz">MPV&lt;&lt;CHICKEN&lt;PASSPORT&lt;&lt;BANGLADESH<br>PACKAGE&lt;TRACEABILITY&lt;&lt;MPV<small><en>Decorative machine-readable-style strip · not an official travel document</en><bn>ডিজাইন-উপাদান · সরকারি ভ্রমণ নথি নয়</bn></small></div>
+      </div>
+      <div class="cover-open-hint"><en>Click to open passport</en><bn>পাসপোর্ট খুলতে ক্লিক করুন</bn>　⌄</div>
+    </div>
+
+    <!-- Passport booklet interior: intentionally MPV-branded, not a government document replica -->
+    <section id="passportInside" aria-label="MPV Chicken Passport inside pages">
+      <div class="passport-spread">
+        <article class="passport-page">
+          <div class="page-content">
+            <div class="page-kicker"><en>Model Poultry Village</en><bn>মডেল পোল্ট্রি ভিলেজ</bn></div>
+            <div class="page-emblem" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="27" stroke="#39734e" stroke-width="1.5"/><path d="M13 40c6-10 12-14 19-14s13 4 19 14" stroke="#39734e" stroke-width="2.6" stroke-linecap="round"/><circle cx="32" cy="19" r="5" fill="#c6a45a"/><path d="M17 46h30M22 51h20" stroke="#39734e" stroke-width="2.2" stroke-linecap="round"/><path d="M22 13l-4-5m24 5 4-5" stroke="#c6a45a" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="page-org"><bn>মডেল পোল্ট্রি ভিলেজ</bn><span class="page-org-en">MODEL POULTRY VILLAGE</span></div>
+            <div class="page-document-title"><en>CHICKEN PASSPORT</en><bn>চিকেন পাসপোর্ট</bn></div>
+            <div class="page-id-label"><en>PACKAGE PASSPORT ID</en><bn>প্যাকেট পাসপোর্ট আইডি</bn></div>
+            <div class="page-id" id="insidePid"></div>
+            <div class="page-seal"><en>MPV<br>TRACE</en><bn>এমপিভি<br>ট্রেস</bn></div>
+            <p class="page-note"><en>Package-level product traceability record</en><bn>প্যাকেটভিত্তিক পণ্যের ট্রেসেবিলিটি রেকর্ড</bn></p>
+          </div>
+        </article>
+        <article class="passport-page">
+          <div class="page-content">
+            <div class="page-kicker"><en>Package identity & record</en><bn>প্যাকেট পরিচিতি ও রেকর্ড</bn></div>
+            <div class="page-fields" id="insideFields"></div>
+            <div class="page-document-title"><en>TRACEABILITY DETAILS</en><bn>ট্রেসেবিলিটি তথ্য</bn></div>
+            <p style="font-size:.8rem"><en>This page displays the sample record associated with this package ID. Records are not independently verified in this prototype.</en><bn>এই পৃষ্ঠায় প্যাকেট আইডির সঙ্গে যুক্ত নমুনা রেকর্ড দেখানো হয়েছে। এই প্রোটোটাইপে রেকর্ড স্বাধীনভাবে যাচাই করা হয়নি।</bn></p>
+            <div class="page-footer" id="insideFooter"></div>
+          </div>
+        </article>
+      </div>
+      <div class="passport-actions">
+        <p><en>The passport is open. Scroll down for the full farm-to-package journey.</en><bn>পাসপোর্ট খোলা হয়েছে। খামার থেকে প্যাকেট পর্যন্ত সম্পূর্ণ তথ্য দেখতে নিচে স্ক্রল করুন।</bn></p>
+        <button class="btn btn-y" type="button" id="closePassport"><en>Close passport cover ↑</en><bn>পাসপোর্টের কভার বন্ধ করুন ↑</bn></button>
+      </div>
+    </section>
+
+    <!-- body grid: timeline + right cards -->
+    <div class="body-grid">
+
+      <!-- left: timeline -->
+      <div class="timeline">
+        <h2><en>Trace the journey</en><bn>যাত্রা অনুসরণ করুন</bn></h2>
+        <ol class="tl" id="timeline"></ol>
+      </div>
+
+      <!-- right: batch + farmer + biosecurity + cta -->
+      <div>
+        <!-- batch -->
+        <div class="card">
+          <div class="card-h">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <en>Batch information</en><bn>ব্যাচের তথ্য</bn>
+          </div>
+          <dl class="dl" id="batchDl"></dl>
+        </div>
+
+        <!-- farmer -->
+        <div class="card">
+          <div class="card-h">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <en>Farmer</en><bn>কৃষক</bn>
+          </div>
+          <div class="farmer-row">
+            <div class="farmer-avatar" id="fAvatar"></div>
+            <div>
+              <div class="farmer-name" id="fName"></div>
+              <div class="farmer-loc" id="fLoc"></div>
+              <a class="farmer-link" href="#" id="fLink"></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- biosecurity -->
+        <div class="card">
+          <div class="card-h">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6z"/></svg>
+            <en>Farm biosecurity indicators</en><bn>খামারের জৈব নিরাপত্তা সূচক</bn>
+          </div>
+          <div class="bio-head">
+            <div><div class="bio-score" id="bioScore"></div></div>
+            <div id="bioBar" style="flex:1;min-width:80px"><div class="bar-wrap"><div class="bar-fill" id="barFill" style="width:0"></div></div><div style="font-size:.82rem;color:#3e5e53" id="bioSub"></div></div>
+          </div>
+          <div class="bio-grid" id="bioGrid"></div>
+        </div>
+
+        <!-- cta -->
+        <div class="cta-box">
+          <p><strong><en>Want the same chicken?</en><bn>এই মুরগিই কিনতে চান?</bn></strong><span><en>Order from MPV Meat. Every package has its own unique Passport ID and QR code.</en><bn>এমপিভি মাংস থেকে অর্ডার করুন। প্রতিটি প্যাকেটের আলাদা পাসপোর্ট আইডি ও QR কোড থাকে।</bn></span></p>
+          <a class="btn btn-y" href="mpv-meat-shop.html"><en>Order MPV Meat</en><bn>এমপিভি মাংস অর্ডার করুন</bn></a>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /state-result -->
+
+</div><!-- /wrap -->
+
+<script>
+(function(){
+  var html = document.documentElement;
+  function L(){ return html.lang }
+  function t(en, bn){ return L()==='bn' ? bn : en }
+  function num(n){ return n.toLocaleString(L()==='bn' ? 'bn-BD' : 'en-US') }
+  function esc(s){ var d=document.createElement('div'); d.textContent=s; return d.innerHTML }
+
+  /* ── sample passport data ── */
+  var DB = {
+    'MPV-PKG-2026-000001': {
+      id:'MPV-PKG-2026-000001',
+      batchId:'MPV-BAR-2026-001',
+      packagedDate:{ en:'29 Sep 2026', bn:'২৯ সেপ্টেম্বর ২০২৬' },
+      product:{ en:'Whole chicken', bn:'পুরো মুরগি' },
+      batchDate:{ en:'12 Sep 2026', bn:'১২ সেপ্টেম্বর ২০২৬' },
+      processDate:{ en:'28 Sep 2026', bn:'২৮ সেপ্টেম্বর ২০২৬' },
+      deliveryDate:{ en:'30 Sep 2026', bn:'৩০ সেপ্টেম্বর ২০২৬' },
+      weight:'1,840',
+      birds:'1,800',
+      district:{ en:'Barisal', bn:'বরিশাল' },
+      farmer:{
+        en:'Farmer Name', bn:'কৃষকের নাম',
+        village:{ en:'Char Kazla, Barisal', bn:'চর কজলা, বরিশাল' },
+        exp:{ en:'MPV farmer since 2023', bn:'২০২৩ সাল থেকে এমপিভি কৃষক' }
+      },
+      bio:[
+        {en:'Perimeter fence',bn:'সীমানা বেড়া',ok:true},
+        {en:'Single entry point',bn:'একক প্রবেশদ্বার',ok:true},
+        {en:'Foot bath at entry',bn:'প্রবেশে পা ধোয়ার ব্যবস্থা',ok:true},
+        {en:'Clean water supply',bn:'বিশুদ্ধ পানির সরবরাহ',ok:true},
+        {en:'Dead bird disposal',bn:'মৃত পাখি অপসারণ',ok:true},
+        {en:'Feed storage free of pests',bn:'পোকামুক্ত খাদ্য সংরক্ষণ',ok:true},
+        {en:'Visitor log maintained',bn:'দর্শনার্থীর হিসাব রাখা',ok:true},
+        {en:'Litter management',bn:'লিটার ব্যবস্থাপনা',ok:true},
+        {en:'Ventilation adequate',bn:'পর্যাপ্ত বায়ু চলাচল',ok:true},
+        {en:'Vaccination record kept',bn:'টিকার রেকর্ড রাখা',ok:true},
+        {en:'No unauthorised medicine',bn:'অননুমোদিত ওষুধ নেই',ok:true},
+        {en:'MPV daily log complete',bn:'এমপিভি দৈনিক লগ সম্পূর্ণ',ok:true}
+      ]
+    },
+    'MPV-PKG-2026-000002': {
+      id:'MPV-PKG-2026-000002',
+      batchId:'MPV-BAR-2026-002',
+      packagedDate:{ en:'23 Sep 2026', bn:'২৩ সেপ্টেম্বর ২০২৬' },
+      product:{ en:'Leg piece', bn:'লেগ পিস' },
+      batchDate:{ en:'5 Sep 2026', bn:'৫ সেপ্টেম্বর ২০২৬' },
+      processDate:{ en:'22 Sep 2026', bn:'২২ সেপ্টেম্বর ২০২৬' },
+      deliveryDate:{ en:'24 Sep 2026', bn:'২৪ সেপ্টেম্বর ২০২৬' },
+      weight:'1,620',
+      birds:'2,000',
+      district:{ en:'Barisal', bn:'বরিশাল' },
+      farmer:{
+        en:'Another Farmer Name', bn:'অন্য কৃষকের নাম',
+        village:{ en:'Nalchity, Jhalakathi', bn:'নলছিটি, ঝালকাঠি' },
+        exp:{ en:'MPV farmer since 2024', bn:'২০২৪ সাল থেকে এমপিভি কৃষক' }
+      },
+      bio:[
+        {en:'Perimeter fence',bn:'সীমানা বেড়া',ok:true},
+        {en:'Single entry point',bn:'একক প্রবেশদ্বার',ok:true},
+        {en:'Foot bath at entry',bn:'প্রবেশে পা ধোয়ার ব্যবস্থা',ok:true},
+        {en:'Clean water supply',bn:'বিশুদ্ধ পানির সরবরাহ',ok:true},
+        {en:'Dead bird disposal',bn:'মৃত পাখি অপসারণ',ok:true},
+        {en:'Feed storage free of pests',bn:'পোকামুক্ত খাদ্য সংরক্ষণ',ok:true},
+        {en:'Visitor log maintained',bn:'দর্শনার্থীর হিসাব রাখা',ok:false},
+        {en:'Litter management',bn:'লিটার ব্যবস্থাপনা',ok:true},
+        {en:'Ventilation adequate',bn:'পর্যাপ্ত বায়ু চলাচল',ok:true},
+        {en:'Vaccination record kept',bn:'টিকার রেকর্ড রাখা',ok:true},
+        {en:'No unauthorised medicine',bn:'অননুমোদিত ওষুধ নেই',ok:true},
+        {en:'MPV daily log complete',bn:'এমপিভি দৈনিক লগ সম্পূর্ণ',ok:false}
+      ]
+    }
+  };
+
+  /* ── render ── */
+  function render(d){
+    /* cover */
+    var pid = document.getElementById('coverPid');
+    pid.textContent = d.id;
+    document.getElementById('coverMeta').textContent = t(d.product.en, d.product.bn) + ' · ' + t('Package-level traceability', 'প্যাকেটভিত্তিক ট্রেসেবিলিটি');
+    document.getElementById('coverFoot').innerHTML =
+      stat(t('Production date','উৎপাদনের তারিখ'), t(d.batchDate.en,d.batchDate.bn)) +
+      stat(t('Processing date','প্রক্রিয়াকরণের তারিখ'), t(d.processDate.en,d.processDate.bn)) +
+      stat(t('Package net weight','প্যাকেটের নিট ওজন'), d.weight + ' ' + t('g','গ্রাম'));
+    document.getElementById('insidePid').textContent = d.id;
+    document.getElementById('insideFields').innerHTML = [
+      [t('Product','পণ্য'),t(d.product.en,d.product.bn)],
+      [t('Net package weight','প্যাকেটের নিট ওজন'),d.weight+' '+t('g','গ্রাম')],
+      [t('Parent batch ID','মূল ব্যাচ আইডি'),d.batchId],
+      [t('Production date','উৎপাদনের তারিখ'),t(d.batchDate.en,d.batchDate.bn)],
+      [t('Processing date','প্রক্রিয়াকরণের তারিখ'),t(d.processDate.en,d.processDate.bn)],
+      [t('Packaging date','প্যাকেটজাতের তারিখ'),t(d.packagedDate.en,d.packagedDate.bn)],
+      [t('District','জেলা'),t(d.district.en,d.district.bn)]
+    ].map(function(r){return '<div class="page-field"><span>'+esc(r[0])+'</span><strong>'+esc(r[1])+'</strong></div>'}).join('');
+    document.getElementById('insideFooter').textContent = 'MPV<<PACKAGE<' + d.id.replace(/[^A-Z0-9]/g,'<') + '<<BANGLADESH';
+    document.getElementById('passportInside').style.display = 'none';
+    document.querySelector('.body-grid').style.display = 'none';
+    document.getElementById('cover').setAttribute('aria-expanded','false');
+
+    /* timeline */
+    var steps = [
+      { label:{en:'Farm',bn:'খামার'}, st:'done',
+        detail:'<span>'+t('Location','অবস্থান')+' <b>'+esc(t(d.farmer.village.en,d.farmer.village.bn))+'</b></span><span>'+t('Farmer','কৃষক')+' <b>'+esc(t(d.farmer.en,d.farmer.bn))+'</b></span>',
+        date:'', icon:'farm'},
+      { label:{en:'Flock raised',bn:'বাচ্চা পালন'}, st:'done',
+        detail:'<span>'+t('Birds','বাচ্চা')+' <b>'+num(+d.birds.replace(/,/g,''))+'</b></span><span>'+t('Started','শুরু')+' <b>'+t(d.batchDate.en,d.batchDate.bn)+'</b></span>',
+        date:t(d.batchDate.en,d.batchDate.bn), icon:'bird'},
+      { label:{en:'Processing',bn:'প্রক্রিয়াকরণ'}, st:'done',
+        detail:'<span>'+t('Date','তারিখ')+' <b>'+t(d.processDate.en,d.processDate.bn)+'</b></span><span>'+t('Processing record','প্রক্রিয়াকরণ রেকর্ড')+' <b>'+esc(d.batchId)+'</b></span>',
+        date:t(d.processDate.en,d.processDate.bn), icon:'proc'},
+      { label:{en:'Packaging',bn:'প্যাকেটজাতকরণ'}, st:'done',
+        detail:'<span>'+t('Packaged on','প্যাকেটজাতের তারিখ')+' <b>'+t(d.packagedDate.en,d.packagedDate.bn)+'</b></span><span>'+t('Passport status','পাসপোর্টের অবস্থা')+' <b>'+t('Published','প্রকাশিত')+'</b></span>',
+        date:t(d.packagedDate.en,d.packagedDate.bn), icon:'box'},
+      { label:{en:'Customer scan',bn:'গ্রাহকের স্ক্যান'}, st:'here',
+        detail:'<span>'+t('You are viewing the public record for this individual package.','আপনি এই নির্দিষ্ট প্যাকেটের প্রকাশ্য তথ্য দেখছেন।')+'</span>',
+        date:'', icon:'you'}
+    ];
+    document.getElementById('timeline').innerHTML = steps.map(function(s){
+      return '<li class="'+s.st+'"><div class="dot">'+icon(s.icon)+'</div>'+
+        '<div class="tl-label">'+t(s.label.en,s.label.bn)+'</div>'+
+        (s.date?'<div class="tl-date">'+s.date+'</div>':'')+
+        (s.detail?'<div class="tl-detail">'+s.detail+'</div>':'')+
+        '</li>';
+    }).join('');
+
+    /* batch */
+    document.getElementById('batchDl').innerHTML = [
+      [t('Package Passport ID','প্যাকেট পাসপোর্ট আইডি'), d.id],
+      [t('Parent batch ID','মূল ব্যাচ আইডি'), d.batchId],
+      [t('Product','পণ্য'), t(d.product.en,d.product.bn)],
+      [t('Package net weight','প্যাকেটের নিট ওজন'), d.weight + ' ' + t('g','গ্রাম')],
+      [t('Production date','উৎপাদনের তারিখ'), t(d.batchDate.en,d.batchDate.bn)],
+      [t('Processing date','প্রক্রিয়াকরণের তারিখ'), t(d.processDate.en,d.processDate.bn)],
+      [t('Packaging date','প্যাকেটজাতের তারিখ'), t(d.packagedDate.en,d.packagedDate.bn)],
+      [t('Batch bird count','ব্যাচের পাখির সংখ্যা'), num(+d.birds.replace(/,/g,''))],
+      [t('District','জেলা'), t(d.district.en,d.district.bn)]
+    ].map(function(r){ return '<dt>'+r[0]+'</dt><dd>'+esc(r[1])+'</dd>' }).join('');
+
+    /* farmer */
+    document.getElementById('fAvatar').textContent = t('Farmer\nphoto','কৃষকের\nছবি');
+    document.getElementById('fName').textContent = t(d.farmer.en, d.farmer.bn);
+    document.getElementById('fLoc').textContent = t(d.farmer.village.en, d.farmer.village.bn);
+    var link = document.getElementById('fLink');
+    link.textContent = t("Read farmer's story →", 'কৃষকের গল্প পড়ুন →');
+
+    /* biosecurity */
+    var passed = d.bio.filter(function(b){ return b.ok }).length;
+    var total = d.bio.length;
+    var pct = Math.round(passed/total*100);
+    document.getElementById('bioScore').innerHTML = num(passed) + '/' + num(total) + ' <small>' + t('indicators recorded as met','সূচক পূরণ হিসেবে নথিভুক্ত') + '</small>';
+    document.getElementById('bioSub').textContent = num(pct) + '% ' + t('compliance','সম্মতি');
+    setTimeout(function(){ document.getElementById('barFill').style.width = pct + '%' }, 80);
+    document.getElementById('bioGrid').innerHTML = d.bio.map(function(b){
+      return '<div class="bio-item '+(b.ok?'ok':'no')+'">'+
+        '<svg viewBox="0 0 24 24" aria-hidden="true">'+(b.ok?'<path d="M20 6 9 17l-5-5"/>':'<path d="M18 6 6 18M6 6l12 12"/>')+'</svg>'+
+        '<span>'+t(b.en,b.bn)+'</span></div>';
+    }).join('');
+
+    /* show */
+    document.getElementById('state-empty').style.display = 'none';
+    document.getElementById('state-error').style.display = 'none';
+    document.getElementById('state-result').style.display = 'block';
+    document.getElementById('state-result').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function stat(label, val){
+    return '<div class="cover-stat"><strong>'+esc(val)+'</strong><span>'+esc(label)+'</span></div>';
+  }
+
+  function icon(type){
+    var icons = {
+      farm:'<path d="M3 22V10l9-7 9 7v12"/><rect x="9" y="15" width="6" height="7"/>',
+      bird:'<circle cx="12" cy="9" r="3"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>',
+      proc:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 12l2 2 4-4"/>',
+      box:'<path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2m18 0-1 10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2L3 8m18 0H3"/>',
+      you:'<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>'
+    };
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+icons[type]+'</svg>';
+  }
+
+  function showError(id){
+    document.getElementById('state-empty').style.display = 'none';
+    document.getElementById('state-result').style.display = 'none';
+    document.getElementById('errMsg').innerHTML =
+      t('"','"') + esc(id) + t('" was not found in the MPV database. Please check the package ID printed on your pack (format: MPV-PKG-YYYY-NNNNNN) and try again.',
+         '" এমপিভি ডেটাবেসে পাওয়া যায়নি। প্যাকেটে ছাপানো প্যাকেজ আইডি দেখুন (ফরম্যাট: MPV-PKG-YYYY-NNNNNN) এবং আবার চেষ্টা করুন।');
+    document.getElementById('state-error').style.display = 'block';
+  }
+
+  function lookup(){
+    var raw = document.getElementById('pidInput').value.trim().toUpperCase();
+    if(!raw){
+      document.getElementById('pidInput').focus();
+      return;
+    }
+    if(DB[raw]){ render(DB[raw]) }
+    else{ showError(raw) }
+  }
+
+  document.getElementById('lookupBtn').addEventListener('click', lookup);
+  document.getElementById('pidInput').addEventListener('keydown', function(e){ if(e.key==='Enter') lookup() });
+  document.getElementById('pidInput').placeholder = 'MPV-PKG-2026-000001';
+
+  function openPassport(){
+    if(document.getElementById('state-result').style.display === 'none') return;
+    document.getElementById('passportInside').style.display = 'block';
+    document.querySelector('.body-grid').style.display = '';
+    document.getElementById('cover').setAttribute('aria-expanded','true');
+    document.getElementById('passportInside').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  function closePassport(){
+    document.getElementById('passportInside').style.display = 'none';
+    document.querySelector('.body-grid').style.display = 'none';
+    document.getElementById('cover').setAttribute('aria-expanded','false');
+    document.getElementById('cover').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  document.getElementById('cover').addEventListener('click',openPassport);
+  document.getElementById('cover').addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openPassport()}});
+  document.getElementById('closePassport').addEventListener('click',closePassport);
+
+  /* language switch */
+  document.querySelectorAll('.lang button').forEach(function(b){
+    b.addEventListener('click', function(){
+      html.setAttribute('lang', b.dataset.set);
+      document.querySelectorAll('.lang button').forEach(function(x){
+        x.setAttribute('aria-pressed', x===b ? 'true' : 'false');
+      });
+      /* re-render if a passport is already showing */
+      var rid = document.getElementById('state-result');
+      if(rid && rid.style.display !== 'none'){
+        var id = document.getElementById('coverPid').textContent.trim();
+        var wasOpen = document.getElementById('cover').getAttribute('aria-expanded') === 'true';
+        if(DB[id]) { render(DB[id]); if(wasOpen) openPassport(); }
+      }
+    });
+  });
+
+  /* Auto-load a package passport from a QR URL such as /passport.html?id=MPV-PKG-2026-000001 */
+  var sp = new URLSearchParams(location.search);
+  var qid = (sp.get('id')||'').trim().toUpperCase();
+  if(qid){
+    document.getElementById('pidInput').value = qid;
+    if(DB[qid]) render(DB[qid]);
+    else showError(qid);
+  }
+
+})();
+</script>
+</body>
+</html>

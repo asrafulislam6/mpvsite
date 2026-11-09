@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About MPV | এমপিভি পরিচিতি</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#12332A;--paddy:#2E7D4F;--mist:#EAF1E7;--bone:#FAFBF7;--turmeric:#F2B02E;--clay:#B8432B;--line:#cfdccb;
+--display:"Bricolage Grotesque","Hind Siliguri",system-ui,sans-serif;--body:"Hind Siliguri",system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:128px}
+body{font-family:var(--body);color:var(--ink);background:var(--bone);line-height:1.65;font-size:17px;-webkit-font-smoothing:antialiased;padding-bottom:64px}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--turmeric);outline-offset:3px;border-radius:4px}
+en,bn{display:inline}
+html[lang="bn"] en{display:none}
+html[lang="en"] bn{display:none}
+html[lang="bn"] body{line-height:1.8}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--display);line-height:1.12;letter-spacing:-.015em}
+html[lang="bn"] h1,html[lang="bn"] h2,html[lang="bn"] h3{font-family:var(--body);letter-spacing:0;line-height:1.3}
+h2{font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:700}
+h3{font-size:1.15rem;font-weight:700}
+section{padding:64px 0}
+.eyebrow{font-weight:600;color:var(--paddy);font-size:.9rem;margin-bottom:6px;display:block}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.78rem 1.35rem;border-radius:999px;font-weight:600;text-decoration:none;border:2px solid transparent;cursor:pointer;min-height:48px;background:none;transition:background .15s}
+.btn-primary{background:var(--turmeric);color:var(--ink)}
+.btn-primary:hover{background:#ffc247}
+.btn-ghost{border-color:var(--ink)}
+.btn-ghost:hover{background:var(--ink);color:var(--bone)}
+.btn-sm{padding:.4rem 1rem;min-height:40px;font-size:.95rem}
+
+/* header */
+header.top{position:sticky;top:0;z-index:30;background:rgba(250,251,247,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:1rem;height:64px}
+.logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;font-family:var(--display);font-weight:700;font-size:1.1rem;line-height:1.1}
+html[lang="bn"] .logo{font-family:var(--body)}
+.logo small{display:block;font-family:var(--body);font-weight:500;font-size:.72rem;color:var(--paddy)}
+nav.main{margin-left:auto;display:none;gap:1.3rem}
+nav.main a{text-decoration:none;font-weight:500;padding:.4rem 0;border-bottom:2px solid transparent}
+nav.main a:hover,nav.main a[aria-current]{border-color:var(--turmeric)}
+.lang{display:flex;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden;margin-left:auto}
+.lang button{border:0;background:transparent;font-size:.9rem;font-weight:600;padding:.3rem .8rem;cursor:pointer;min-height:38px}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bone)}
+.login{display:none}
+.burger{width:44px;height:44px;border:0;background:transparent;cursor:pointer;display:grid;place-items:center}
+.burger span,.burger span::before,.burger span::after{display:block;width:22px;height:2px;background:var(--ink);content:"";position:relative}
+.burger span::before{position:absolute;top:-7px}.burger span::after{position:absolute;top:7px}
+.drawer{display:none;border-top:1px solid var(--line);background:var(--bone)}
+.drawer.open{display:block}
+.drawer a{display:block;padding:.9rem 20px;border-bottom:1px solid var(--line);text-decoration:none;font-weight:500}
+@media(min-width:980px){nav.main{display:flex}.lang{margin-left:0}.login{display:inline-flex}.burger{display:none}.drawer{display:none!important}}
+
+/* page hero */
+.phero{background:linear-gradient(180deg,var(--mist),var(--bone));padding:44px 0 36px}
+.crumb{font-size:.9rem;color:#3e5e53;margin-bottom:14px}
+.crumb a{text-decoration:none}.crumb a:hover{text-decoration:underline}
+.phero h1{font-size:clamp(2.1rem,5.6vw,3.6rem);font-weight:700;max-width:16ch}
+html[lang="bn"] .phero h1{max-width:none;font-size:clamp(2rem,5.4vw,3.3rem)}
+.phero p{margin-top:16px;max-width:58ch;font-size:1.12rem;color:#27493f}
+
+/* sub nav */
+.subnav{position:sticky;top:64px;z-index:20;background:var(--bone);border-bottom:1px solid var(--line)}
+.subnav .wrap{display:flex;gap:6px;overflow-x:auto;padding-top:8px;padding-bottom:8px;scrollbar-width:none}
+.subnav a{white-space:nowrap;text-decoration:none;font-weight:500;font-size:.95rem;padding:.4rem .95rem;border-radius:999px;min-height:40px;display:inline-flex;align-items:center;border:1.5px solid transparent}
+.subnav a:hover{background:var(--mist)}
+.subnav a.on{background:var(--ink);color:var(--bone)}
+
+/* background */
+.two{display:grid;gap:34px}
+@media(min-width:900px){.two{grid-template-columns:1fr 1fr;gap:56px}.two.wide-left{grid-template-columns:1.25fr .75fr}}
+.prose p+p{margin-top:14px}
+.prose{max-width:60ch}
+.pull{background:var(--ink);color:var(--bone);border-radius:20px;padding:28px}
+.pull b{display:block;font-family:var(--display);font-size:1.35rem;line-height:1.3;color:var(--turmeric)}
+html[lang="bn"] .pull b{font-family:var(--body)}
+.pull p{margin-top:12px;opacity:.9;font-size:.98rem}
+
+/* vision mission objectives */
+.vm{background:var(--mist)}
+.vmgrid{display:grid;gap:18px}
+@media(min-width:900px){.vmgrid{grid-template-columns:1fr 1fr}}
+.vmbox{background:var(--bone);border:1px solid var(--line);border-radius:18px;padding:26px}
+.vmbox h3{color:var(--paddy);margin-bottom:8px}
+.vmbox p{font-size:1.1rem;line-height:1.5}
+.objs{grid-column:1/-1}
+.olist{list-style:none;padding:0;counter-reset:o;display:grid;gap:12px;margin-top:14px}
+.olist li{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start}
+.olist li::before{counter-increment:o;content:counter(o);width:34px;height:34px;border-radius:50%;background:var(--paddy);color:#fff;display:grid;place-items:center;font-weight:700;font-family:var(--display);font-size:.95rem}
+html[lang="bn"] .olist li::before{font-family:var(--body)}
+@media(min-width:760px){.olist{grid-template-columns:1fr 1fr;gap:14px 36px}}
+
+/* approach */
+.pillars{display:grid;gap:0;margin-top:30px;border-top:1px solid var(--line)}
+.pillar{display:grid;gap:8px;padding:28px 0;border-bottom:1px solid var(--line)}
+.pillar .no{font-family:var(--display);font-size:2.6rem;font-weight:700;color:var(--turmeric);line-height:1}
+html[lang="bn"] .pillar .no{font-family:var(--body)}
+.pillar p{max-width:56ch;color:#27493f}
+@media(min-width:800px){.pillar{grid-template-columns:90px 1fr 1.3fr;gap:30px;align-items:start}}
+
+/* biosecurity: premium illustration + expandable panel */
+.bio{background:var(--mist);color:var(--ink);position:relative;overflow:hidden}
+.bio::before{content:"";position:absolute;width:420px;height:420px;border:1px solid rgba(46,125,79,.12);border-radius:50%;right:-220px;top:-210px;pointer-events:none}
+.bio .wrap{position:relative;z-index:1}
+.bio h2{color:var(--ink);max-width:22ch}
+.bio .eyebrow{color:var(--paddy)}
+.bio .lead{max-width:58ch;color:#35564a;margin-top:10px}
+.bio-layout{display:grid;gap:26px;margin-top:30px;align-items:start}
+.bio-visual{position:relative;min-width:0;background:var(--bone);border:1px solid var(--line);border-radius:24px;padding:16px;overflow:hidden}
+.bio-visual::after{content:"";position:absolute;inset:auto -24px -42px auto;width:160px;height:160px;border-radius:50%;background:var(--turmeric);opacity:.12;pointer-events:none}
+.bio-art{display:block;width:100%;height:auto;position:relative;z-index:1}
+.bio-visual-note{position:relative;z-index:1;margin:10px 8px 4px;padding:15px 16px;border-left:3px solid var(--turmeric);background:var(--mist);border-radius:0 12px 12px 0}
+.bio-visual-note strong{display:block;font-family:var(--display);font-size:1rem;line-height:1.35;color:var(--ink)}
+html[lang="bn"] .bio-visual-note strong{font-family:var(--body)}
+.bio-visual-note span{display:block;margin-top:4px;color:#426255;font-size:.91rem;line-height:1.55}
+.bgrid{display:grid;gap:0;border-top:1px solid #c8d8c8;min-width:0}
+.bi{border-bottom:1px solid #c8d8c8;min-width:0}
+.bi summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:38px minmax(0,1fr) 30px;gap:11px;align-items:center;padding:13px 8px;border-radius:10px;transition:background .18s ease}
+.bi summary::-webkit-details-marker{display:none}
+.bi summary:hover,.bi[open] summary{background:rgba(250,251,247,.8)}
+.bi-no{font-family:var(--display);font-size:.82rem;font-weight:700;color:var(--paddy);letter-spacing:.02em}
+html[lang="bn"] .bi-no{font-family:var(--body)}
+.bi-title{font-size:1rem;line-height:1.4;font-weight:600;display:block}
+.bi-toggle{width:28px;height:28px;border:1px solid #b6cbb8;border-radius:50%;display:grid;place-items:center;color:var(--paddy);font-size:1.15rem;line-height:1;justify-self:end;transition:transform .18s ease,background .18s ease}
+.bi-toggle::before{content:"+"}
+.bi[open] .bi-toggle{background:var(--turmeric);border-color:var(--turmeric);color:var(--ink);transform:rotate(180deg)}
+.bi[open] .bi-toggle::before{content:"−"}
+.bi-detail{padding:0 46px 17px 57px;color:#35564a;font-size:.93rem;line-height:1.65;animation:bio-open .18s ease-out}
+.bi-detail p{margin:0}
+@keyframes bio-open{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:820px){.bio-layout{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:38px}.bio-visual{position:sticky;top:150px;padding:20px}.bio-visual-note{margin-top:2px}.bi summary{padding:14px 10px}}
+@media(min-width:1080px){.bio-layout{gap:54px}.bio-visual{padding:24px}}
+@media(max-width:480px){.bio-visual{padding:10px;border-radius:18px}.bio-visual-note{margin:4px 4px 2px;padding:12px}.bi summary{grid-template-columns:30px minmax(0,1fr) 28px;gap:8px;padding:12px 5px}.bi-detail{padding:0 34px 15px 43px;font-size:.9rem}}
+@media(prefers-reduced-motion:reduce){.bi summary,.bi-toggle{transition:none}.bi-detail{animation:none}}
+/* video */
+.vid-wrap{display:grid;gap:22px;margin-top:28px}
+@media(min-width:960px){.vid-wrap{grid-template-columns:1.7fr 1fr;gap:30px;align-items:start}}
+.player{position:relative;aspect-ratio:16/9;border-radius:20px;overflow:hidden;background:var(--ink)}
+.poster{position:absolute;inset:0;border:0;width:100%;cursor:pointer;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;padding:22px;text-align:left;color:#fff;background:repeating-linear-gradient(135deg,#1c4a3c 0 18px,#194236 18px 36px)}
+.poster::before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(10,30,24,.82),rgba(10,30,24,0) 62%)}
+.poster>*{position:relative}
+.poster .tag{font-size:.8rem;font-weight:600;background:var(--turmeric);color:var(--ink);padding:.1rem .65rem;border-radius:999px;margin-bottom:8px}
+.poster .ttl{font-family:var(--display);font-weight:700;font-size:clamp(1.2rem,2.6vw,1.7rem);line-height:1.2;max-width:26ch}
+html[lang="bn"] .poster .ttl{font-family:var(--body)}
+.poster .who{font-size:.92rem;opacity:.88;margin-top:4px}
+.playbtn{position:absolute!important;left:50%;top:44%;transform:translate(-50%,-50%);width:78px;height:78px;border-radius:50%;background:var(--turmeric);display:grid;place-items:center;box-shadow:0 0 0 10px rgba(242,176,46,.25);transition:transform .15s}
+.poster:hover .playbtn{transform:translate(-50%,-50%) scale(1.07)}
+.playbtn::after{content:"";border-left:22px solid var(--ink);border-top:13px solid transparent;border-bottom:13px solid transparent;margin-left:6px}
+.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.soon{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:#fff;background:var(--ink)}
+.soon p{max-width:34ch}
+.soon strong{display:block;font-size:1.1rem;margin-bottom:6px;color:var(--turmeric)}
+.vinfo{margin-top:16px}
+.vinfo h3{font-size:1.25rem}
+.vinfo p{margin-top:6px;color:#3e5e53;max-width:60ch}
+.plist{display:grid;gap:10px;list-style:none;padding:0}
+.pl{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:center;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:10px;cursor:pointer;min-height:76px}
+.pl:hover{border-color:var(--paddy)}
+.pl[aria-current="true"]{border-color:var(--paddy);box-shadow:0 0 0 3px rgba(46,125,79,.18)}
+.pl .th{aspect-ratio:16/10;border-radius:8px;background:repeating-linear-gradient(135deg,#d6e6d1 0 10px,#c6dcc0 10px 20px);display:grid;place-items:center}
+.pl .th::after{content:"";border-left:11px solid var(--ink);border-top:7px solid transparent;border-bottom:7px solid transparent;margin-left:3px}
+.pl b{display:block;font-size:.97rem;line-height:1.35}
+.pl small{color:#3e5e53;font-size:.86rem}
+.more{display:inline-block;margin-top:14px;font-weight:600;color:var(--paddy);text-decoration:none;border-bottom:2px solid var(--turmeric)}
+
+/* journey */
+.journey{background:var(--mist)}
+.jl{list-style:none;padding:0;margin-top:30px;display:grid;gap:0}
+.jl li{position:relative;padding:0 0 30px 50px}
+.jl li::before{content:"";position:absolute;left:0;top:2px;width:30px;height:30px;border-radius:50%;background:var(--paddy);border:4px solid var(--mist);box-shadow:0 0 0 2px var(--paddy)}
+.jl li:last-child::before{background:var(--turmeric);box-shadow:0 0 0 2px var(--turmeric)}
+.jl li::after{content:"";position:absolute;left:14px;top:36px;bottom:2px;width:2px;background:var(--paddy);opacity:.35}
+.jl li:last-child::after{display:none}
+.jl time{font-weight:700;color:var(--paddy);font-size:.92rem}
+.jl p{max-width:44ch;color:#27493f;margin-top:2px}
+@media(min-width:900px){
+  .jl{grid-template-columns:repeat(5,1fr);gap:20px}
+  .jl li{padding:56px 0 0 0}
+  .jl li::after{left:34px;right:-20px;top:15px;bottom:auto;width:auto;height:2px}
+}
+
+/* impact */
+.impact{background:var(--paddy);color:#fff;padding:0}
+.impact ul{list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr}
+.impact li{padding:26px 18px;border-bottom:1px solid rgba(255,255,255,.2)}
+.impact li:nth-child(odd){border-right:1px solid rgba(255,255,255,.2)}
+.impact .n{display:block;font-family:var(--display);font-weight:700;font-size:clamp(1.8rem,4.6vw,2.8rem);line-height:1}
+html[lang="bn"] .impact .n{font-family:var(--body)}
+.impact .l{font-size:.95rem;opacity:.9}
+@media(min-width:800px){.impact ul{grid-template-columns:repeat(4,1fr)}.impact li{border-bottom:0;border-right:1px solid rgba(255,255,255,.2)!important;padding:34px 24px}.impact li:last-child{border-right:0!important}}
+
+/* CTA */
+.cta{text-align:center}
+.cta h2{max-width:20ch;margin:0 auto}
+.cta p{margin:12px auto 0;max-width:46ch;color:#3e5e53}
+.cta .row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+
+footer{background:#0c241d;color:#d7e4d8;padding:30px 0;font-size:.92rem}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer a{text-decoration:none}footer a:hover{text-decoration:underline}
+
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:35;background:var(--ink);display:grid;grid-template-columns:repeat(3,1fr);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+.dock a{color:var(--bone);text-decoration:none;text-align:center;font-size:.9rem;font-weight:600;padding:10px 4px;border-radius:10px;min-height:48px;display:grid;place-items:center}
+.dock a.hot{background:var(--turmeric);color:var(--ink)}
+@media(min-width:980px){.dock{display:none}body{padding-bottom:0}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+
+/* visual storytelling enhancements */
+.background-visual-stack{display:grid;gap:18px;align-content:start}
+.visual-photo{position:relative;min-height:300px;border-radius:24px;overflow:hidden;background:var(--mist);isolation:isolate;box-shadow:0 16px 42px rgba(18,51,42,.10)}
+.visual-photo>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform .7s ease}
+.visual-photo:hover>img{transform:scale(1.035)}
+.visual-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,51,42,.02) 25%,rgba(18,51,42,.82));z-index:-1}
+.photo-caption{position:absolute;left:18px;right:18px;bottom:18px;color:white;display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.photo-caption strong{font-family:var(--display);font-size:clamp(1.1rem,2.4vw,1.55rem);line-height:1.2;max-width:18ch}
+.photo-caption span{background:var(--turmeric);color:var(--ink);font-size:.78rem;font-weight:700;border-radius:999px;padding:6px 10px;white-space:nowrap}
+html[lang="bn"] .photo-caption strong{font-family:var(--body)}
+.vmbox{position:relative;overflow:hidden;transition:transform .22s ease,box-shadow .22s ease}
+.vmbox:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(18,51,42,.08)}
+.vm-icon{width:54px;height:54px;border-radius:16px;background:var(--mist);display:grid;place-items:center;margin-bottom:18px;color:var(--paddy)}
+.vm-icon svg,.pillar-art svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.objs .vm-icon{display:none}
+.objitem{border:1px solid var(--line);background:var(--bone);border-radius:14px;padding:14px;transition:border-color .2s,transform .2s}
+.objitem:hover{border-color:var(--paddy);transform:translateY(-2px)}
+.olist li{grid-template-columns:34px 1fr}
+.pillar{position:relative}
+.pillar-art{width:64px;height:64px;border-radius:18px;background:var(--mist);color:var(--paddy);display:grid;place-items:center;order:2}
+.pillar-art svg{width:34px;height:34px}
+.pillar .no{order:1}
+.pillar h3{order:3}
+.pillar p{order:4}
+@media(min-width:800px){.pillar{grid-template-columns:72px 64px 1fr;gap:22px;align-items:center}.pillar .no{grid-column:1;grid-row:1/3}.pillar-art{grid-column:2;grid-row:1/3}.pillar h3{grid-column:3;grid-row:1}.pillar p{grid-column:3;grid-row:2}}
+.bi{position:relative;overflow:hidden;transition:transform .2s,border-color .2s;background:rgba(255,255,255,.065)}
+.bi:hover{transform:translateY(-3px);border-color:var(--turmeric)}
+.bi i{display:flex;align-items:center;gap:8px}
+.bi i:after{content:"";display:block;width:24px;height:2px;background:var(--turmeric);opacity:.65}
+.pl .th{overflow:hidden;position:relative}
+.pl .th img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.jl li{transition:transform .2s}
+.jl li:hover{transform:translateY(-2px)}
+.impact li{transition:background .2s}
+.impact li:hover{background:rgba(255,255,255,.07)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.reveal.is-visible{opacity:1;transform:translateY(0)}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.visual-photo>img{transition:none}.vmbox,.objitem,.bi,.jl li{transition:none}}
+@media(max-width:600px){.visual-photo{min-height:280px}.photo-caption{align-items:flex-start;flex-direction:column}.pillar{grid-template-columns:60px 1fr;align-items:center}.pillar .no{grid-column:1;grid-row:1}.pillar-art{grid-column:1;grid-row:2;width:52px;height:52px}.pillar h3,.pillar p{grid-column:2}.pillar h3{grid-row:1}.pillar p{grid-row:2}}
+
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap bar">
+    <a class="logo" href="#" aria-label="MPV home">
+      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#12332A"/><path d="M8 27c4-9 8-12 12-12s8 3 12 12" fill="none" stroke="#2E7D4F" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="14" r="4.2" fill="#F2B02E"/><path d="M8 31h24" stroke="#EAF1E7" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <span><en>Model Poultry Village</en><bn>মডেল পোল্ট্রি ভিলেজ</bn><small><en>MPV · Antibiotic-free broilers</en><bn>এমপিভি · অ্যান্টিবায়োটিকমুক্ত ব্রয়লার</bn></small></span>
+    </a>
+    <nav class="main" aria-label="Main">
+      <a href="mpv-about-enhanced_final_.html" aria-current="page"><en>About MPV</en><bn>এমপিভি পরিচিতি</bn></a>
+      <a href="mpv-training.html"><en>Training</en><bn>প্রশিক্ষণ</bn></a>
+      <a href="mpv-publications-reference-layout.html"><en>Publications</en><bn>প্রকাশনা</bn></a>
+      <a href="mpv-meat-shop.html"><en>MPV Meat</en><bn>এমপিভি মাংস</bn></a>
+      <a href="index.html#notice"><en>Notice</en><bn>নোটিশ</bn></a>
+      <a href="index.html#gallery"><en>Gallery</en><bn>গ্যালারি</bn></a>
+    </nav>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-set="en" aria-pressed="true">EN</button>
+      <button type="button" data-set="bn" aria-pressed="false">বাংলা</button>
+    </div>
+    <a class="btn btn-ghost btn-sm login" href="#"><en>Log in</en><bn>লগ ইন</bn></a>
+    <button class="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="drawer"><span></span></button>
+  </div>
+  <div class="drawer" id="drawer">
+    <a href="mpv-about-enhanced_final_.html"><en>About MPV</en><bn>এমপিভি পরিচিতি</bn></a>
+    <a href="mpv-training.html"><en>Training</en><bn>প্রশিক্ষণ</bn></a>
+    <a href="mpv-publications-reference-layout.html"><en>Publications</en><bn>প্রকাশনা</bn></a>
+    <a href="mpv-meat-shop.html"><en>MPV Meat</en><bn>এমপিভি মাংস</bn></a>
+    <a href="index.html#notice"><en>Notice</en><bn>নোটিশ</bn></a>
+    <a href="index.html#gallery"><en>Gallery</en><bn>গ্যালারি</bn></a>
+    <a href="#"><en>Log in</en><bn>লগ ইন</bn></a>
+  </div>
+</header>
+
+<main>
+  <div class="phero"><div class="wrap">
+    <p class="crumb"><a href="index.html"><en>Home</en><bn>হোম</bn></a> / <en>About MPV</en><bn>এমপিভি পরিচিতি</bn></p>
+    <h1><en>About Model Poultry Village</en><bn>মডেল পোল্ট্রি ভিলেজ সম্পর্কে</bn></h1>
+    <p><en>MPV is an antibiotic-free broiler production model. Farmers learn together, follow 12 biosecurity indicators and trace every batch back to the farm.</en><bn>এমপিভি একটি অ্যান্টিবায়োটিকমুক্ত ব্রয়লার উৎপাদন মডেল। কৃষকেরা একসঙ্গে শেখেন, ১২টি জৈব নিরাপত্তা সূচক মানেন এবং প্রতিটি ব্যাচ খামার পর্যন্ত ট্রেস করা যায়।</bn></p>
+  </div></div>
+
+  <nav class="subnav" aria-label="On this page"><div class="wrap" id="subnav">
+    <a href="#background"><en>Background</en><bn>পটভূমি</bn></a>
+    <a href="#vision"><en>Vision and mission</en><bn>লক্ষ্য ও উদ্দেশ্য</bn></a>
+    <a href="#approach"><en>The approach</en><bn>পদ্ধতি</bn></a>
+    <a href="#biosecurity"><en>12 indicators</en><bn>১২টি সূচক</bn></a>
+    <a href="#stories"><en>Farmer stories</en><bn>কৃষকদের গল্প</bn></a>
+    <a href="#journey"><en>Our journey</en><bn>আমাদের যাত্রা</bn></a>
+  </div></nav>
+
+  <!-- BACKGROUND -->
+  <section id="background"><div class="wrap two wide-left">
+    <div class="prose">
+      <span class="eyebrow"><en>Background and rationale</en><bn>পটভূমি ও যৌক্তিকতা</bn></span>
+      <h2 style="margin-bottom:18px"><en>Healthy flocks without routine antibiotics</en><bn>নিয়মিত অ্যান্টিবায়োটিক ছাড়াই সুস্থ মুরগি</bn></h2>
+      <p><en>Broiler farming has grown quickly, and so has the routine use of antibiotics to keep crowded flocks healthy. That puts farmers, consumers and whole communities at risk, including through antibiotic resistance.</en><bn>ব্রয়লার খামার দ্রুত বেড়েছে, আর ঘনভাবে পালিত মুরগিকে সুস্থ রাখতে নিয়মিত অ্যান্টিবায়োটিক ব্যবহারও বেড়েছে। এতে কৃষক, ক্রেতা ও পুরো সমাজ ঝুঁকিতে পড়ে, অ্যান্টিবায়োটিক প্রতিরোধ ক্ষমতা তৈরিসহ।</bn></p>
+      <p><en>MPV asks a different question: can good management keep flocks healthy without them? It answers with practice, not promises. Farmers learn the same 12 biosecurity practices, record their work every day, and each batch is traced to the farm.</en><bn>এমপিভি ভিন্ন প্রশ্ন করে: সঠিক ব্যবস্থাপনায় কি অ্যান্টিবায়োটিক ছাড়াই মুরগি সুস্থ রাখা যায়? এর উত্তর দেয় চর্চার মাধ্যমে, প্রতিশ্রুতিতে নয়। কৃষকেরা একই ১২টি জৈব নিরাপত্তা চর্চা শেখেন, প্রতিদিন হিসাব রাখেন, আর প্রতিটি ব্যাচ খামার পর্যন্ত ট্রেস করা যায়।</bn></p>
+    </div>
+    <div class="background-visual-stack">
+    <div class="visual-photo reveal">
+      <img src="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?auto=format&fit=crop&w=1100&q=85" alt="Healthy poultry in a farm setting" loading="lazy">
+      <div class="photo-caption"><strong><en>Better farm practices. Safer food.</en><bn>উন্নত খামার ব্যবস্থাপনা। নিরাপদ খাদ্য।</bn></strong><span><en>PREVENTION FIRST</en><bn>প্রতিরোধই প্রথম</bn></span></div>
+    </div>
+    <aside class="pull reveal">
+      <b><en>Healthy farms create healthy communities.</en><bn>সুস্থ খামার গড়ে সুস্থ সমাজ।</bn></b>
+      <p><en>When a farm stays healthy, the food is safer, the farmer earns more reliably and the community is less exposed to resistant infections.</en><bn>খামার সুস্থ থাকলে খাবার নিরাপদ হয়, কৃষকের আয় স্থিতিশীল হয় এবং সমাজ প্রতিরোধী সংক্রমণের ঝুঁকিতে কম পড়ে।</bn></p>
+    </aside>
+    </div>
+  </div></section>
+
+  <!-- VISION / MISSION / OBJECTIVES -->
+  <section class="vm" id="vision"><div class="wrap">
+    <span class="eyebrow"><en>Vision, mission and objectives</en><bn>ভিশন, মিশন ও উদ্দেশ্য</bn></span>
+    <h2 style="margin-bottom:26px"><en>What MPV is working toward</en><bn>এমপিভি যা অর্জনে কাজ করছে</bn></h2>
+    <div class="vmgrid">
+      <div class="vmbox reveal"><div class="vm-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M3 25h26M6 25V15l10-7 10 7v10M12 25v-7h8v7M4 13l12-8 12 8"/></svg></div><h3><en>Vision</en><bn>ভিশন</bn></h3><p><en>Healthy farms creating healthy communities across Bangladesh.</en><bn>সারা বাংলাদেশে সুস্থ খামারের মাধ্যমে সুস্থ সমাজ গড়া।</bn></p></div>
+      <div class="vmbox reveal"><div class="vm-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="12" cy="10" r="4"/><path d="M4 25c0-5 3-8 8-8s8 3 8 8M22 8h6M25 5v6M22 17l3 3 5-6"/></svg></div><h3><en>Mission</en><bn>মিশন</bn></h3><p><en>To help farmers raise broilers without antibiotics through shared learning, biosecurity and transparent records.</en><bn>সম্মিলিত শিক্ষা, জৈব নিরাপত্তা ও স্বচ্ছ হিসাবের মাধ্যমে কৃষকদের অ্যান্টিবায়োটিক ছাড়া ব্রয়লার পালনে সহায়তা করা।</bn></p></div>
+      <div class="vmbox objs reveal"><h3><en>Objectives</en><bn>উদ্দেশ্য</bn></h3>
+        <ol class="olist">
+          <li class="objitem"><en>Train farmers in antibiotic-free broiler production.</en><bn>কৃষকদের অ্যান্টিবায়োটিকমুক্ত ব্রয়লার উৎপাদনে প্রশিক্ষণ দেওয়া।</bn></li>
+          <li class="objitem"><en>Put the 12 biosecurity indicators into practice on every MPV farm.</en><bn>প্রতিটি এমপিভি খামারে ১২টি জৈব নিরাপত্তা সূচক বাস্তবায়ন করা।</bn></li>
+          <li class="objitem"><en>Use farm data to show what works: mortality, FCR and profit.</en><bn>খামারের তথ্য দিয়ে দেখানো কী কাজ করে: মৃত্যুহার, এফসিআর ও মুনাফা।</bn></li>
+          <li class="objitem"><en>Give consumers a traceable, antibiotic-free product.</en><bn>ক্রেতাদের ট্রেস করা যায় এমন অ্যান্টিবায়োটিকমুক্ত পণ্য দেওয়া।</bn></li>
+          <li class="objitem"><en>Grow MPV district by district, toward all 64 districts.</en><bn>জেলায় জেলায় এমপিভি বিস্তার করা, ৬৪ জেলার লক্ষ্যে।</bn></li>
+        </ol>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- APPROACH -->
+  <section id="approach"><div class="wrap">
+    <span class="eyebrow"><en>The MPV approach</en><bn>এমপিভি পদ্ধতি</bn></span>
+    <h2><en>Three ideas that work together</en><bn>তিনটি ধারণা, একসঙ্গে কাজ করে</bn></h2>
+    <div class="pillars">
+      <div class="pillar reveal"><span class="no"><en>01</en><bn>০১</bn></span><div class="pillar-art" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="11" cy="10" r="4"/><path d="M3 27c0-6 3-9 8-9s8 3 8 9M21 9h8M25 5v8M22 20l3 3 5-6"/></svg></div><h3><en>Farmer-led learning</en><bn>কৃষকের নেতৃত্বে শেখা</bn></h3><p><en>Farmers teach and learn from each other in the village. Training is practical, in Bangla, and built on real farm problems.</en><bn>কৃষকেরা গ্রামে একে অপরকে শেখান ও একে অপরের কাছে শেখেন। প্রশিক্ষণ ব্যবহারিক, বাংলায়, এবং খামারের বাস্তব সমস্যার ওপর ভিত্তি করে।</bn></p></div>
+      <div class="pillar reveal"><span class="no"><en>02</en><bn>০২</bn></span><div class="pillar-art" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 3l11 4v8c0 7-5 11-11 14C10 26 5 22 5 15V7z"/><path d="M10 16l4 4 8-9"/></svg></div><h3><en>Antibiotic-free production model</en><bn>অ্যান্টিবায়োটিকমুক্ত উৎপাদন মডেল</bn></h3><p><en>Prevention comes first: clean housing, good feed and water, vaccination and daily observation, so medicine is not the default.</en><bn>প্রতিরোধ আগে: পরিষ্কার ঘর, ভালো খাদ্য ও পানি, টিকা এবং প্রতিদিনের পর্যবেক্ষণ, যাতে ওষুধ কখনো ডিফল্ট না হয়।</bn></p></div>
+      <div class="pillar reveal"><span class="no"><en>03</en><bn>০৩</bn></span><div class="pillar-art" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="12"/><path d="M16 4c4 4 5 8 0 12s-4 8 0 12M4 16h24M8 8c4 2 12 2 16 0M8 24c4-2 12-2 16 0"/></svg></div><h3><en>One Health approach</en><bn>ওয়ান হেলথ দৃষ্টিভঙ্গি</bn></h3><p><en>The health of people, animals and the environment is linked. Healthier flocks mean safer food and less antibiotic resistance in the community.</en><bn>মানুষ, প্রাণী ও পরিবেশের স্বাস্থ্য একে অপরের সঙ্গে যুক্ত। সুস্থ মুরগি মানে নিরাপদ খাবার এবং সমাজে কম অ্যান্টিবায়োটিক প্রতিরোধ।</bn></p></div>
+    </div>
+  </div></section>
+
+  <!-- BIOSECURITY -->
+  <section class="bio" id="biosecurity"><div class="wrap">
+    <span class="eyebrow"><en>12 biosecurity indicators</en><bn>১২টি জৈব নিরাপত্তা সূচক</bn></span>
+    <h2><en>Every MPV farm follows the same 12 practices</en><bn>প্রতিটি এমপিভি খামার একই ১২টি চর্চা মানে</bn></h2>
+    <p class="lead"><en>These are checked on each farm and shown on every Chicken Passport.</en><bn>প্রতিটি খামারে এগুলো যাচাই করা হয় এবং প্রতিটি চিকেন পাসপোর্টে দেখানো হয়।</bn></p>
+    <div class="bio-layout">
+      <div class="bio-visual">
+        <svg class="bio-art" viewBox="0 0 520 430" role="img" aria-labelledby="bioArtTitle bioArtDesc" xmlns="http://www.w3.org/2000/svg">
+          <title id="bioArtTitle">MPV biosecure poultry farm illustration</title><desc id="bioArtDesc">A clean poultry shed, fenced farm boundary, water and greenery illustrated in MPV brand colors.</desc>
+          <defs><clipPath id="bioSceneClip"><rect x="10" y="10" width="500" height="350" rx="22"/></clipPath></defs>
+          <g clip-path="url(#bioSceneClip)">
+            <rect x="10" y="10" width="500" height="350" fill="#EAF1E7"/>
+            <circle cx="425" cy="76" r="35" fill="#F2B02E" opacity=".92"/>
+            <path d="M10 244 Q90 190 170 235 T330 224 T510 210 V360 H10Z" fill="#D4E4D1"/>
+            <path d="M10 286 Q105 242 205 278 T390 265 T510 270 V360 H10Z" fill="#B6D2B4"/>
+            <path d="M180 360 L246 245 L295 245 L360 360Z" fill="#FAFBF7"/>
+            <path d="M212 360 L258 260 L281 260 L328 360" fill="#F2B02E" opacity=".72"/>
+            <!-- farm shed -->
+            <path d="M120 166 L255 91 L390 166Z" fill="#12332A"/>
+            <path d="M139 165 L255 104 L371 165Z" fill="#2E7D4F"/>
+            <rect x="143" y="164" width="224" height="119" rx="4" fill="#FAFBF7" stroke="#12332A" stroke-width="4"/>
+            <rect x="159" y="183" width="192" height="83" rx="3" fill="#EAF1E7" stroke="#C4D8C4" stroke-width="2"/>
+            <path d="M176 204 H334 M176 222 H334 M176 240 H334" stroke="#B6D2B4" stroke-width="4" stroke-linecap="round"/>
+            <rect x="235" y="224" width="40" height="59" rx="3" fill="#12332A"/>
+            <circle cx="266" cy="254" r="2.5" fill="#F2B02E"/>
+            <!-- fence -->
+            <g stroke="#2E7D4F" stroke-width="4" stroke-linecap="round"><path d="M35 296 H485"/><path d="M42 276 V327 M91 276 V327 M140 276 V327 M389 276 V327 M438 276 V327 M480 276 V327"/><path d="M35 291 L48 280 M35 311 L48 322 M84 280 L98 291 M84 322 L98 311 M133 280 L147 291 M133 322 L147 311 M382 280 L396 291 M382 322 L396 311 M431 280 L445 291 M431 322 L445 311 M473 280 L487 291 M473 322 L487 311"/></g>
+            <!-- clean water point -->
+            <rect x="392" y="185" width="63" height="57" rx="10" fill="#FAFBF7" stroke="#2E7D4F" stroke-width="3"/>
+            <path d="M423 194 C423 194 408 212 408 221 A15 15 0 0 0 438 221 C438 212 423 194 423 194Z" fill="#B6D9D4" stroke="#2E7D4F" stroke-width="2"/>
+            <!-- small plants -->
+            <g stroke="#2E7D4F" stroke-width="4" stroke-linecap="round" fill="none"><path d="M68 274v-25m0 13q-16-2-17-16q17 1 17 16m0-3q17-2 18-17q-17 2-18 17"/><path d="M461 272v-22m0 11q-14-2-15-14q15 1 15 14m0-3q15-2 16-15q-16 2-16 15"/></g>
+            <!-- small check marker -->
+            <circle cx="102" cy="114" r="26" fill="#FAFBF7" stroke="#2E7D4F" stroke-width="2"/>
+            <path d="M90 114l8 8 16-18" fill="none" stroke="#2E7D4F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+          <rect x="10.75" y="10.75" width="498.5" height="348.5" rx="21.25" fill="none" stroke="#C4D8C4" stroke-width="1.5"/>
+          <g transform="translate(28 378)"><circle cx="8" cy="8" r="7" fill="#2E7D4F"/><path d="M5 8l2 2 4-5" fill="none" stroke="#FAFBF7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="24" y="13" font-family="Hind Siliguri, sans-serif" font-size="13" fill="#12332A">Prevention · Hygiene · Daily care</text></g>
+        </svg>
+        <div class="bio-visual-note"><strong><en>Prevention starts with everyday practice.</en><bn>প্রতিদিনের চর্চা থেকেই প্রতিরোধের শুরু।</bn></strong><span><en>Explore the practices used to support healthier flocks and better farm management.</en><bn>সুস্থ মুরগি ও উন্নত খামার ব্যবস্থাপনায় সহায়ক চর্চাগুলো দেখুন।</bn></span></div>
+      </div>
+      <div class="bgrid" id="bgrid" aria-label="12 biosecurity practices"></div>
+    </div>
+  </div></section>
+
+  <!-- FARMER STORY VIDEO -->
+  <section id="stories"><div class="wrap">
+    <span class="eyebrow"><en>Farmer stories</en><bn>কৃষকদের গল্প</bn></span>
+    <h2><en>Hear it from the farmers</en><bn>কৃষকদের মুখেই শুনুন</bn></h2>
+    <div class="vid-wrap">
+      <div>
+        <div class="player" id="player"></div>
+        <div class="vinfo" id="vinfo"></div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:12px;font-size:1rem"><en>More stories</en><bn>আরও গল্প</bn></h3>
+        <ul class="plist" id="plist"></ul>
+        <a class="more" href="#"><en>All farmer stories and videos</en><bn>সব কৃষকের গল্প ও ভিডিও</bn></a>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- JOURNEY -->
+  <section class="journey" id="journey"><div class="wrap">
+    <span class="eyebrow"><en>MPV journey</en><bn>এমপিভি যাত্রা</bn></span>
+    <h2><en>From one idea to a growing network</en><bn>একটি ধারণা থেকে বিস্তৃত নেটওয়ার্ক</bn></h2>
+    <ol class="jl">
+      <li><time><en>Year</en><bn>সাল</bn></time><h3><en>The idea</en><bn>ধারণা</bn></h3><p><en>Why MPV began and the problem it set out to solve.</en><bn>কেন এমপিভি শুরু হলো এবং কোন সমস্যা সমাধানে।</bn></p></li>
+      <li><time><en>Year</en><bn>সাল</bn></time><h3><en>First farmers</en><bn>প্রথম কৃষক</bn></h3><p><en>The first farms join and adopt the 12 practices.</en><bn>প্রথম খামারগুলো যুক্ত হয়ে ১২টি চর্চা গ্রহণ করে।</bn></p></li>
+      <li><time><en>Year</en><bn>সাল</bn></time><h3><en>Learning together</en><bn>একসঙ্গে শেখা</bn></h3><p><en>Farmer-led training spreads from village to village.</en><bn>কৃষকের নেতৃত্বে প্রশিক্ষণ গ্রাম থেকে গ্রামে ছড়ায়।</bn></p></li>
+      <li><time><en>Year</en><bn>সাল</bn></time><h3><en>Data and traceability</en><bn>তথ্য ও ট্রেসযোগ্যতা</bn></h3><p><en>Daily records and the Chicken Passport go live.</en><bn>দৈনিক হিসাব ও চিকেন পাসপোর্ট চালু হয়।</bn></p></li>
+      <li><time><en>Next</en><bn>পরবর্তী</bn></time><h3><en>Mission 64</en><bn>মিশন ৬৪</bn></h3><p><en>Taking MPV to all 64 districts.</en><bn>এমপিভিকে ৬৪ জেলায় নিয়ে যাওয়া।</bn></p></li>
+    </ol>
+  </div></section>
+
+  <!-- IMPACT -->
+  <div class="impact" aria-label="MPV impact"><div class="wrap">
+    <ul id="impact"></ul>
+  </div></div>
+
+  <!-- CTA -->
+  <section class="cta"><div class="wrap">
+    <h2><en>Be part of the MPV model</en><bn>এমপিভি মডেলের অংশ হোন</bn></h2>
+    <p><en>Learn the method, or taste the result.</en><bn>পদ্ধতিটি শিখুন, অথবা ফলাফলটি চেখে দেখুন।</bn></p>
+    <div class="row">
+      <a class="btn btn-primary" href="#"><en>Join MPV training</en><bn>এমপিভি প্রশিক্ষণে যোগ দিন</bn></a>
+      <a class="btn btn-ghost" href="mpv-meat-shop.html"><en>Order MPV meat</en><bn>এমপিভি মাংস অর্ডার করুন</bn></a>
+    </div>
+  </div></section>
+</main>
+
+<footer><div class="wrap">
+  <span>© 2026 Model Poultry Village</span>
+  <span><a href="#">Facebook</a> · <a href="#">LinkedIn</a> · <a href="#">YouTube</a></span>
+</div></footer>
+
+
+
+<script>
+(function(){
+var html=document.documentElement;
+function L(){return html.lang}
+function t(en,bn){return L()==='bn'?bn:en}
+function num(n,d){return n.toLocaleString(L()==='bn'?'bn-BD':'en-US',{minimumFractionDigits:d||0,maximumFractionDigits:d||0})}
+function $(id){return document.getElementById(id)}
+
+/* ---------- data ---------- */
+/* Set `yt` to the YouTube video ID (the part after v= in the URL) for each farmer story. */
+var VIDEOS=[
+ {yt:'',en:'How I stopped using routine antibiotics',bn:'যেভাবে আমি নিয়মিত অ্যান্টিবায়োটিক বাদ দিলাম',
+  who:{en:'Farmer name, Village',bn:'কৃষকের নাম, গ্রামের নাম'},
+  sum:{en:'A short summary of this farmer’s story goes here: what they changed on the farm and what they saw as a result.',bn:'এই কৃষকের গল্পের সংক্ষিপ্ত সারাংশ এখানে থাকবে: খামারে তিনি কী বদলেছেন এবং ফলাফলে কী দেখেছেন।'}},
+ {yt:'',en:'My first MPV batch',bn:'আমার প্রথম এমপিভি ব্যাচ',
+  who:{en:'Farmer name, Village',bn:'কৃষকের নাম, গ্রামের নাম'},
+  sum:{en:'A short summary of this farmer’s story goes here.',bn:'এই কৃষকের গল্পের সংক্ষিপ্ত সারাংশ এখানে থাকবে।'}},
+ {yt:'',en:'What the daily record taught me',bn:'দৈনিক হিসাব আমাকে যা শেখাল',
+  who:{en:'Farmer name, Village',bn:'কৃষকের নাম, গ্রামের নাম'},
+  sum:{en:'A short summary of this farmer’s story goes here.',bn:'এই কৃষকের গল্পের সংক্ষিপ্ত সারাংশ এখানে থাকবে।'}}
+];
+/* Draft indicators and explanatory copy — replace with MPV's approved official list before launch. */
+var BIO=[
+ {en:'Perimeter fence',bn:'সীমানা বেড়া',de:'A clear boundary helps limit uncontrolled entry of people and animals.',db:'স্পষ্ট সীমানা অনিয়ন্ত্রিতভাবে মানুষ ও প্রাণীর প্রবেশ সীমিত করতে সাহায্য করে।',icon:'<path d="M4 27V7m8 20V7m8 20V7m8 20V7M2 11h28M2 20h28"/><path d="M4 7l4-3 4 3m4 0 4-3 4 3"/>'},
+ {en:'Single entry point',bn:'একক প্রবেশদ্বার',de:'Use a designated entrance so entry can be controlled and biosecurity steps are easier to follow.',db:'নির্দিষ্ট প্রবেশপথ ব্যবহার করলে প্রবেশ নিয়ন্ত্রণ এবং জৈব নিরাপত্তার নিয়ম মানা সহজ হয়।',icon:'<path d="M5 28V5h22v23M10 28V10h12v18M15 19h.1M3 28h26"/><path d="M18 14l3 3-3 3"/>'},
+ {en:'Foot bath at entry',bn:'প্রবেশে পা জীবাণুমুক্তকরণ',de:'Keep the entry footbath maintained and use it according to the farm’s approved hygiene procedure.',db:'প্রবেশপথের ফুটবাথ ঠিকভাবে রক্ষণাবেক্ষণ করুন এবং খামারের অনুমোদিত স্বাস্থ্যবিধি অনুযায়ী ব্যবহার করুন।',icon:'<path d="M4 20h24l-3 7H7zM8 17l3-4 4 1 3-4 4 2"/><path d="M11 5l1-2m5 4 1-2m5 4 1-2"/>'},
+ {en:'Clean water supply',bn:'পরিষ্কার পানির সরবরাহ',de:'Provide clean drinking water and routinely check drinkers and the water supply.',db:'মুরগির জন্য পরিষ্কার পানির ব্যবস্থা করুন এবং পানির পাত্র ও সরবরাহ নিয়মিত পরীক্ষা করুন।',icon:'<path d="M16 3s-8 9-8 15a8 8 0 0016 0c0-6-8-15-8-15z"/><path d="M12 20a4 4 0 004 3"/>'},
+ {en:'Dead bird disposal',bn:'মৃত পাখির নিরাপদ অপসারণ',de:'Remove dead birds promptly and handle them using the farm’s safe disposal procedure.',db:'মৃত পাখি দ্রুত সরিয়ে খামারের নিরাপদ অপসারণ পদ্ধতি অনুসরণ করুন।',icon:'<path d="M5 23c3-1 4-5 8-5 2 0 3 2 5 2l6-3-2 6-7 4H8z"/><path d="M13 18l-2-5 5 2 4-3 2 5M24 17l4-2-1 4"/>'},
+ {en:'Pest-free feed storage',bn:'পোকামাকড়মুক্ত খাদ্য সংরক্ষণ',de:'Store feed in a dry, covered, protected area and check for pests or contamination.',db:'শুকনো, ঢেকে রাখা ও সুরক্ষিত স্থানে খাদ্য সংরক্ষণ করুন; পোকা বা দূষণ আছে কি না দেখুন।',icon:'<path d="M5 11l11-6 11 6-11 6zM5 11v13l11 5 11-5V11M16 17v12"/><path d="M22 5l3-2m-1 7 4-1"/>'},
+ {en:'Visitor log',bn:'দর্শনার্থীর রেকর্ড',de:'Record farm visitors and follow the farm’s visitor hygiene and access rules.',db:'খামারে আগত দর্শনার্থীদের তথ্য লিখে রাখুন এবং প্রবেশ ও পরিচ্ছন্নতার নিয়ম মানুন।',icon:'<rect x="7" y="4" width="18" height="24" rx="2"/><path d="M12 4V2h8v2M11 12h10M11 17h10M11 22h6"/>'},
+ {en:'Litter management',bn:'লিটার ব্যবস্থাপনা',de:'Keep litter appropriately dry and managed; address wet or soiled areas promptly.',db:'লিটার যথাযথভাবে শুকনো ও নিয়ন্ত্রিত রাখুন; ভেজা বা নোংরা অংশ দ্রুত ব্যবস্থা নিন।',icon:'<path d="M5 25h22M7 22l2-12h14l2 12M10 10l2-5h8l2 5"/><path d="M12 15v4m4-4v4m4-4v4"/>'},
+ {en:'Adequate ventilation',bn:'পর্যাপ্ত বায়ু চলাচল',de:'Maintain suitable airflow and observe birds for signs of heat stress or poor air quality.',db:'উপযুক্ত বায়ু চলাচল নিশ্চিত করুন এবং গরমে অস্বস্তি বা খারাপ বাতাসের লক্ষণ দেখুন।',icon:'<path d="M3 10h15a3 3 0 100-6M3 16h22a3 3 0 110 6M3 22h8"/><path d="M3 5h5"/>'},
+ {en:'Vaccination records',bn:'টিকার রেকর্ড',de:'Keep vaccination dates and details documented and follow the veterinarian-approved plan.',db:'টিকার তারিখ ও তথ্য লিখে রাখুন এবং পশুচিকিৎসকের অনুমোদিত পরিকল্পনা অনুসরণ করুন।',icon:'<path d="M8 5l15 15M6 7l4-4 4 4-4 4zM18 19l4-4 4 4-4 4zM8 12l-5 5 4 4 5-5M14 18l-4 4"/>'},
+ {en:'No unauthorised medicine',bn:'অননুমোদিত ওষুধ ব্যবহার নয়',de:'Do not use medicines without proper authorisation; seek veterinary guidance when birds are ill.',db:'যথাযথ অনুমোদন ছাড়া ওষুধ ব্যবহার করবেন না; মুরগি অসুস্থ হলে পশুচিকিৎসকের পরামর্শ নিন।',icon:'<path d="M11 5a5 5 0 017 7l-6 6a5 5 0 01-7-7zM14 8l7 7M5 27L27 5"/>'},
+ {en:'Complete daily log',bn:'সম্পূর্ণ দৈনিক রেকর্ড',de:'Record routine checks and important farm events consistently so the batch history can be traced.',db:'নিয়মিত পরীক্ষা ও গুরুত্বপূর্ণ খামার-সংক্রান্ত ঘটনা লিখে রাখুন, যাতে ব্যাচের ইতিহাস অনুসরণ করা যায়।',icon:'<rect x="6" y="4" width="20" height="24" rx="2"/><path d="M11 11l2 2 4-4M11 19h10M11 23h7"/>'}
+];
+var cur=0,playing=false;
+
+/* ---------- render ---------- */
+function renderBio(){
+  var active=0;
+  $('bgrid').innerHTML=BIO.map(function(b,i){
+    var open=i===active;
+    return '<details class="bi"'+(open?' open':'')+'><summary aria-label="'+t('Practice ','চর্চা ')+num(i+1)+': '+t(b.en,b.bn)+'"><span class="bi-no">'+num(i+1)+'</span><span class="bi-title">'+t(b.en,b.bn)+'</span><span class="bi-toggle" aria-hidden="true"></span></summary><div class="bi-detail"><p>'+t(b.de,b.db)+'</p></div></details>';
+  }).join('');
+  $('bgrid').querySelectorAll('.bi').forEach(function(item){
+    item.addEventListener('toggle',function(){
+      if(item.open){$('bgrid').querySelectorAll('.bi').forEach(function(other){if(other!==item)other.open=false;});}
+    });
+  });
+}
+function renderImpact(){
+  var d=[[num(15),t('Farmers','কৃষক')],[num(169),t('Production batches','উৎপাদন ব্যাচ')],[num(353400),t('Kilograms of meat produced','কেজি মাংস উৎপাদিত')],['৳'+num(6.36,2),t('Crore market value','কোটি টাকা বাজারমূল্য')]];
+  $('impact').innerHTML=d.map(function(x){return '<li><span class="n">'+x[0]+'</span><span class="l">'+x[1]+'</span></li>'}).join('');
+}
+function renderPlayer(){
+  var v=VIDEOS[cur];
+  if(!playing){
+    $('player').innerHTML='<button class="poster" type="button" id="playBtn" aria-label="'+t('Play video: ','ভিডিও চালান: ')+t(v.en,v.bn)+'"><span class="playbtn"></span><span class="tag">'+t('Farmer story','কৃষকের গল্প')+'</span><span class="ttl">'+t(v.en,v.bn)+'</span><span class="who">'+t(v.who.en,v.who.bn)+'</span></button>';
+  }else if(v.yt){
+    $('player').innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(v.yt)+'?autoplay=1&rel=0" title="'+t(v.en,v.bn).replace(/"/g,'')+'" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+  }else{
+    $('player').innerHTML='<div class="soon"><p><strong>'+t('Video coming soon','ভিডিও শীঘ্রই আসছে')+'</strong>'+t('This player loads the farmer’s YouTube video once the link is added.','ইউটিউব লিংক যোগ করলে এখানে কৃষকের ভিডিও চলবে।')+'</p></div>';
+  }
+  $('vinfo').innerHTML='<h3>'+t(v.en,v.bn)+'</h3><p><strong>'+t(v.who.en,v.who.bn)+'</strong><br>'+t(v.sum.en,v.sum.bn)+'</p>';
+}
+function renderList(){
+  $('plist').innerHTML=VIDEOS.map(function(v,i){
+    return '<li><button class="pl" type="button" data-v="'+i+'"'+(i===cur?' aria-current="true"':'')+'><span class="th" aria-hidden="true"><img src="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?auto=format&fit=crop&w=240&q=70" alt="" loading="lazy"></span><span><b>'+t(v.en,v.bn)+'</b><small>'+t(v.who.en,v.who.bn)+'</small></span></button></li>';
+  }).join('');
+}
+function renderAll(){
+  renderBio();renderImpact();
+  var v=VIDEOS[cur];
+  if(!(playing&&v.yt)){renderPlayer()}
+  else{$('vinfo').innerHTML='<h3>'+t(v.en,v.bn)+'</h3><p><strong>'+t(v.who.en,v.who.bn)+'</strong><br>'+t(v.sum.en,v.sum.bn)+'</p>'}
+  renderList();
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  if(b.id==='playBtn'){playing=true;renderPlayer();return}
+  if(b.dataset.v!==undefined){cur=+b.dataset.v;playing=false;renderPlayer();renderList();var pb=$('playBtn');if(pb)pb.focus();return}
+});
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){
+  html.setAttribute('lang',b.dataset.set);
+  document.querySelectorAll('.lang button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+  var wasPlaying=playing;
+  renderAll();
+  if(wasPlaying&&VIDEOS[cur].yt){playing=true}
+});});
+
+var burger=document.querySelector('.burger'),drawer=$('drawer');
+burger.addEventListener('click',function(){var o=drawer.classList.toggle('open');burger.setAttribute('aria-expanded',o)});
+
+/* scroll-spy for sub nav */
+var links=[].slice.call(document.querySelectorAll('#subnav a'));
+var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))});
+function spy(){
+  var y=window.scrollY+160,idx=0;
+  secs.forEach(function(s,i){if(s&&s.offsetTop<=y)idx=i});
+  links.forEach(function(a,i){if(i===idx){a.classList.add('on');a.setAttribute('aria-current','true')}else{a.classList.remove('on');a.removeAttribute('aria-current')}});
+}
+window.addEventListener('scroll',spy,{passive:true});spy();
+
+renderAll();
+  /* Lightweight scroll reveal with reduced-motion support. */
+  var revealItems=document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target)}})},{threshold:.12});
+    revealItems.forEach(function(el){observer.observe(el)});
+  }else{revealItems.forEach(function(el){el.classList.add('is-visible')})}
+})();
+</script>
+</body>
+</html>

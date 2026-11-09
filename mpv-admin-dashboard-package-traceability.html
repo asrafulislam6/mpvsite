@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MPV Admin | এমপিভি অ্যাডমিন</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#12332A;--paddy:#2E7D4F;--mist:#EAF1E7;--bone:#FAFBF7;--turmeric:#F2B02E;--clay:#B8432B;--line:#d4dfd0;--amber:#8a5a00;
+--display:"Bricolage Grotesque","Hind Siliguri",system-ui,sans-serif;--body:"Hind Siliguri",system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--body);color:var(--ink);background:#f3f6f1;line-height:1.55;font-size:16px;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--turmeric);outline-offset:2px;border-radius:6px}
+[hidden]{display:none!important}
+en,bn{display:inline}
+html[lang="bn"] en{display:none}
+html[lang="en"] bn{display:none}
+html[lang="bn"] body{line-height:1.7}
+h1,h2,h3{font-family:var(--display);line-height:1.2;letter-spacing:-.01em}
+html[lang="bn"] h1,html[lang="bn"] h2,html[lang="bn"] h3{font-family:var(--body);letter-spacing:0;line-height:1.35}
+
+/* layout */
+.side{position:fixed;inset:0 auto 0 0;width:250px;background:var(--ink);color:#d7e4d8;z-index:50;overflow-y:auto;transform:translateX(-100%);transition:transform .2s;padding:14px 12px 30px}
+.side.open{transform:none}
+.brand{display:flex;gap:.6rem;align-items:center;color:#fff;font-family:var(--display);font-weight:700;padding:6px 8px 14px}
+html[lang="bn"] .brand{font-family:var(--body)}
+.brand small{display:block;font-family:var(--body);font-weight:500;font-size:.72rem;color:var(--turmeric)}
+.sgroup{font-size:.74rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#7fa593;padding:14px 10px 4px}
+html[lang="bn"] .sgroup{text-transform:none;letter-spacing:0;font-size:.82rem}
+.side button.nav{display:flex;width:100%;align-items:center;gap:.65rem;border:0;background:none;color:inherit;text-align:left;padding:.5rem .7rem;border-radius:10px;min-height:42px;font-weight:500}
+.side button.nav:hover{background:rgba(255,255,255,.08)}
+.side button.nav[aria-current="page"]{background:var(--turmeric);color:var(--ink);font-weight:700}
+.side .badge{margin-left:auto;background:var(--clay);color:#fff;border-radius:999px;font-size:.74rem;padding:0 .5rem;font-weight:700}
+.scrim{position:fixed;inset:0;background:rgba(10,30,24,.5);z-index:45;display:none}
+.scrim.open{display:block}
+.top{position:sticky;top:0;z-index:30;background:rgba(243,246,241,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);height:60px;display:flex;align-items:center;gap:10px;padding:0 16px}
+.burger{width:44px;height:44px;border:0;background:#fff;border:1px solid var(--line);border-radius:12px;display:grid;place-items:center;font-size:1.3rem}
+.top h1{font-size:1.15rem;font-family:var(--body);font-weight:700}
+.top .sp{margin-left:auto}
+.lang{display:flex;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden}
+.lang button{border:0;background:transparent;font-size:.85rem;font-weight:700;padding:.15rem .7rem;min-height:34px}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bone)}
+.me{background:var(--mist);border-radius:999px;padding:.1rem .8rem;font-weight:700;font-size:.88rem}
+main{padding:18px 16px 70px;max-width:1280px}
+@media(min-width:1000px){.side{transform:none}.scrim{display:none!important}.burger{display:none}.wrapr{margin-left:250px}.top{padding:0 28px}main{padding:22px 28px 70px}}
+
+/* ui */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.5rem 1.1rem;border-radius:999px;font-weight:700;border:2px solid transparent;min-height:42px;background:none;text-decoration:none;font-size:.95rem}
+.btn-primary{background:var(--turmeric);color:var(--ink)}
+.btn-primary:hover{background:#ffc247}
+.btn-dark{background:var(--ink);color:var(--bone)}
+.btn-line{border-color:var(--paddy);color:var(--paddy);background:#fff}
+.btn-line:hover{background:var(--paddy);color:#fff}
+.btn-danger{border-color:var(--clay);color:var(--clay);background:#fff}
+.btn-danger:hover{background:var(--clay);color:#fff}
+.btn-sm{min-height:36px;padding:.2rem .8rem;font-size:.88rem}
+.ph{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.ph h2{font-size:clamp(1.4rem,3.4vw,1.9rem)}
+.ph p{color:#3e5e53;font-size:.95rem}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}
+.card h3{font-size:1rem;font-family:var(--body);font-weight:700;margin-bottom:10px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:1fr}.g3{grid-template-columns:1fr}
+@media(min-width:900px){.g2{grid-template-columns:1.2fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+@media(min-width:760px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1180px){.kpis{grid-template-columns:repeat(5,1fr)}}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
+.kpi .l{font-size:.84rem;color:#3e5e53;font-weight:600}
+.kpi .v{font-family:var(--display);font-size:1.6rem;font-weight:700;line-height:1.2}
+html[lang="bn"] .kpi .v{font-family:var(--body)}
+.kpi .s{font-size:.8rem;color:#3e5e53}
+.chip{display:inline-flex;align-items:center;font-size:.78rem;font-weight:700;border-radius:999px;padding:.02rem .6rem;background:var(--mist);white-space:nowrap}
+.chip.ok{background:#d8efe0;color:#1d6a3a}.chip.watch{background:#fdeec8;color:var(--amber)}.chip.bad{background:#f8d9d1;color:#9a2f19}.chip.dark{background:var(--ink);color:var(--bone)}.chip.blue{background:#dbe8f5;color:#1f4f7a}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.toolbar input,.toolbar select{border:1.5px solid var(--line);border-radius:12px;padding:.4rem .8rem;background:#fff;min-height:42px}
+.toolbar input[type=search]{flex:1;min-width:180px;max-width:340px}
+.toolbar .sp{margin-left:auto}
+.tw{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:16px}
+table{width:100%;border-collapse:collapse;min-width:680px;font-size:.93rem}
+th{text-align:left;font-size:.78rem;color:#3e5e53;font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line);background:#f7faf5;white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid #e8efe5;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;white-space:nowrap}
+.acts{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.thumb{width:44px;height:44px;border-radius:10px;background:radial-gradient(circle at 30% 30%,#f9dfb8,#e3a45b 62%,#c97f3a);flex:none;background-size:cover;background-position:center}
+.cellrow{display:flex;gap:10px;align-items:center}
+.sub{display:block;font-size:.8rem;color:#3e5e53}
+.empty{text-align:center;padding:30px 10px;color:#3e5e53}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.fchip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:.15rem .85rem;font-weight:600;min-height:38px;font-size:.9rem}
+.fchip[aria-pressed="true"]{background:var(--ink);color:var(--bone);border-color:var(--ink)}
+.bar{height:8px;background:var(--mist);border-radius:999px;overflow:hidden;min-width:70px}
+.bar i{display:block;height:100%;background:var(--paddy);border-radius:999px}
+.alertrow{display:flex;gap:10px;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #e8efe5;font-size:.93rem}
+.alertrow:last-child{border-bottom:0}
+.dot{width:10px;height:10px;border-radius:50%;flex:none;display:inline-block;margin-right:8px}
+.back{border:0;background:none;color:var(--paddy);font-weight:700;padding:4px 0;min-height:40px}
+.profile{display:flex;gap:14px;justify-content:space-between;flex-wrap:wrap;align-items:start}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:3px 16px;font-size:.93rem;margin-top:6px}
+.dl dt{color:#3e5e53}.dl dd{font-weight:600}
+.legend{display:grid;gap:6px;margin-top:8px}
+.legend div{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:70;background:rgba(10,30,24,.55);display:none;overflow-y:auto;padding:4vh 12px}
+.modal.open{display:block}
+.mbox{background:#fff;border-radius:20px;max-width:640px;margin:0 auto;box-shadow:0 20px 50px -15px rgba(0,0,0,.4)}
+.mbox.wide{max-width:820px}
+.mh{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.mh h3{font-size:1.1rem;font-family:var(--body);margin:0}
+.x{width:40px;height:40px;border:0;background:var(--mist);border-radius:50%;font-size:1.2rem}
+.mb{padding:16px 18px}
+.mf{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.form{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:560px){.form{grid-template-columns:1fr 1fr}.form .full{grid-column:1/-1}}
+label.f{display:grid;gap:4px;font-weight:600;font-size:.88rem;align-content:start}
+label.f input:not([type=checkbox]):not([type=file]),label.f select,label.f textarea,.in{border:1.5px solid var(--line);border-radius:12px;padding:.5rem .8rem;background:#fff;min-height:46px;font-weight:400;width:100%;font-size:1rem}
+label.f textarea{min-height:84px;resize:vertical}
+label.f input:focus,label.f select:focus,label.f textarea:focus,.in:focus{border-color:var(--paddy);outline:none;box-shadow:0 0 0 3px rgba(46,125,79,.2)}
+label.f.bad input,label.f.bad select,label.f.bad textarea{border-color:var(--clay)}
+.err{color:var(--clay);font-size:.82rem;font-weight:600}
+.tog{display:flex;gap:10px;align-items:center;font-weight:600;min-height:46px}
+.tog input{width:22px;height:22px;accent-color:var(--paddy)}
+.prev{width:100%;max-height:140px;object-fit:cover;border-radius:12px;display:none}
+.hint{font-size:.85rem;color:#3e5e53}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:999px;padding:.55rem 1.2rem;font-weight:600;z-index:90;display:none}
+.toast.show{display:block}
+.ostep{display:flex;gap:4px;margin:6px 0 14px}
+.ostep span{flex:1;text-align:center;font-size:.76rem;font-weight:700;padding:6px 2px;border-bottom:4px solid var(--line);color:#6a8a7e}
+.ostep span.on{border-color:var(--turmeric);color:var(--ink)}.ostep span.dn{border-color:var(--paddy);color:var(--paddy)}
+.inv-box{border:1px dashed var(--line);border-radius:12px;padding:12px;margin-top:10px}
+#print{display:none}
+@media print{body *{visibility:hidden}#print,#print *{visibility:visible}#print{display:block;position:absolute;left:0;top:0;width:100%;padding:24px;background:#fff;color:#000}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Course landing-page manager (frontend prototype; API-ready data shape) */
+.cp-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0}
+.cp-stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+.cp-stat strong{display:block;font-size:1.45rem;line-height:1.25}
+.cp-stat span{font-size:.84rem;color:#62766a}
+.cp-empty{background:#fff;border:1px dashed #b8c9b7;border-radius:16px;text-align:center;padding:34px 18px;margin-top:14px}
+.cp-empty .cp-icon{font-size:2rem;margin-bottom:8px}
+.cp-table-title{font-weight:700;display:block;max-width:360px}
+.cp-slug{font-size:.8rem;color:#65776c;overflow-wrap:anywhere}
+.cp-actions{display:flex;gap:6px;flex-wrap:wrap}
+.cp-form-section{grid-column:1/-1;border-bottom:1px solid var(--line);padding:10px 0 5px;font-weight:700;color:var(--paddy)}
+.cp-preview-hero{background:linear-gradient(135deg,#12332a,#2e7d4f);color:#fff;border-radius:16px;padding:26px;margin-bottom:16px}
+.cp-preview-hero h2{font-size:1.6rem;margin:8px 0}.cp-preview-hero p{color:#e4eee4;max-width:700px}
+.cp-preview-block{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px;margin:10px 0}
+@media(max-width:620px){.cp-stats{grid-template-columns:1fr}.cp-actions .btn{flex:1}}
+
+.trace-note{border:1px solid #d8e8dd;background:#f4faf6;color:#315b42;border-radius:12px;padding:12px 14px;font-size:.88rem;margin:10px 0 16px}
+.trace-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 18px}.trace-step{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 11px;font-size:.83rem;font-weight:650}.trace-step.active{background:#e9f5ed;border-color:#a9d2b7;color:#24633c}.trace-arrow{color:#789084}
+.qr-preview{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center;border:1px dashed #b8c9be;border-radius:14px;padding:14px;background:#fbfdfb}.qr-preview img{width:140px;height:140px;object-fit:contain;background:#fff;border-radius:8px}.passport-hero{background:linear-gradient(135deg,#e8f4eb,#f6f9f5);border-radius:16px;padding:18px;margin-bottom:14px}.passport-hero h2{margin:8px 0 4px}.timeline{border-left:2px solid #c7ddce;margin:12px 0 12px 7px;padding-left:18px}.timeline-item{position:relative;padding:0 0 15px}.timeline-item:before{content:"";position:absolute;left:-24px;top:4px;width:10px;height:10px;border-radius:50%;background:#2e7d4f;border:2px solid #fff;box-shadow:0 0 0 1px #9fc6ac}.trace-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}.trace-stat{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}.trace-stat strong{display:block;font-size:1.25rem}.trace-stat span{color:var(--muted);font-size:.8rem}@media(max-width:600px){.qr-preview{grid-template-columns:1fr}.trace-stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<aside class="side" id="side" aria-label="Admin menu"></aside>
+<div class="scrim" id="scrim"></div>
+
+<div class="wrapr">
+  <header class="top">
+    <button class="burger" type="button" id="burger" aria-label="Menu">☰</button>
+    <h1 id="ptitle"></h1>
+    <span class="sp"></span>
+    <div class="lang" role="group" aria-label="Language"><button type="button" data-set="en" aria-pressed="true">EN</button><button type="button" data-set="bn" aria-pressed="false">বাংলা</button></div>
+    <span class="me"><en>Admin</en><bn>অ্যাডমিন</bn></span>
+  </header>
+  <main id="main" tabindex="-1"></main>
+</div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+<div class="toast" id="toast" role="status"></div>
+<div id="print"></div>
+
+<script>
+(function(){
+var html=document.documentElement;
+function L(){return html.lang}
+function t(en,bn){return L()==='bn'?bn:en}
+function num(n,d){return Number(n).toLocaleString(L()==='bn'?'bn-BD':'en-US',{minimumFractionDigits:d||0,maximumFractionDigits:d||0})}
+function tk(n){return (n<0?'−':'')+'৳'+num(Math.abs(Math.round(n)))}
+function crore(n){return n>=1e7?'৳'+num(n/1e7,2)+t(' Cr',' কোটি'):tk(n)}
+function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML}
+function $(id){return document.getElementById(id)}
+function toNum(s){s=String(s==null?'':s).replace(/[০-৯]/g,function(c){return '০১২৩৪৫৬৭৮৯'.indexOf(c)}).replace(/,/g,'').trim();var n=parseFloat(s);return isNaN(n)?0:n}
+function pad(n,w){return String(n).padStart(w,'0')}
+function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1,2)+'-'+pad(d.getDate(),2)}
+function dstr(s){var d=typeof s==='string'?new Date(s+'T00:00:00'):s;return d.toLocaleDateString(L()==='bn'?'bn-BD':'en-GB',{day:'numeric',month:'short',year:'numeric'})}
+var TODAY=new Date();TODAY.setHours(0,0,0,0);
+function daysAgo(n){var d=new Date(TODAY);d.setDate(d.getDate()-n);return d}
+function toast(m){var el=$('toast');el.textContent=m;el.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(function(){el.classList.remove('show')},2200)}
+
+/* ================= place names ================= */
+var BN_PLACE={Noakhali:'নোয়াখালী',Barishal:'বরিশাল',Feni:'ফেনী',Cumilla:'কুমিল্লা',Lakshmipur:'লক্ষ্মীপুর',Bhola:'ভোলা',Patuakhali:'পটুয়াখালী',Dhaka:'ঢাকা',Chattogram:'চট্টগ্রাম',Sylhet:'সিলেট',Khulna:'খুলনা',Rajshahi:'রাজশাহী',Rangpur:'রংপুর',Mymensingh:'ময়মনসিংহ',Sonaimuri:'সোনাইমুড়ী',Begumganj:'বেগমগঞ্জ',Companiganj:'কোম্পানীগঞ্জ',Subarnachar:'সুবর্ণচর',Bakerganj:'বাকেরগঞ্জ',Muladi:'মুলাদী',Gournadi:'গৌরনদী',Chhagalnaiya:'ছাগলনাইয়া',Sonagazi:'সোনাগাজী',Laksam:'লাকসাম',Chauddagram:'চৌদ্দগ্রাম',Ramganj:'রামগঞ্জ',Raipur:'রায়পুর','Char Fasson':'চরফ্যাশন',Kalapara:'কলাপাড়া'};
+function place(s){return L()==='bn'?(BN_PLACE[s]||s):s}
+var DIST=['Bagerhat','Bandarban','Barguna','Barishal','Bhola','Bogura','Brahmanbaria','Chandpur','Chapai Nawabganj','Chattogram','Chuadanga',"Cox's Bazar",'Cumilla','Dhaka','Dinajpur','Faridpur','Feni','Gaibandha','Gazipur','Gopalganj','Habiganj','Jamalpur','Jashore','Jhalokathi','Jhenaidah','Joypurhat','Khagrachhari','Khulna','Kishoreganj','Kurigram','Kushtia','Lakshmipur','Lalmonirhat','Madaripur','Magura','Manikganj','Meherpur','Moulvibazar','Munshiganj','Mymensingh','Naogaon','Narail','Narayanganj','Narsingdi','Natore','Netrokona','Nilphamari','Noakhali','Pabna','Panchagarh','Patuakhali','Pirojpur','Rajbari','Rajshahi','Rangamati','Rangpur','Satkhira','Shariatpur','Sherpur','Sirajganj','Sunamganj','Sylhet','Tangail','Thakurgaon'];
+
+/* ================= SAMPLE DATA (replace with live database) ================= */
+var DB={farmers:[],batches:[],trainings:[],regs:[],coursePages:[],categories:[],products:[],orders:[],coupons:[],notices:[],pubs:[],gallery:[],processingRecords:[],packages:[],farmVerifications:[]};
+var SET={shopOpen:true,delivery:80,freeOver:2000,lowStock:10,pay:{bkash:true,nagad:true,rocket:true,bank:true,cod:true},bank:'Bank name, account name, account number and branch go here.'};
+
+/* farmers + batches (totals match the brief’s example: 15 farmers, 169 batches, 353,400 kg, ৳6.36 crore) */
+(function(){
+  var PL=[['Noakhali','Sonaimuri'],['Noakhali','Begumganj'],['Noakhali','Companiganj'],['Barishal','Bakerganj'],['Barishal','Muladi'],['Barishal','Gournadi'],['Feni','Chhagalnaiya'],['Feni','Sonagazi'],['Cumilla','Laksam'],['Cumilla','Chauddagram'],['Lakshmipur','Ramganj'],['Lakshmipur','Raipur'],['Bhola','Char Fasson'],['Patuakhali','Kalapara'],['Noakhali','Subarnachar']];
+  var BPF=[18,16,15,14,13,13,12,12,11,10,9,8,7,6,5],FCRT=[1.44,1.46,1.48,1.47,1.5,1.52,1.49,1.55,1.51,1.57,1.53,1.58,1.6,1.56,1.62],MORT=[1.6,1.8,1.9,2,2.1,2.2,2.4,2.3,2.6,2.8,2.5,3,2.9,3.4,3.1],MARG=[.22,.21,.2,.2,.19,.19,.18,.18,.17,.17,.16,.15,.15,.14,.13];
+  var raw=0,tmp=[];
+  for(var f=0;f<15;f++){
+    DB.farmers.push({id:'MPV-F-'+pad(f+1,3),name:'Farmer '+pad(f+1,2),mobile:'017000000'+pad(f+1,2),district:PL[f][0],upazila:PL[f][1],status:(f===12||f===14)?'inactive':'active',joined:iso(new Date(2023,f%12,10))});
+    for(var j=0;j<BPF[f];j++){
+      var birds=1700+((f*37+j*53)%9)*50,dead=Math.max(1,Math.round(birds*MORT[f]/100+((j%3)-1)*2)),r=(birds-dead)*(1.85+((f+j)%5)*0.02);
+      raw+=r;tmp.push({f:f,j:j,n:BPF[f],birds:birds,dead:dead,raw:r});
+    }
+  }
+  var fac=353400/raw,sumKg=0,sumRev=0;
+  tmp.forEach(function(b,k){
+    var kg=Math.round(b.raw*fac),rev=Math.round(kg*180);sumKg+=kg;sumRev+=rev;
+    var marg=MARG[b.f]+((b.j%4)-1.5)*0.004;
+    DB.batches.push({id:'F'+pad(b.f+1,2)+'-B'+pad(b.n-b.j,2),fid:DB.farmers[b.f].id,date:iso(daysAgo(b.j*36+b.f*2+12)),birds:b.birds,dead:b.dead,feedKg:Math.round(kg*FCRT[b.f]*(1+((b.j%3)-1)*0.01)),kg:kg,revenue:rev,cost:0,marg:marg});
+  });
+  DB.batches[0].kg+=353400-sumKg;DB.batches[0].revenue=Math.round(DB.batches[0].kg*180);
+  var rs=0;DB.batches.forEach(function(b,i){if(i>0)rs+=b.revenue});DB.batches[0].revenue=63600000-rs;
+  DB.batches.forEach(function(b){b.cost=Math.round(b.revenue*(1-b.marg));delete b.marg});
+  // Illustrative traceability records for the frontend prototype only.
+  var demoBatch=DB.batches[0],demoFarmer=farmer(demoBatch.fid);
+  DB.processingRecords.push({id:'PR-2026-001',batchId:demoBatch.id,facility:'MPV Demo Processing Unit',processingDate:'2026-10-18',processedQty:3,totalWeightKg:3.0,packCount:3,status:'review',notes:'Illustrative demo record'});
+  DB.packages.push(
+    {id:'PKG-000001',code:'MPV-PKG-2026-000001',processingId:'PR-2026-001',batchId:demoBatch.id,weightG:1000,packagedAt:'2026-10-18',status:'published',token:'demo-mpv-pkg-000001'},
+    {id:'PKG-000002',code:'MPV-PKG-2026-000002',processingId:'PR-2026-001',batchId:demoBatch.id,weightG:1000,packagedAt:'2026-10-18',status:'draft',token:'demo-mpv-pkg-000002'},
+    {id:'PKG-000003',code:'MPV-PKG-2026-000003',processingId:'PR-2026-001',batchId:demoBatch.id,weightG:1000,packagedAt:'2026-10-18',status:'draft',token:'demo-mpv-pkg-000003'}
+  );
+  DB.farmVerifications.push({id:'FV-001',farmId:demoFarmer.id,indicator:'Biosecurity checklist review',status:'verified',date:'2026-10-15',verifier:'MPV Demo Reviewer',evidence:'Demo evidence record',publicNote:'Farm verification recorded in the MPV prototype.'});
+})();
+
+DB.trainings=[
+ {id:'T-001',status:'upcoming',en:'Antibiotic-free broiler farming: basic course',bn:'অ্যান্টিবায়োটিকমুক্ত ব্রয়লার পালন: প্রাথমিক কোর্স',date:'2026-10-18',mode:'in',dur:'2 days',trainer:'Trainer name',target:'New and prospective broiler farmers',fee:0,seats:30,cert:true,people:0},
+ {id:'T-002',status:'upcoming',en:'Biosecurity on small farms: the 12 indicators',bn:'ছোট খামারে জৈব নিরাপত্তা: ১২টি সূচক',date:'2026-11-02',mode:'on',dur:'3 sessions',trainer:'Trainer name',target:'Farmers, field workers and students',fee:500,seats:60,cert:true,people:0},
+ {id:'T-003',status:'upcoming',en:'Farm records and profit tracking',bn:'খামারের হিসাব ও লাভ-ক্ষতি নির্ণয়',date:'2026-11-16',mode:'on',dur:'1 day',trainer:'Trainer name',target:'MPV farmers and new farmers',fee:0,seats:40,cert:true,people:0},
+ {id:'T-004',status:'completed',en:'Farmer-led learning: facilitator training',bn:'কৃষকের নেতৃত্বে শিক্ষা: সহায়ক প্রশিক্ষণ',date:'2026-08-12',mode:'in',dur:'2 days',trainer:'Trainer name',target:'MPV facilitators',fee:0,seats:30,cert:true,people:28},
+ {id:'T-005',status:'completed',en:'Introduction to MPV for students',bn:'শিক্ষার্থীদের জন্য এমপিভি পরিচিতি',date:'2026-06-20',mode:'on',dur:'1 day',trainer:'Trainer name',target:'Students',fee:0,seats:80,cert:false,people:64},
+ {id:'T-006',status:'completed',en:'Antibiotic-free broiler farming: basic course (first cohort)',bn:'অ্যান্টিবায়োটিকমুক্ত ব্রয়লার পালন: প্রাথমিক কোর্স (প্রথম ব্যাচ)',date:'2026-03-14',mode:'in',dur:'2 days',trainer:'Trainer name',target:'New farmers',fee:0,seats:30,cert:true,people:30}
+];
+(function(){var c=[['T-001',18],['T-002',20],['T-003',15]],k=1;c.forEach(function(x){for(var i=0;i<x[1];i++){var paidT=x[0]==='T-002';DB.regs.push({id:'R-'+pad(k++,4),tid:x[0],name:'Participant '+pad(i+1,2),mobile:'018000'+pad(k,5),org:i%3?'Institution name':'Farm',pay:paidT?(i%4===0?'pending':'paid'):'free',date:iso(daysAgo(i%9+1))})}})})();
+
+DB.categories=[{id:'C-1',en:'Whole chicken',bn:'পুরো মুরগি'},{id:'C-2',en:'Cuts',bn:'কাট'},{id:'C-3',en:'Liver and gizzard',bn:'কলিজা ও পাকস্থলী'}];
+DB.products=[
+ {id:'P-001',en:'Whole chicken',bn:'পুরো মুরগি',cat:'C-1',price:290,stock:120,batch:'MPV-BAR-2026-001',dEn:'Cleaned, dressed whole broiler raised without antibiotics.',dBn:'অ্যান্টিবায়োটিক ছাড়া পালিত পরিষ্কার পুরো ব্রয়লার।',status:'active',img:''},
+ {id:'P-002',en:'Breast',bn:'ব্রেস্ট',cat:'C-2',price:360,stock:45,batch:'MPV-BAR-2026-001',dEn:'Breast meat from MPV broilers.',dBn:'এমপিভি ব্রয়লারের ব্রেস্ট।',status:'active',img:''},
+ {id:'P-003',en:'Leg piece',bn:'লেগ পিস',cat:'C-2',price:330,stock:60,batch:'MPV-BAR-2026-002',dEn:'Thigh and drumstick together.',dBn:'রান ও ড্রামস্টিকসহ লেগ পিস।',status:'active',img:''},
+ {id:'P-004',en:'Drumstick',bn:'ড্রামস্টিক',cat:'C-2',price:340,stock:40,batch:'MPV-BAR-2026-002',dEn:'Drumsticks from MPV broilers.',dBn:'এমপিভি ব্রয়লারের ড্রামস্টিক।',status:'active',img:''},
+ {id:'P-005',en:'Thigh',bn:'থাই',cat:'C-2',price:335,stock:38,batch:'MPV-BAR-2026-002',dEn:'Thigh pieces from MPV broilers.',dBn:'এমপিভি ব্রয়লারের থাই।',status:'active',img:''},
+ {id:'P-006',en:'Wing',bn:'উইং',cat:'C-2',price:240,stock:50,batch:'MPV-BAR-2026-003',dEn:'Chicken wings from MPV broilers.',dBn:'এমপিভি ব্রয়লারের উইং।',status:'active',img:''},
+ {id:'P-007',en:'Liver',bn:'কলিজা',cat:'C-3',price:220,stock:6,batch:'MPV-BAR-2026-003',dEn:'Chicken liver from MPV broilers.',dBn:'এমপিভি ব্রয়লারের কলিজা।',status:'active',img:''},
+ {id:'P-008',en:'Gizzard',bn:'পাকস্থলী (গিজার্ড)',cat:'C-3',price:210,stock:18,batch:'MPV-BAR-2026-003',dEn:'Cleaned gizzard from MPV broilers.',dBn:'এমপিভি ব্রয়লারের পরিষ্কার গিজার্ড।',status:'hidden',img:''}
+];
+DB.coupons=[{id:'K-1',code:'MPV10',type:'percent',value:10,min:1000,active:true},{id:'K-2',code:'WELCOME100',type:'flat',value:100,min:1500,active:false}];
+(function(){
+  var C=[['Customer 01','01900000001','Dhaka'],['Customer 02','01900000002','Chattogram'],['Customer 03','01900000003','Noakhali'],['Customer 04','01900000004','Cumilla'],['Customer 05','01900000005','Barishal'],['Customer 06','01900000006','Dhaka']];
+  var O=[[0,[['P-001',3],['P-006',1]],'bkash',1,'delivered',22],[1,[['P-002',2]],'cod',0,'delivered',18],[2,[['P-001',2],['P-003',2]],'nagad',1,'delivered',14],[3,[['P-004',1.5],['P-007',1]],'bank',1,'delivered',9],[0,[['P-001',4]],'bkash',1,'out',2],[4,[['P-003',3],['P-005',2]],'rocket',1,'processing',1],[5,[['P-001',6],['P-002',2]],'bkash',1,'confirmed',1],[2,[['P-006',2]],'cod',0,'pending',0],[1,[['P-001',2]],'nagad',0,'pending',0],[3,[['P-004',2]],'cod',0,'cancelled',6]];
+  O.forEach(function(o,i){
+    var items=o[1].map(function(it){var p=DB.products.filter(function(x){return x.id===it[0]})[0];return {pid:p.id,kg:it[1],unit:p.price}});
+    var sub=items.reduce(function(a,b){return a+b.kg*b.unit},0);
+    DB.orders.push({id:'MPV-ORD-'+(10001+i),date:iso(daysAgo(o[5])),cname:C[o[0]][0],mobile:C[o[0]][1],district:C[o[0]][2],address:'House, road, area',items:items,method:o[2],paid:!!o[3],status:o[4],coupon:'',discount:0,delivery:sub>=SET.freeOver?0:SET.delivery,note:''});
+  });
+})();
+DB.notices=[
+ {id:'N-1',en:'Registration is open for the antibiotic-free broiler farming course',bn:'অ্যান্টিবায়োটিকমুক্ত ব্রয়লার পালন কোর্সের নিবন্ধন চলছে',bodyEn:'Details and registration on the Training page.',bodyBn:'বিস্তারিত ও নিবন্ধন প্রশিক্ষণ পাতায়।',cat:'training',date:'2026-09-30',pinned:true,published:true},
+ {id:'N-2',en:'Orders are open for the next delivery round',bn:'পরবর্তী ডেলিভারি রাউন্ডের জন্য অর্ডার নেওয়া হচ্ছে',bodyEn:'Order MPV Meat from the shop.',bodyBn:'দোকান থেকে এমপিভি মাংস অর্ডার করুন।',cat:'meat',date:'2026-09-26',pinned:false,published:true},
+ {id:'N-3',en:'Monthly farmer meeting: batch results and feedback',bn:'মাসিক কৃষক সভা: ব্যাচের ফলাফল ও মতামত',bodyEn:'',bodyBn:'',cat:'farmers',date:'2026-09-18',pinned:false,published:true},
+ {id:'N-4',en:'Mission 64 progress update',bn:'মিশন ৬৪ অগ্রগতির হালনাগাদ',bodyEn:'',bodyBn:'',cat:'mission64',date:'2026-09-10',pinned:false,published:false}
+];
+DB.pubs=[
+ {id:'U-1',sec:'sci',type:'original',en:'Antibiotic-free broiler production on smallholder farms: outcomes from the MPV model',bn:'ক্ষুদ্র খামারে অ্যান্টিবায়োটিকমুক্ত ব্রয়লার উৎপাদন: এমপিভি মডেলের ফলাফল',authors:'Author A, Author B',year:2026,venue:'Journal name',link:'10.0000/sample.2026.001',pdf:'paper-2026.pdf'},
+ {id:'U-2',sec:'sci',type:'review',en:'Farmer-led learning for biosecurity: a review',bn:'জৈব নিরাপত্তায় কৃষকের নেতৃত্বে শিক্ষা: পর্যালোচনা',authors:'Author A, Author C',year:2025,venue:'Journal name',link:'10.0000/sample.2025.014',pdf:''},
+ {id:'U-3',sec:'oth',type:'brief',en:'Scaling village-level biosecurity: a policy brief',bn:'গ্রামভিত্তিক জৈব নিরাপত্তা বিস্তার: নীতি সংক্ষেপ',authors:'MPV team',year:2026,venue:'MPV',link:'',pdf:'brief.pdf'},
+ {id:'U-4',sec:'oth',type:'poster',en:'The 12 biosecurity indicators (poster)',bn:'১২টি জৈব নিরাপত্তা সূচক (পোস্টার)',authors:'MPV team',year:2025,venue:'MPV',link:'',pdf:'poster.pdf'}
+];
+DB.gallery=[
+ {id:'G-1',type:'video',cat:'intro',en:'Introducing MPV',bn:'এমপিভি পরিচিতি',yt:'',img:''},
+ {id:'G-2',type:'photo',cat:'training',en:'Farmer training session',bn:'কৃষক প্রশিক্ষণ অধিবেশন',yt:'',img:''},
+ {id:'G-3',type:'photo',cat:'visit',en:'Farm visit',bn:'খামার পরিদর্শন',yt:'',img:''},
+ {id:'G-4',type:'photo',cat:'meat',en:'MPV Meat packs',bn:'এমপিভি মাংসের প্যাকেট',yt:'',img:''}
+];
+
+/* ================= derived numbers ================= */
+function farmer(id){return DB.farmers.filter(function(f){return f.id===id})[0]}
+function bm(b){var alive=b.birds-b.dead;return {mort:b.dead/b.birds*100,alive:alive,w:b.kg/alive,fcr:b.feedKg/b.kg,profit:b.revenue-b.cost,ppb:(b.revenue-b.cost)/alive}}
+function agg(list){
+  var a={n:list.length,birds:0,dead:0,feed:0,kg:0,rev:0,cost:0};
+  list.forEach(function(b){a.birds+=b.birds;a.dead+=b.dead;a.feed+=b.feedKg;a.kg+=b.kg;a.rev+=b.revenue;a.cost+=b.cost});
+  a.alive=a.birds-a.dead;a.mort=a.birds?a.dead/a.birds*100:0;a.fcr=a.kg?a.feed/a.kg:0;a.profit=a.rev-a.cost;a.ppb=a.alive?a.profit/a.alive:0;return a;
+}
+function fBatches(fid){return DB.batches.filter(function(b){return b.fid===fid})}
+function cat(id){return DB.categories.filter(function(c){return c.id===id})[0]}
+function prod(id){return DB.products.filter(function(p){return p.id===id})[0]}
+function orderTotals(o){var sub=o.items.reduce(function(a,b){return a+b.kg*b.unit},0);return {sub:sub,disc:o.discount,del:o.delivery,total:sub-o.discount+o.delivery}}
+function regsOf(tid){return DB.regs.filter(function(r){return r.tid===tid})}
+var MORT_WATCH=3;/* placeholder threshold */
+
+/* ================= entity config (generic add / edit / delete) ================= */
+function opts(a){return a}
+var ENT={
+ farmers:{n:['farmer','কৃষক'],pre:'MPV-F-',w:3,fields:[
+  {k:'name',l:['Name','নাম'],type:'text',req:1},{k:'mobile',l:['Mobile','মোবাইল'],type:'text',req:1},
+  {k:'district',l:['District','জেলা'],type:'select',req:1,opts:function(){return DIST.map(function(d){return [d,d,BN_PLACE[d]||d]})}},
+  {k:'upazila',l:['Upazila','উপজেলা'],type:'text'},
+  {k:'status',l:['Status','অবস্থা'],type:'select',opts:function(){return [['active','Active','সক্রিয়'],['inactive','Inactive','নিষ্ক্রিয়']]}},
+  {k:'joined',l:['Joined','যোগদান'],type:'date'}]},
+ batches:{n:['batch','ব্যাচ'],fields:[
+  {k:'date',l:['Batch date','ব্যাচের তারিখ'],type:'date',req:1},{k:'birds',l:['Birds placed','বাচ্চা তোলা'],type:'number',req:1},
+  {k:'dead',l:['Birds died','মৃত পাখি'],type:'number',req:1},{k:'feedKg',l:['Feed used (kg)','ফিড ব্যবহার (কেজি)'],type:'number',req:1},
+  {k:'kg',l:['Meat produced (kg)','উৎপাদিত মাংস (কেজি)'],type:'number',req:1},{k:'cost',l:['Total cost (৳)','মোট খরচ (৳)'],type:'number',req:1},
+  {k:'revenue',l:['Revenue (৳)','আয় (৳)'],type:'number',req:1}]},
+ trainings:{n:['training','প্রশিক্ষণ'],pre:'T-',w:3,fields:[
+  {k:'en',l:['Title (English)','শিরোনাম (ইংরেজি)'],type:'text',req:1,full:1},{k:'bn',l:['Title (বাংলা)','শিরোনাম (বাংলা)'],type:'text',req:1,full:1},
+  {k:'date',l:['Date','তারিখ'],type:'date',req:1},{k:'mode',l:['Format','ধরন'],type:'select',opts:function(){return [['in','In person','সরাসরি'],['on','Online','অনলাইন']]}},
+  {k:'dur',l:['Duration','সময়কাল'],type:'text'},{k:'trainer',l:['Trainer','প্রশিক্ষক'],type:'text'},
+  {k:'target',l:['Target participants','কাদের জন্য'],type:'text',full:1},
+  {k:'fee',l:['Fee (৳, 0 = free)','ফি (৳, ০ = বিনামূল্যে)'],type:'number',req:1},{k:'seats',l:['Total seats','মোট আসন'],type:'number',req:1},
+  {k:'status',l:['Status','অবস্থা'],type:'select',opts:function(){return [['upcoming','Upcoming','আসন্ন'],['completed','Completed','সম্পন্ন']]}},
+  {k:'people',l:['Participants (if completed)','অংশগ্রহণকারী (সম্পন্ন হলে)'],type:'number'},
+  {k:'cert',l:['Certificate is issued','সনদ দেওয়া হবে'],type:'check'}]},
+ products:{n:['product','পণ্য'],pre:'P-',w:3,fields:[
+  {k:'en',l:['Name (English)','নাম (ইংরেজি)'],type:'text',req:1},{k:'bn',l:['Name (বাংলা)','নাম (বাংলা)'],type:'text',req:1},
+  {k:'cat',l:['Category','ক্যাটাগরি'],type:'select',req:1,opts:function(){return DB.categories.map(function(c){return [c.id,c.en,c.bn]})}},
+  {k:'price',l:['Price per kg (৳)','প্রতি কেজি দাম (৳)'],type:'number',req:1},
+  {k:'stock',l:['Stock (kg)','স্টক (কেজি)'],type:'number',req:1},{k:'batch',l:['Batch / Passport ID','ব্যাচ / পাসপোর্ট আইডি'],type:'text'},
+  {k:'dEn',l:['Description (English)','বিবরণ (ইংরেজি)'],type:'textarea',full:1},{k:'dBn',l:['Description (বাংলা)','বিবরণ (বাংলা)'],type:'textarea',full:1},
+  {k:'status',l:['Visibility','দৃশ্যমানতা'],type:'select',opts:function(){return [['active','Visible in shop','দোকানে দেখা যাবে'],['hidden','Hidden','লুকানো']]}},
+  {k:'img',l:['Product photo','পণ্যের ছবি'],type:'image'}]},
+ categories:{n:['category','ক্যাটাগরি'],pre:'C-',w:1,fields:[{k:'en',l:['Name (English)','নাম (ইংরেজি)'],type:'text',req:1},{k:'bn',l:['Name (বাংলা)','নাম (বাংলা)'],type:'text',req:1}]},
+ coupons:{n:['coupon','কুপন'],pre:'K-',w:1,fields:[
+  {k:'code',l:['Code','কোড'],type:'text',req:1},{k:'type',l:['Type','ধরন'],type:'select',opts:function(){return [['percent','Percent off','শতাংশ ছাড়'],['flat','Flat ৳ off','নির্দিষ্ট ৳ ছাড়']]}},
+  {k:'value',l:['Value','মান'],type:'number',req:1},{k:'min',l:['Minimum order (৳)','সর্বনিম্ন অর্ডার (৳)'],type:'number'},{k:'active',l:['Active','চালু'],type:'check'}]},
+ notices:{n:['notice','নোটিশ'],pre:'N-',w:1,fields:[
+  {k:'en',l:['Title (English)','শিরোনাম (ইংরেজি)'],type:'text',req:1,full:1},{k:'bn',l:['Title (বাংলা)','শিরোনাম (বাংলা)'],type:'text',req:1,full:1},
+  {k:'bodyEn',l:['Details (English)','বিস্তারিত (ইংরেজি)'],type:'textarea',full:1},{k:'bodyBn',l:['Details (বাংলা)','বিস্তারিত (বাংলা)'],type:'textarea',full:1},
+  {k:'cat',l:['Category','ক্যাটাগরি'],type:'select',opts:function(){return [['training','Training','প্রশিক্ষণ'],['meat','MPV Meat','এমপিভি মাংস'],['farmers','Farmers','কৃষক'],['event','Event','অনুষ্ঠান'],['award','Competition / award','প্রতিযোগিতা / পুরস্কার'],['mission64','Mission 64','মিশন ৬৪'],['general','General','সাধারণ']]}},
+  {k:'date',l:['Date','তারিখ'],type:'date',req:1},{k:'pinned',l:['Pin to top','উপরে স্থির রাখুন'],type:'check'},{k:'published',l:['Published','প্রকাশিত'],type:'check'}]},
+ pubs:{n:['publication','প্রকাশনা'],pre:'U-',w:1,fields:[
+  {k:'sec',l:['Segment','বিভাগ'],type:'select',opts:function(){return [['sci','Scientific article','বৈজ্ঞানিক প্রবন্ধ'],['oth','Other publication','অন্যান্য প্রকাশনা']]}},
+  {k:'type',l:['Type','ধরন'],type:'select',opts:function(){return [['original','Original research','মৌলিক গবেষণা'],['review','Review article','পর্যালোচনা'],['conf','Conference paper','সম্মেলন প্রবন্ধ'],['finding','Research findings','গবেষণার ফলাফল'],['news','Newspaper article','সংবাদপত্র'],['mag','Magazine article','ম্যাগাজিন'],['brief','Policy brief','নীতি সংক্ষেপ'],['report','Report','প্রতিবেদন'],['poster','Poster','পোস্টার'],['story','Success story','সাফল্যের গল্প'],['material','Training material','প্রশিক্ষণ সামগ্রী'],['media','Media coverage','গণমাধ্যম'],['doc','MPV document','এমপিভি নথি']]}},
+  {k:'en',l:['Title (English)','শিরোনাম (ইংরেজি)'],type:'text',req:1,full:1},{k:'bn',l:['Title (বাংলা)','শিরোনাম (বাংলা)'],type:'text',req:1,full:1},
+  {k:'authors',l:['Authors','লেখক'],type:'text'},{k:'year',l:['Year','সাল'],type:'number',req:1},{k:'venue',l:['Journal / outlet','জার্নাল / প্রকাশক'],type:'text'},
+  {k:'link',l:['DOI or link','ডিওআই বা লিংক'],type:'text'},{k:'pdf',l:['PDF file','পিডিএফ ফাইল'],type:'file',full:1}]},
+ gallery:{n:['gallery item','গ্যালারি আইটেম'],pre:'G-',w:1,fields:[
+  {k:'type',l:['Type','ধরন'],type:'select',opts:function(){return [['photo','Photo','ছবি'],['video','Video (YouTube)','ভিডিও (ইউটিউব)']]}},
+  {k:'cat',l:['Category','ক্যাটাগরি'],type:'select',opts:function(){return [['training','MPV Training','এমপিভি প্রশিক্ষণ'],['visit','Farm visit','খামার পরিদর্শন'],['stories','Farmer success stories','কৃষকের সাফল্য'],['meat','MPV Meat','এমপিভি মাংস'],['community','Community activities','কমিউনিটি'],['workshop','Workshops and conferences','কর্মশালা ও সম্মেলন'],['intro','MPV introduction','এমপিভি পরিচিতি']]}},
+  {k:'en',l:['Caption (English)','ক্যাপশন (ইংরেজি)'],type:'text',req:1,full:1},{k:'bn',l:['Caption (বাংলা)','ক্যাপশন (বাংলা)'],type:'text',req:1,full:1},
+  {k:'yt',l:['YouTube video ID (for videos)','ইউটিউব ভিডিও আইডি (ভিডিওর জন্য)'],type:'text',full:1},{k:'img',l:['Photo','ছবি'],type:'image'}]}
+};
+function lbl(e,i){return ENT[e].n[i]}
+function nextId(ent,list){var c=ENT[ent],m=0;list.forEach(function(x){var n=parseInt(String(x.id).replace(/\D/g,''),10);if(n>m)m=n});return c.pre+pad(m+1,c.w)}
+
+/* ================= state & shell ================= */
+var S={view:'overview',farmerId:null,trainId:null,f:{},orderStatus:'all',packageProcessingFilter:null};
+function F(v){return S.f[v]||(S.f[v]={q:'',a:'all',b:'all'})}
+var NAV=[
+ ['g','Dashboard','ড্যাশবোর্ড'],['overview','Overview','সারসংক্ষেপ','M3 12 12 3l9 9M5 10v10h5v-6h4v6h5V10'],
+ ['g','Farm data','খামারের তথ্য'],['farmers','Farmers','কৃষক','M16 11a4 4 0 1 0-8 0M4 21c0-4 3.6-7 8-7s8 3 8 7'],
+ ['g','Traceability','ট্রেসেবিলিটি'],['processing','Processing & Packaging','প্রসেসিং ও প্যাকেজিং','M3 21h18M5 21V7l7-4 7 4v14M9 10h1m4 0h1m-6 4h1m4 0h1m-5 7v-4h4v4'],['passports','Chicken Passports','চিকেন পাসপোর্ট','M4 4h5v5H4zM15 4h5v5h-5zM4 15h5v5H4zM15 15h2v2h-2zM19 15v5M15 19h2'],['verification','Farm Verification','খামার যাচাই','M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11zM8 12l3 3 5-6'],['training','Training','প্রশিক্ষণ','M3 7l9-4 9 4-9 4zM7 10v5c0 1 2 3 5 3s5-2 5-3v-5'],
+ ['coursepages','Course Landing Pages','কোর্স ল্যান্ডিং পেজ','M4 3h11l5 5v13H4zM14 3v6h6M8 13h8M8 17h8'],
+ ['g','Shop (MPV Meat)','দোকান (এমপিভি মাংস)'],['orders','Orders','অর্ডার','M6 2 3 6v14a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0'],['products','Products','পণ্য','M21 8 12 3 3 8v8l9 5 9-5zM3 8l9 5 9-5M12 13v8'],['categories','Categories','ক্যাটাগরি','M4 6h16M4 12h16M4 18h10'],['customers','Customers','ক্রেতা','M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8'],['coupons','Coupons','কুপন','M20 12a2 2 0 0 0 2 2v4H2v-4a2 2 0 0 0 0-4V6h20v4a2 2 0 0 0-2 2zM9 6v12'],['shopset','Shop settings','দোকান সেটিংস','M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19 12a7 7 0 0 0-.1-1l2-1.6-2-3.4-2.4 1a7 7 0 0 0-1.7-1L14.5 3h-5l-.4 3a7 7 0 0 0-1.7 1l-2.4-1-2 3.4L5 11a7 7 0 0 0 0 2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 1.7 1l.4 3h5l.4-3a7 7 0 0 0 1.7-1l2.4 1 2-3.4-2-1.6a7 7 0 0 0 .1-1z'],
+ ['g','Website content','ওয়েবসাইট কনটেন্ট'],['notices','Notices','নোটিশ','M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0'],['pubs','Publications','প্রকাশনা','M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z'],['gallery','Gallery','গ্যালারি','M3 5h18v14H3zM8 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM21 15l-5-5L5 19'],
+ ['g','Research','গবেষণা'],['data','Data export','ডেটা এক্সপোর্ট','M12 3v12m0 0 4-4m-4 4-4-4M4 21h16']
+];
+var TITLES={};NAV.forEach(function(n){if(n[0]!=='g')TITLES[n[0]]=[n[1],n[2]]});
+function pending(){return DB.orders.filter(function(o){return o.status==='pending'}).length}
+function renderSide(){
+  $('side').innerHTML='<div class="brand"><svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#2E7D4F"/><path d="M8 27c4-9 8-12 12-12s8 3 12 12" fill="none" stroke="#EAF1E7" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="14" r="4.2" fill="#F2B02E"/><path d="M8 31h24" stroke="#EAF1E7" stroke-width="2.4" stroke-linecap="round"/></svg><span>MPV Admin<small>'+t('Model Poultry Village','মডেল পোল্ট্রি ভিলেজ')+'</small></span></div>'+
+  NAV.map(function(n){
+    if(n[0]==='g')return '<div class="sgroup">'+t(n[1],n[2])+'</div>';
+    var cur=(S.view===n[0]||(n[0]==='farmers'&&S.view==='farmer')||(n[0]==='training'&&S.view==='regs'))?' aria-current="page"':'';
+    return '<button type="button" class="nav" data-nav="'+n[0]+'"'+cur+'><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+n[3]+'"/></svg>'+t(n[1],n[2])+(n[0]==='orders'&&pending()?'<span class="badge">'+num(pending())+'</span>':'')+'</button>';
+  }).join('');
+}
+function render(){
+  renderSide();
+  var k=S.view==='farmer'?'farmers':S.view==='regs'?'training':S.view,tt=TITLES[k]||TITLES.overview;$('ptitle').textContent=t(tt[0],tt[1]);
+  var V={overview:vOverview,farmers:vFarmers,farmer:vFarmer,processing:vProcessing,passports:vPassports,verification:vVerification,training:vTraining,coursepages:vCoursePages,regs:vRegs,orders:vOrders,products:vProducts,categories:vCategories,customers:vCustomers,coupons:vCoupons,shopset:vShopSet,notices:vNotices,pubs:vPubs,gallery:vGallery,data:vData};
+  $('main').innerHTML=V[S.view]();
+}
+function go(v,x){S.view=v;if(v==='farmer')S.farmerId=x;if(v==='regs')S.trainId=x;closeSide();render();window.scrollTo(0,0)}
+function openSide(){$('side').classList.add('open');$('scrim').classList.add('open')}
+function closeSide(){$('side').classList.remove('open');$('scrim').classList.remove('open')}
+
+/* ================= helpers for views ================= */
+function head(title,sub,btn){return '<div class="ph"><div><h2>'+title+'</h2>'+(sub?'<p>'+sub+'</p>':'')+'</div>'+(btn||'')+'</div>'}
+function addBtn(ent,extra){return '<button class="btn btn-primary" type="button" data-add="'+ent+'"'+(extra?' data-x="'+extra+'"':'')+'>+ '+t('Add '+ENT[ent].n[0],ENT[ent].n[1]+' যোগ করুন')+'</button>'}
+function tbl(heads,rows,emptyMsg){
+  if(!rows.length)return '<div class="tw"><div class="empty">'+(emptyMsg||t('Nothing to show.','দেখানোর কিছু নেই।'))+'</div></div>';
+  return '<div class="tw"><table><thead><tr>'+heads.map(function(h){return '<th'+(h[1]?' class="n"':'')+'>'+h[0]+'</th>'}).join('')+'</tr></thead><tbody>'+rows.map(function(r){return '<tr>'+r.map(function(c,i){return '<td'+(heads[i][1]?' class="n"':'')+'>'+c+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>';
+}
+function actBtns(ent,id,more){return '<div class="acts">'+(more||'')+'<button class="btn btn-line btn-sm" type="button" data-edit="'+ent+':'+id+'">'+t('Edit','সম্পাদনা')+'</button><button class="btn btn-danger btn-sm" type="button" data-del="'+ent+':'+id+'">'+t('Delete','মুছুন')+'</button></div>'}
+function search(){var f=F(S.view);return '<input type="search" data-q="1" value="'+esc(f.q)+'" placeholder="'+t('Search','খুঁজুন')+'" aria-label="'+t('Search','খুঁজুন')+'">'}
+function kpi(l,v,s){return '<div class="kpi"><div class="l">'+l+'</div><div class="v">'+v+'</div>'+(s?'<div class="s">'+s+'</div>':'')+'</div>'}
+function barChart(data,w,h){
+  var max=Math.max.apply(null,data.map(function(d){return d.v}))||1,W=600,H=210,pl=10,pb=26,pt=22,bw=(W-pl*2)/data.length;
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto" role="img" aria-label="'+t('Meat produced per month','মাসভিত্তিক মাংস উৎপাদন')+'">'+data.map(function(d,i){
+    var bh=d.v/max*(H-pb-pt),x=pl+i*bw+bw*.15;
+    return '<rect x="'+x.toFixed(1)+'" y="'+(H-pb-bh).toFixed(1)+'" width="'+(bw*.7).toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="4" fill="#2E7D4F"/><text x="'+(x+bw*.35).toFixed(1)+'" y="'+(H-pb-bh-5).toFixed(1)+'" text-anchor="middle" font-size="10" fill="#3e5e53">'+num(Math.round(d.v/1000))+'k</text><text x="'+(x+bw*.35).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle" font-size="10.5" fill="#3e5e53">'+d.l+'</text>';
+  }).join('')+'</svg>';
+}
+
+/* ================= OVERVIEW ================= */
+function vOverview(){
+  var a=agg(DB.batches),active=DB.farmers.filter(function(f){return f.status==='active'}).length;
+  var months=[];for(var k=11;k>=0;k--){var d=new Date(TODAY.getFullYear(),TODAY.getMonth()-k,1);months.push({key:d.getFullYear()+'-'+pad(d.getMonth()+1,2),l:d.toLocaleDateString(L()==='bn'?'bn-BD':'en-GB',{month:'short'}),v:0})}
+  DB.batches.forEach(function(b){var m=months.filter(function(x){return b.date.indexOf(x.key)===0})[0];if(m)m.v+=b.kg});
+  var dist={};DB.farmers.forEach(function(f){var d=dist[f.district]||(dist[f.district]={n:0,b:0,kg:0});d.n++;fBatches(f.id).forEach(function(b){d.b++;d.kg+=b.kg})});
+  var dl=Object.keys(dist).sort(function(x,y){return dist[y].kg-dist[x].kg}),mx=dist[dl[0]].kg;
+  var hi=DB.farmers.map(function(f){return {f:f,a:agg(fBatches(f.id))}}).filter(function(x){return x.f.status==='active'&&x.a.mort>MORT_WATCH}).sort(function(x,y){return y.a.mort-x.a.mort}).slice(0,3);
+  var low=DB.products.filter(function(p){return p.stock<=SET.lowStock&&p.status==='active'});
+  var pendPay=DB.regs.filter(function(r){return r.pay==='pending'}).length;
+  function al(color,txt,btn,view){return '<div class="alertrow"><span><span class="dot" style="background:'+color+'"></span>'+txt+'</span>'+(btn?'<button class="btn btn-line btn-sm" type="button" data-nav="'+view+'">'+btn+'</button>':'')+'</div>'}
+  var alerts=al('#B8432B',num(pending())+t(' orders waiting to be confirmed',' টি অর্ডার নিশ্চিতের অপেক্ষায়'),t('Open','খুলুন'),'orders')+
+    al('#F2B02E',low.length?low.map(function(p){return esc(t(p.en,p.bn))}).join(', ')+t(' running low',' স্টক কম'):t('No low-stock products','কম স্টকের পণ্য নেই'),low.length?t('Restock','স্টক'):'','products')+
+    al('#F2B02E',num(pendPay)+t(' training payments pending',' টি প্রশিক্ষণ পেমেন্ট বাকি'),t('Review','দেখুন'),'training')+
+    (hi.length?hi.map(function(x){return al('#B8432B',esc(x.f.name)+t(': mortality ',': মৃত্যুহার ')+num(x.a.mort,1)+'%',t('View','দেখুন'),'farmer:'+x.f.id)}).join(''):al('#2E7D4F',t('No farmer above the mortality watch level','মৃত্যুহার সীমার ওপরে কোনো কৃষক নেই'),'',''));
+  return head(t('Overview','সারসংক্ষেপ'),t('All farmers and batches across MPV.','এমপিভির সব কৃষক ও ব্যাচ।'))+
+  '<div class="kpis">'+kpi(t('Total farmers','মোট কৃষক'),num(DB.farmers.length))+kpi(t('Active farmers','সক্রিয় কৃষক'),num(active))+kpi(t('Total batches','মোট ব্যাচ'),num(a.n))+kpi(t('Total birds','মোট পাখি'),num(a.birds))+kpi(t('Meat produced','মাংস উৎপাদন'),num(a.kg)+t(' kg',' কেজি'))+
+  kpi(t('Total revenue','মোট আয়'),crore(a.rev))+kpi(t('Average mortality','গড় মৃত্যুহার'),num(a.mort,1)+'%')+kpi(t('Average FCR','গড় এফসিআর'),num(a.fcr,2))+kpi(t('Avg profit per bird','প্রতি পাখি গড় মুনাফা'),tk(a.ppb))+kpi(t('Districts covered','জেলা কভারেজ'),num(dl.length)+' / '+num(64))+'</div>'+
+  '<div class="grid g2"><div class="card"><h3>'+t('Meat produced per month (kg)','মাসভিত্তিক মাংস উৎপাদন (কেজি)')+'</h3>'+barChart(months)+'</div><div class="card"><h3>'+t('Needs attention','মনোযোগ দরকার')+'</h3>'+alerts+'</div></div>'+
+  '<div class="card" style="margin-top:14px"><h3>'+t('Coverage by district','জেলাভিত্তিক কভারেজ')+'</h3>'+tbl([[t('District','জেলা')],[t('Farmers','কৃষক'),1],[t('Batches','ব্যাচ'),1],[t('Meat (kg)','মাংস (কেজি)'),1],['']],dl.map(function(d){return [esc(place(d)),num(dist[d].n),num(dist[d].b),num(dist[d].kg),'<div class="bar"><i style="width:'+(dist[d].kg/mx*100).toFixed(0)+'%"></i></div>']}))+'<p class="hint" style="margin-top:8px">'+t('Sample data. A 64-district map can replace this table.','নমুনা তথ্য। এই টেবিলের জায়গায় ৬৪ জেলার মানচিত্র বসানো যাবে।')+'</p></div>';
+}
+
+/* ================= FARMERS ================= */
+function vFarmers(){
+  var f=F('farmers');
+  var dists=[];DB.farmers.forEach(function(x){if(dists.indexOf(x.district)<0)dists.push(x.district)});
+  return head(t('Farmers','কৃষক'),t('Every MPV farmer with production, mortality, FCR and profit.','প্রতিটি এমপিভি কৃষকের উৎপাদন, মৃত্যুহার, এফসিআর ও মুনাফা।'),addBtn('farmers'))+
+  '<div class="toolbar">'+search()+'<select data-a="1" aria-label="'+t('District','জেলা')+'"><option value="all">'+t('All districts','সব জেলা')+'</option>'+dists.map(function(d){return '<option value="'+d+'"'+(f.a===d?' selected':'')+'>'+place(d)+'</option>'}).join('')+'</select><select data-b="1" aria-label="'+t('Status','অবস্থা')+'"><option value="all">'+t('All status','সব অবস্থা')+'</option><option value="active"'+(f.b==='active'?' selected':'')+'>'+t('Active','সক্রিয়')+'</option><option value="inactive"'+(f.b==='inactive'?' selected':'')+'>'+t('Inactive','নিষ্ক্রিয়')+'</option></select></div><div id="tbl">'+tFarmers()+'</div>';
+}
+function tFarmers(){
+  var f=F('farmers'),q=f.q.toLowerCase();
+  var rows=DB.farmers.filter(function(x){return (f.a==='all'||x.district===f.a)&&(f.b==='all'||x.status===f.b)&&(!q||(x.id+' '+x.name+' '+x.mobile+' '+x.upazila).toLowerCase().indexOf(q)>-1)}).map(function(x){
+    var a=agg(fBatches(x.id));
+    return [esc(x.id),'<strong>'+esc(x.name)+'</strong><span class="sub">'+esc(x.mobile)+'</span>',esc(place(x.district))+'<span class="sub">'+esc(place(x.upazila))+'</span>',num(a.n),num(a.birds),'<span class="chip '+(a.mort>MORT_WATCH?'watch':'ok')+'">'+num(a.mort,1)+'%</span>',num(a.fcr,2),tk(a.ppb),'<span class="chip '+(x.status==='active'?'ok':'')+'">'+(x.status==='active'?t('Active','সক্রিয়'):t('Inactive','নিষ্ক্রিয়'))+'</span>',
+      '<div class="acts"><button class="btn btn-line btn-sm" type="button" data-nav="farmer:'+x.id+'">'+t('View','দেখুন')+'</button><button class="btn btn-line btn-sm" type="button" data-edit="farmers:'+x.id+'">'+t('Edit','সম্পাদনা')+'</button></div>']});
+  return tbl([[t('ID','আইডি')],[t('Farmer','কৃষক')],[t('Location','অবস্থান')],[t('Batches','ব্যাচ'),1],[t('Birds','পাখি'),1],[t('Mortality','মৃত্যুহার'),1],['FCR',1],[t('Profit/bird','মুনাফা/পাখি'),1],[t('Status','অবস্থা')],['']],rows);
+}
+function vFarmer(){
+  var x=farmer(S.farmerId);if(!x){return vFarmers()}
+  var bs=fBatches(x.id).sort(function(p,q){return q.date<p.date?-1:1}),a=agg(bs);
+  var rows=bs.map(function(b){var m=bm(b);return [esc(b.id),dstr(b.date),num(b.birds),'<span class="chip '+(m.mort>MORT_WATCH?'watch':'ok')+'">'+num(m.mort,1)+'%</span>',num(m.fcr,2),num(b.kg),tk(b.revenue),tk(b.cost),'<strong style="color:'+(m.profit<0?'#B8432B':'inherit')+'">'+tk(m.profit)+'</strong>',actBtns('batches',b.id)]});
+  return '<button class="back" type="button" data-nav="farmers">← '+t('All farmers','সব কৃষক')+'</button>'+
+  '<div class="card"><div class="profile"><div><h2 style="font-size:1.5rem">'+esc(x.name)+' <span class="chip '+(x.status==='active'?'ok':'')+'">'+(x.status==='active'?t('Active','সক্রিয়'):t('Inactive','নিষ্ক্রিয়'))+'</span></h2><dl class="dl"><dt>ID</dt><dd>'+esc(x.id)+'</dd><dt>'+t('Mobile','মোবাইল')+'</dt><dd>'+esc(x.mobile)+'</dd><dt>'+t('Location','অবস্থান')+'</dt><dd>'+esc(place(x.upazila))+', '+esc(place(x.district))+'</dd><dt>'+t('Joined','যোগদান')+'</dt><dd>'+dstr(x.joined)+'</dd></dl></div><div class="acts"><button class="btn btn-line" type="button" data-edit="farmers:'+x.id+'">'+t('Edit profile','প্রোফাইল সম্পাদনা')+'</button><button class="btn btn-danger" type="button" data-del="farmers:'+x.id+'">'+t('Delete','মুছুন')+'</button></div></div></div>'+
+  '<div class="kpis" style="margin-top:14px">'+kpi(t('Batches','ব্যাচ'),num(a.n))+kpi(t('Meat produced','মাংস'),num(a.kg)+t(' kg',' কেজি'))+kpi(t('Income','আয়'),crore(a.rev))+kpi(t('Expenditure','খরচ'),crore(a.cost))+kpi(t('Profit','মুনাফা'),crore(a.profit),tk(a.ppb)+t(' per bird',' প্রতি পাখি'))+kpi(t('Mortality','মৃত্যুহার'),num(a.mort,1)+'%')+kpi('FCR',num(a.fcr,2))+'</div>'+
+  '<div class="ph" style="margin-top:6px"><h3 style="font-size:1.1rem;font-family:var(--body)">'+t('Batch history','ব্যাচের ইতিহাস')+'</h3>'+addBtn('batches',x.id)+'</div>'+
+  tbl([[t('Batch','ব্যাচ')],[t('Date','তারিখ')],[t('Birds','পাখি'),1],[t('Mortality','মৃত্যুহার'),1],['FCR',1],[t('Meat kg','মাংস কেজি'),1],[t('Income','আয়'),1],[t('Cost','খরচ'),1],[t('Profit','মুনাফা'),1],['']],rows)+
+  '<p class="hint" style="margin-top:8px">'+t('Editing a batch recalculates mortality, FCR and profit everywhere.','ব্যাচ সম্পাদনা করলে মৃত্যুহার, এফসিআর ও মুনাফা সব জায়গায় নতুন করে হিসাব হয়।')+'</p>';
+}
+
+/* ================= TRAINING ================= */
+function vTraining(){
+  var f=F('training'),rows=DB.trainings.slice().sort(function(a,b){return a.date<b.date?1:-1}).filter(function(x){return f.a==='all'||x.status===f.a}).map(function(x){
+    var r=regsOf(x.id).length,up=x.status==='upcoming';
+    return ['<strong>'+esc(t(x.en,x.bn))+'</strong><span class="sub">'+esc(x.id)+' · '+(x.mode==='in'?t('In person','সরাসরি'):t('Online','অনলাইন'))+' · '+esc(x.dur)+'</span>',dstr(x.date),x.fee?tk(x.fee):'<span class="chip ok">'+t('Free','বিনামূল্যে')+'</span>',up?num(r)+' / '+num(x.seats):num(x.people)+t(' attended',' জন'),'<span class="chip '+(up?'blue':'')+'">'+(up?t('Upcoming','আসন্ন'):t('Completed','সম্পন্ন'))+'</span>',
+      actBtns('trainings',x.id,up?'<button class="btn btn-line btn-sm" type="button" data-nav="regs:'+x.id+'">'+t('Registrations','নিবন্ধন')+'</button>':'')]});
+  return head(t('Training','প্রশিক্ষণ'),t('Create trainings, set them free or paid, and manage registrations.','প্রশিক্ষণ তৈরি করুন, বিনামূল্যে বা ফি সহ ঠিক করুন এবং নিবন্ধন দেখুন।'),addBtn('trainings'))+
+  '<div class="chips">'+[['all','All','সব'],['upcoming','Upcoming','আসন্ন'],['completed','Completed','সম্পন্ন']].map(function(c){return '<button class="fchip" type="button" data-fa="'+c[0]+'" aria-pressed="'+(f.a===c[0])+'">'+t(c[1],c[2])+'</button>'}).join('')+'</div>'+
+  tbl([[t('Training','প্রশিক্ষণ')],[t('Date','তারিখ')],[t('Fee','ফি')],[t('Registered','নিবন্ধিত')],[t('Status','অবস্থা')],['']],rows);
+}
+function vRegs(){
+  var x=DB.trainings.filter(function(z){return z.id===S.trainId})[0];if(!x)return vTraining();
+  var rs=regsOf(x.id),rows=rs.map(function(r){return [esc(r.id),'<strong>'+esc(r.name)+'</strong><span class="sub">'+esc(r.mobile)+'</span>',esc(r.org),dstr(r.date),'<span class="chip '+(r.pay==='pending'?'watch':'ok')+'">'+(r.pay==='free'?t('Free','বিনামূল্যে'):r.pay==='paid'?t('Paid','পরিশোধিত'):t('Payment pending','পেমেন্ট বাকি'))+'</span>',
+    '<div class="acts">'+(r.pay==='pending'?'<button class="btn btn-line btn-sm" type="button" data-paid="'+r.id+'">'+t('Mark paid','পরিশোধিত')+'</button>':'')+'<button class="btn btn-danger btn-sm" type="button" data-rmreg="'+r.id+'">'+t('Remove','সরান')+'</button></div>']});
+  return '<button class="back" type="button" data-nav="training">← '+t('All trainings','সব প্রশিক্ষণ')+'</button>'+head(esc(t(x.en,x.bn)),dstr(x.date)+' · '+num(rs.length)+' / '+num(x.seats)+t(' seats taken',' আসন পূর্ণ'),'<button class="btn btn-dark" type="button" data-csv="regs:'+x.id+'">'+t('Download CSV','সিএসভি ডাউনলোড')+'</button>')+
+  tbl([[t('Reg. ID','নিবন্ধন আইডি')],[t('Participant','অংশগ্রহণকারী')],[t('Organization','প্রতিষ্ঠান')],[t('Registered','নিবন্ধনের তারিখ')],[t('Payment','পেমেন্ট')],['']],rows,t('No registrations yet.','এখনো কোনো নিবন্ধন নেই।'));
+}
+
+/* ================= COURSE LANDING PAGES ================= */
+/*
+  API integration seam: DB.coursePages is prototype data only. Later replace
+  list/create/update/archive operations with authenticated Node.js + Express API calls.
+  Keep the same field names as the future course_pages database/API resource.
+*/
+function courseTraining(id){return DB.trainings.filter(function(x){return x.id===id})[0]}
+function courseStatusLabel(s){return s==='published'?t('Published','প্রকাশিত'):s==='archived'?t('Archived','আর্কাইভ করা'):t('Draft','খসড়া')}
+function courseStatusChip(s){return '<span class="chip '+(s==='published'?'ok':s==='archived'?'':'watch')+'">'+courseStatusLabel(s)+'</span>'}
+function vCoursePages(){
+  var list=DB.coursePages.slice().sort(function(a,b){return (b.updatedAt||b.createdAt||'').localeCompare(a.updatedAt||a.createdAt||'')});
+  var pub=list.filter(function(x){return x.status==='published'}).length,draft=list.filter(function(x){return x.status==='draft'}).length;
+  var rows=list.map(function(x){var tr=courseTraining(x.trainingId);return [
+    '<strong class="cp-table-title">'+esc(x.title|| (tr?tr.en:''))+'</strong><span class="sub">'+esc(x.id)+' · '+esc(x.trainingId||t('No linked training','প্রশিক্ষণ যুক্ত নেই'))+'</span>',
+    '<span class="cp-slug">/training/'+esc(x.slug)+'</span>',
+    esc(x.updatedAt||x.createdAt||'—'),courseStatusChip(x.status),
+    '<div class="cp-actions"><button class="btn btn-line btn-sm" type="button" data-cpedit="'+esc(x.id)+'">'+t('Edit','সম্পাদনা')+'</button><button class="btn btn-line btn-sm" type="button" data-cppreview="'+esc(x.id)+'">'+t('Preview','প্রিভিউ')+'</button>'+
+    (x.status==='published'?'<button class="btn btn-line btn-sm" type="button" data-cptoggle="'+esc(x.id)+'">'+t('Unpublish','অপ্রকাশিত')+'</button>':x.status==='archived'?'':'<button class="btn btn-primary btn-sm" type="button" data-cptoggle="'+esc(x.id)+'">'+t('Publish','প্রকাশ')+'</button>')+
+    (x.status==='archived'?'':'<button class="btn btn-line btn-sm" type="button" data-cparchive="'+esc(x.id)+'">'+t('Archive','আর্কাইভ')+'</button>')+'</div>'
+  ]});
+  var intro=head(t('Course Landing Pages','কোর্স ল্যান্ডিং পেজ'),t('Create a dedicated, consistent landing page for each training course. Published pages are intended to appear in the public Training listing after backend integration.','প্রতিটি প্রশিক্ষণ কোর্সের জন্য আলাদা, একই ডিজাইনের ল্যান্ডিং পেজ তৈরি করুন। ব্যাকএন্ড যুক্ত হলে প্রকাশিত পেজগুলো পাবলিক Training তালিকায় দেখানোর জন্য প্রস্তুত থাকবে।'),'<button class="btn btn-primary" type="button" data-cpadd>+ '+t('Create course page','কোর্স পেজ তৈরি')+'</button>');
+  var stats='<div class="cp-stats"><div class="cp-stat"><strong>'+num(list.length)+'</strong><span>'+t('Total pages','মোট পেজ')+'</span></div><div class="cp-stat"><strong>'+num(pub)+'</strong><span>'+t('Published','প্রকাশিত')+'</span></div><div class="cp-stat"><strong>'+num(draft)+'</strong><span>'+t('Drafts','খসড়া')+'</span></div></div>';
+  var note='<div class="notice" style="margin-top:12px;padding:12px 14px;border-radius:12px;background:#fff8e6;border:1px solid #ead7a3;color:#6e5519"><strong>'+t('Frontend prototype','ফ্রন্টএন্ড প্রোটোটাইপ')+'</strong><br>'+t('Changes currently stay in this browser session and are not saved to a database or public website. Node.js + Express integration will connect this manager to real course data later.','এখন পরিবর্তনগুলো শুধু এই ব্রাউজার সেশনে থাকে; ডেটাবেস বা পাবলিক ওয়েবসাইটে সংরক্ষিত হয় না। পরে Node.js + Express যুক্ত করে বাস্তব কোর্স ডেটার সঙ্গে সংযোগ করা হবে।')+'</div>';
+  return intro+stats+note+(list.length?'<div class="card" style="margin-top:14px"><div class="tw"><table><thead><tr><th>'+t('Course page','কোর্স পেজ')+'</th><th>'+t('Public URL slug','পাবলিক URL স্লাগ')+'</th><th>'+t('Updated','হালনাগাদ')+'</th><th>'+t('Status','অবস্থা')+'</th><th>'+t('Actions','অ্যাকশন')+'</th></tr></thead><tbody>'+list.map(function(x,i){return '<tr>'+rows[i].map(function(c){return '<td>'+c+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div></div>':'<div class="cp-empty"><div class="cp-icon">▤</div><h3>'+t('No course landing pages yet','এখনো কোনো কোর্স ল্যান্ডিং পেজ নেই')+'</h3><p style="margin:8px auto 16px;max-width:500px;color:#63766a">'+t('Create your first page using the predefined sections. You can save it as a draft, preview it, and publish it when ready.','নির্ধারিত সেকশন ব্যবহার করে প্রথম পেজ তৈরি করুন। খসড়া হিসেবে সংরক্ষণ, প্রিভিউ এবং প্রস্তুত হলে প্রকাশ করতে পারবেন।')+'</p><button class="btn btn-primary" type="button" data-cpadd>+ '+t('Create first course page','প্রথম কোর্স পেজ তৈরি')+'</button></div>');
+}
+function cpField(id,label,value,type,full,placeholder){var cls='f'+(full?' full':'');var val=value==null?'':value;return '<label class="'+cls+'"><span>'+label+'</span>'+(type==='textarea'?'<textarea id="'+id+'" placeholder="'+(placeholder||'')+'">'+esc(val)+'</textarea>':'<input id="'+id+'" type="'+(type||'text')+'" value="'+esc(val)+'" placeholder="'+(placeholder||'')+'">')+'</label>'}
+function openCoursePageForm(id){
+  var item=id?DB.coursePages.filter(function(x){return x.id===id})[0]:null;if(id&&!item)return;
+  M={coursePageId:id||null};var x=item||{};
+  var trOpts='<option value="">'+t('Choose a training (optional)','প্রশিক্ষণ নির্বাচন করুন (ঐচ্ছিক)')+'</option>'+DB.trainings.map(function(tr){return '<option value="'+esc(tr.id)+'"'+(x.trainingId===tr.id?' selected':'')+'>'+esc(tr.en)+' · '+esc(tr.id)+'</option>'}).join('');
+  var status=x.status||'draft';
+  var form='<div class="mh"><h3>'+(item?t('Edit course landing page','কোর্স ল্যান্ডিং পেজ সম্পাদনা'):t('Create course landing page','কোর্স ল্যান্ডিং পেজ তৈরি'))+'</h3><button class="x" type="button" data-close aria-label="'+t('Close','বন্ধ')+'">×</button></div><div class="mb"><p class="hint" style="margin-bottom:14px">'+t('Complete the predefined sections. The same structure will be used for every course.','নির্ধারিত সেকশনগুলো পূরণ করুন। প্রতিটি কোর্সে একই কাঠামো ব্যবহার হবে।')+'</p><div class="form">'+
+  '<div class="cp-form-section">'+t('1. Basic information','১. প্রাথমিক তথ্য')+'</div>'+ 
+  '<label class="f full"><span>'+t('Link to existing training','বিদ্যমান প্রশিক্ষণের সঙ্গে যুক্ত করুন')+'</span><select id="cp_training">'+trOpts+'</select></label>'+ 
+  cpField('cp_title',t('Page title *','পেজের শিরোনাম *'),x.title||'','text',true,t('e.g. Biosecurity Management Training','যেমন: Biosecurity Management Training'))+
+  cpField('cp_slug',t('URL slug *','URL স্লাগ *'),x.slug||'','text',false,'biosecurity-management')+
+  cpField('cp_excerpt',t('Short description','সংক্ষিপ্ত বিবরণ'),x.excerpt||'','textarea',true,t('A short summary for course cards and search results','কোর্স কার্ড ও সার্চ ফলাফলের জন্য সংক্ষিপ্ত বিবরণ'))+
+  cpField('cp_hero',t('Hero image URL','হিরো ছবির URL'),x.heroImage||'','url',true,'https://...')+
+  '<div class="cp-form-section">'+t('2. Course content','২. কোর্সের কনটেন্ট')+'</div>'+ 
+  cpField('cp_intro',t('Course introduction','কোর্স পরিচিতি'),x.introduction||'','textarea',true,t('Explain what the course is about','কোর্স সম্পর্কে লিখুন'))+
+  cpField('cp_objectives',t('Learning objectives (one per line)','শেখার লক্ষ্য (প্রতি লাইনে একটি)'),x.objectives||'','textarea',true,t('What participants will learn','অংশগ্রহণকারীরা কী শিখবেন'))+
+  cpField('cp_curriculum',t('Course outline / modules (one per line)','কোর্স আউটলাইন / মডিউল (প্রতি লাইনে একটি)'),x.curriculum||'','textarea',true,t('Module 1: ...','মডিউল ১: ...'))+
+  cpField('cp_audience',t('Target participants','লক্ষ্য অংশগ্রহণকারী'),x.audience||'','text',true,t('Farmers, field workers, students...'))+
+  '<div class="cp-form-section">'+t('3. Trainer and logistics','৩. প্রশিক্ষক ও সময়সূচি')+'</div>'+ 
+  cpField('cp_trainer',t('Trainer / facilitator','প্রশিক্ষক / ফ্যাসিলিটেটর'),x.trainer||'','text',false,'')+
+  cpField('cp_trainerBio',t('Trainer biography','প্রশিক্ষকের পরিচিতি'),x.trainerBio||'','textarea',true,'')+
+  cpField('cp_date',t('Start date','শুরুর তারিখ'),x.date||'','date',false,'')+
+  cpField('cp_duration',t('Duration','সময়কাল'),x.duration||'','text',false,'e.g. 2 days')+
+  '<label class="f"><span>'+t('Modality','প্রশিক্ষণের ধরন')+'</span><select id="cp_modality"><option value="in"'+(x.modality==='in'?' selected':'')+'>'+t('In person','সরাসরি')+'</option><option value="on"'+(x.modality==='on'?' selected':'')+'>'+t('Online','অনলাইন')+'</option><option value="hybrid"'+(x.modality==='hybrid'?' selected':'')+'>'+t('Hybrid','হাইব্রিড')+'</option></select></label>'+ 
+  cpField('cp_location',t('Location / meeting link','স্থান / মিটিং লিংক'),x.location||'','text',false,'')+
+  cpField('cp_fee',t('Course fee (৳)','কোর্স ফি (৳)'),x.fee==null?'':x.fee,'number',false,'0')+
+  cpField('cp_seats',t('Available seats','আসন সংখ্যা'),x.seats==null?'':x.seats,'number',false,'30')+
+  cpField('cp_deadline',t('Registration deadline','নিবন্ধনের শেষ তারিখ'),x.deadline||'','date',false,'')+
+  '<label class="f"><span>'+t('Registration','নিবন্ধন')+'</span><select id="cp_registration"><option value="enabled"'+(x.registration!=='disabled'?' selected':'')+'>'+t('Enabled','চালু')+'</option><option value="disabled"'+(x.registration==='disabled'?' selected':'')+'>'+t('Disabled','বন্ধ')+'</option></select></label>'+ 
+  '<div class="cp-form-section">'+t('4. Search and publishing','৪. সার্চ ও প্রকাশ')+'</div>'+ 
+  cpField('cp_seoTitle',t('SEO title','SEO শিরোনাম'),x.seoTitle||'','text',true,'')+
+  cpField('cp_seoDescription',t('SEO description','SEO বিবরণ'),x.seoDescription||'','textarea',true,'')+
+  '<label class="f"><span>'+t('Page status','পেজের অবস্থা')+'</span><select id="cp_status"><option value="draft"'+(status==='draft'?' selected':'')+'>'+t('Draft','খসড়া')+'</option><option value="published"'+(status==='published'?' selected':'')+'>'+t('Published','প্রকাশিত')+'</option><option value="archived"'+(status==='archived'?' selected':'')+'>'+t('Archived','আর্কাইভ')+'</option></select></label>'+ 
+  '</div><p id="cp_error" class="err" style="margin-top:10px"></p></div><div class="mf"><button class="btn btn-line" type="button" data-close>'+t('Cancel','বাতিল')+'</button><button class="btn btn-primary" type="button" id="cpSave">'+t('Save course page','কোর্স পেজ সংরক্ষণ')+'</button></div>';
+  openModal(form,true);
+}
+function saveCoursePage(){
+  var val=function(id){var el=$(id);return el?el.value.trim():''};
+  var title=val('cp_title'),slug=val('cp_slug').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  if(!title||!slug){$('cp_error').textContent=t('Page title and URL slug are required.','পেজের শিরোনাম ও URL স্লাগ আবশ্যক।');return}
+  var dup=DB.coursePages.some(function(p){return p.slug===slug&&p.id!==M.coursePageId});if(dup){$('cp_error').textContent=t('This URL slug is already used. Choose another slug.','এই URL স্লাগটি আগে ব্যবহার করা হয়েছে। অন্য স্লাগ দিন।');return}
+  var now=iso(TODAY),x=M.coursePageId?DB.coursePages.filter(function(p){return p.id===M.coursePageId})[0]:null;
+  var data={trainingId:val('cp_training'),title:title,slug:slug,excerpt:val('cp_excerpt'),heroImage:val('cp_hero'),introduction:val('cp_intro'),objectives:val('cp_objectives'),curriculum:val('cp_curriculum'),audience:val('cp_audience'),trainer:val('cp_trainer'),trainerBio:val('cp_trainerBio'),date:val('cp_date'),duration:val('cp_duration'),modality:val('cp_modality'),location:val('cp_location'),fee:val('cp_fee')===''?0:Number(val('cp_fee')),seats:val('cp_seats')===''?0:Number(val('cp_seats')),deadline:val('cp_deadline'),registration:val('cp_registration'),seoTitle:val('cp_seoTitle'),seoDescription:val('cp_seoDescription'),status:val('cp_status'),updatedAt:now};
+  if(!x){var n=DB.coursePages.length+1;data.id='CP-'+String(n).padStart(3,'0');data.createdAt=now;DB.coursePages.push(data)}else{Object.keys(data).forEach(function(k){x[k]=data[k]})}
+  closeModal();toast(t('Course page saved in prototype session','প্রোটোটাইপ সেশনে কোর্স পেজ সংরক্ষিত'));render();
+}
+function previewCoursePage(id){var x=DB.coursePages.filter(function(p){return p.id===id})[0];if(!x)return;
+  var lineList=function(s){return (s||'').split(/\n+/).filter(function(v){return v.trim()}).map(function(v){return '<li>'+esc(v)+'</li>'}).join('')};
+  openModal('<div class="mh"><h3>'+t('Course page preview','কোর্স পেজ প্রিভিউ')+'</h3><button class="x" type="button" data-close>×</button></div><div class="mb"><div class="cp-preview-hero">'+(x.heroImage?'<img src="'+esc(x.heroImage)+'" alt="" style="width:100%;max-height:230px;object-fit:cover;border-radius:10px;margin-bottom:12px">':'')+'<span class="chip">'+courseStatusLabel(x.status)+'</span><h2>'+esc(x.title)+'</h2><p>'+esc(x.excerpt)+'</p><p style="margin-top:14px">'+esc(x.duration||'')+(x.modality?' · '+esc(x.modality==='on'?t('Online','অনলাইন'):x.modality==='hybrid'?t('Hybrid','হাইব্রিড'):t('In person','সরাসরি')):'')+(x.date?' · '+esc(x.date):'')+'</p></div>'+
+  '<div class="cp-preview-block"><h3>'+t('About this course','কোর্স সম্পর্কে')+'</h3><p style="margin-top:6px">'+esc(x.introduction||x.excerpt||'—')+'</p></div>'+
+  (x.objectives?'<div class="cp-preview-block"><h3>'+t('Learning objectives','শেখার লক্ষ্য')+'</h3><ul style="padding-left:22px;margin-top:8px">'+lineList(x.objectives)+'</ul></div>':'')+
+  (x.curriculum?'<div class="cp-preview-block"><h3>'+t('Course outline','কোর্স আউটলাইন')+'</h3><ol style="padding-left:22px;margin-top:8px">'+lineList(x.curriculum)+'</ol></div>':'')+
+  '<div class="cp-preview-block"><h3>'+t('Course details','কোর্সের তথ্য')+'</h3><p>'+t('Trainer','প্রশিক্ষক')+': '+esc(x.trainer||'—')+'</p><p>'+t('Target participants','লক্ষ্য অংশগ্রহণকারী')+': '+esc(x.audience||'—')+'</p><p>'+t('Fee','ফি')+': '+(Number(x.fee)===0?t('Free','বিনামূল্যে'):'৳ '+num(x.fee))+'</p><p>'+t('Seats','আসন')+': '+num(x.seats)+'</p><p>'+t('Location','স্থান')+': '+esc(x.location||'—')+'</p></div>'+
+  '<div class="mf"><button class="btn btn-line" type="button" data-close>'+t('Close preview','প্রিভিউ বন্ধ')+'</button><button class="btn btn-primary" type="button" data-cpedit="'+esc(x.id)+'">'+t('Edit page','পেজ সম্পাদনা')+'</button></div>',true);
+}
+function archiveCoursePage(id){var x=DB.coursePages.filter(function(p){return p.id===id})[0];if(!x)return;x.status='archived';x.updatedAt=iso(TODAY);toast(t('Course page archived','কোর্স পেজ আর্কাইভ করা হয়েছে'));render()}
+
+/* ================= PACKAGE-LEVEL TRACEABILITY ================= */
+function batchFor(id){return DB.batches.filter(function(x){return x.id===id})[0]}
+function farmerForBatch(id){var b=batchFor(id);return b?farmer(b.fid):null}
+function processingFor(id){return DB.processingRecords.filter(function(x){return x.id===id})[0]}
+function packageFor(id){return DB.packages.filter(function(x){return x.id===id||x.code===id||x.token===id})[0]}
+function packageStatus(s){var c=s==='published'?'ok':s==='recalled'?'bad':s==='draft'?'watch':'blue';var label={draft:['Draft','খসড়া'],review:['Needs review','পর্যালোচনা বাকি'],published:['Published','প্রকাশিত'],recalled:['Recalled','প্রত্যাহার করা হয়েছে'],inactive:['Inactive','নিষ্ক্রিয়']}[s]||[s,s];return '<span class="chip '+c+'">'+t(label[0],label[1])+'</span>'}
+function traceBanner(){return '<div class="trace-note"><strong>'+t('Frontend prototype · sample data only','ফ্রন্টএন্ড প্রোটোটাইপ · শুধু নমুনা ডেটা')+'</strong><br>'+t('Changes are held in this page session. No backend or persistent database is connected yet. QR links use a placeholder domain until deployment.','পরিবর্তন এই পেজ সেশনের মধ্যে থাকে। এখনো ব্যাকএন্ড বা স্থায়ী ডেটাবেস যুক্ত নেই। ডিপ্লয়মেন্টের আগে QR লিংকে placeholder domain ব্যবহৃত হচ্ছে।')+'</div><div class="trace-flow"><span class="trace-step">1. '+t('Farm','খামার')+'</span><span class="trace-arrow">→</span><span class="trace-step">2. '+t('Batch','ব্যাচ')+'</span><span class="trace-arrow">→</span><span class="trace-step active">3. '+t('Processing','প্রসেসিং')+'</span><span class="trace-arrow">→</span><span class="trace-step active">4. '+t('Package QR','প্যাকেজ QR')+'</span><span class="trace-arrow">→</span><span class="trace-step">5. '+t('Customer scan','ক্রেতার স্ক্যান')+'</span></div>'}
+function vProcessing(){
+ var rows=DB.processingRecords.slice().reverse().map(function(r){var b=batchFor(r.batchId),p=DB.packages.filter(function(x){return x.processingId===r.id});return ['<strong>'+esc(r.id)+'</strong><span class="sub">'+t('Batch','ব্যাচ')+': '+esc(r.batchId)+'</span>',esc(r.facility),dstr(r.processingDate),num(r.processedQty)+t(' birds/items',' টি'),num(r.totalWeightKg,2)+' kg',num(p.length),packageStatus(r.status),'<div class="acts"><button class="btn btn-line btn-sm" type="button" data-procview="'+esc(r.id)+'">'+t('View packages','প্যাকেজ দেখুন')+'</button></div>']});
+ return head(t('Processing & Packaging','প্রসেসিং ও প্যাকেজিং'),t('Select an existing batch, record processing, then generate a unique passport and QR for every package.','আগের ব্যাচ বেছে প্রসেসিং রেকর্ড করুন, তারপর প্রতিটি প্যাকেজের জন্য আলাদা পাসপোর্ট ও QR তৈরি করুন।'),'<button class="btn btn-primary" type="button" data-procadd>+ '+t('New processing record','নতুন প্রসেসিং রেকর্ড')+'</button>')+traceBanner()+'<div class="trace-stats"><div class="trace-stat"><strong>'+num(DB.processingRecords.length)+'</strong><span>'+t('Processing records','প্রসেসিং রেকর্ড')+'</span></div><div class="trace-stat"><strong>'+num(DB.packages.length)+'</strong><span>'+t('Package passports','প্যাকেজ পাসপোর্ট')+'</span></div><div class="trace-stat"><strong>'+num(DB.packages.filter(function(x){return x.status==='published'}).length)+'</strong><span>'+t('Published passports','প্রকাশিত পাসপোর্ট')+'</span></div></div><div class="card"><h3>'+t('Processing records','প্রসেসিং রেকর্ড')+'</h3>'+tbl([[t('Record / Batch','রেকর্ড / ব্যাচ')],[t('Facility','ফ্যাসিলিটি')],[t('Processing date','প্রসেসিং তারিখ')],[t('Quantity','পরিমাণ'),1],[t('Total weight','মোট ওজন'),1],[t('Packages','প্যাকেজ'),1],[t('Status','অবস্থা')],['']],rows,t('No processing records yet. Create one to generate package passports.','এখনো প্রসেসিং রেকর্ড নেই। প্যাকেজ পাসপোর্ট তৈরি করতে নতুন রেকর্ড করুন।'))+'</div>';
+}
+function vPassports(){
+ var f=F('passports'),q=f.q.toLowerCase();var items=DB.packages.filter(function(p){var far=farmerForBatch(p.batchId);return (!S.packageProcessingFilter||p.processingId===S.packageProcessingFilter)&&(!q||(p.code+' '+p.batchId+' '+(far?far.name:'')+' '+p.id).toLowerCase().indexOf(q)>-1)}).slice().reverse();
+ var rows=items.map(function(p){var b=batchFor(p.batchId),far=farmerForBatch(p.batchId);return ['<strong>'+esc(p.code)+'</strong><span class="sub">'+t('Batch','ব্যাচ')+': '+esc(p.batchId)+'</span>',esc(far?far.name:'—')+'<span class="sub">'+esc(far?place(far.upazila):'')+'</span>',num(p.weightG)+' g',dstr(p.packagedAt),packageStatus(p.status),'<div class="acts"><button class="btn btn-line btn-sm" type="button" data-pkgview="'+esc(p.id)+'">'+t('Passport','পাসপোর্ট')+'</button><button class="btn btn-line btn-sm" type="button" data-weight="'+esc(p.id)+'">'+t('Weight','ওজন')+'</button><button class="btn btn-line btn-sm" type="button" data-qr="'+esc(p.id)+'">'+t('QR / Label','QR / লেবেল')+'</button>'+(p.status==='published'?'<button class="btn btn-line btn-sm" type="button" data-pkgstatus="'+esc(p.id)+'">'+t('Unpublish','অপ্রকাশিত')+'</button>':p.status==='recalled'?'':'<button class="btn btn-primary btn-sm" type="button" data-pkgstatus="'+esc(p.id)+'">'+t('Publish','প্রকাশ করুন')+'</button>')+'</div>']});
+ return head(t('Chicken Passports','চিকেন পাসপোর্ট'),t('Each package has its own unique passport ID and QR, linked to its source batch.','প্রতিটি প্যাকেজের আলাদা পাসপোর্ট আইডি ও QR থাকবে, যা মূল ব্যাচের সঙ্গে যুক্ত।'))+traceBanner()+(S.packageProcessingFilter?'<div class="trace-note">'+t('Filtered to processing record','প্রসেসিং রেকর্ড অনুযায়ী ফিল্টার')+': <strong>'+esc(S.packageProcessingFilter)+'</strong> <button class="btn btn-line btn-sm" type="button" data-clearprocfilter>'+t('Show all packages','সব প্যাকেজ দেখুন')+'</button></div>':'')+'<div class="toolbar">'+search()+'<span class="hint">'+num(items.length)+' '+t('packages','টি প্যাকেজ')+'</span></div><div id="tbl">'+tbl([[t('Package passport','প্যাকেজ পাসপোর্ট')],[t('Farmer','কৃষক')],[t('Net weight','নেট ওজন'),1],[t('Packaged','প্যাকেজিং তারিখ')],[t('Status','অবস্থা')],['']],rows,t('No packages yet. Create a processing record first.','এখনো প্যাকেজ নেই। আগে প্রসেসিং রেকর্ড তৈরি করুন।'))+'</div>';
+}
+function vVerification(){
+ var rows=DB.farmVerifications.slice().reverse().map(function(v){var far=farmer(v.farmId);var lab={verified:['Verified','যাচাইকৃত','ok'],pending:['Pending','অপেক্ষমাণ','watch'],review:['Needs review','পর্যালোচনা দরকার','bad']}[v.status]||[v.status,v.status,''];return ['<strong>'+esc(far?far.name:v.farmId)+'</strong><span class="sub">'+esc(v.farmId)+'</span>',esc(v.indicator),dstr(v.date),'<span class="chip '+lab[2]+'">'+t(lab[0],lab[1])+'</span>',esc(v.verifier),'<button class="btn btn-line btn-sm" type="button" data-verifyedit="'+esc(v.id)+'">'+t('Review / edit','পর্যালোচনা / সম্পাদনা')+'</button>']});
+ return head(t('Farm Verification','খামার যাচাই'),t('Record biosecurity checks and supporting evidence. Only approved records should be shown publicly.','জৈব নিরাপত্তা যাচাই ও প্রমাণ সংরক্ষণ করুন। কেবল অনুমোদিত তথ্যই পাবলিক পেজে দেখানো উচিত।'),'<button class="btn btn-primary" type="button" data-verifyadd>+ '+t('Add verification','যাচাই যোগ করুন')+'</button>')+traceBanner()+'<div class="card"><h3>'+t('Verification records','যাচাই রেকর্ড')+'</h3>'+tbl([[t('Farmer / Farm','কৃষক / খামার')],[t('Indicator','সূচক')],[t('Verified date','যাচাই তারিখ')],[t('Status','অবস্থা')],[t('Verifier','যাচাইকারী')],['']],rows,t('No farm verification records yet.','এখনো খামার যাচাইয়ের রেকর্ড নেই।'))+'</div>';
+}
+function openProcessingForm(){
+ var opts=DB.batches.map(function(b){var far=farmer(b.fid);return '<option value="'+esc(b.id)+'">'+esc(b.id)+' — '+esc(far?far.name:'')+' · '+num(b.kg)+' kg</option>'}).join('');
+ openModal('<div class="mh"><h3>'+t('New processing & packaging record','নতুন প্রসেসিং ও প্যাকেজিং রেকর্ড')+'</h3><button class="x" type="button" data-close>×</button></div><div class="mb"><p class="hint">'+t('Select an existing batch. The prototype will generate one passport per package with an evenly divided weight. You can edit each package weight later.','আগের ব্যাচ বেছে নিন। প্রোটোটাইপে প্রতিটি প্যাকেজের জন্য সমান ওজন ধরে আলাদা পাসপোর্ট তৈরি হবে। পরে প্রতিটি প্যাকেজের ওজন সম্পাদনা করা যাবে।')+'</p><div class="form" style="margin-top:12px"><label class="f full"><span>'+t('Production batch','প্রোডাকশন ব্যাচ')+' *</span><select id="pr_batch">'+opts+'</select></label><label class="f"><span>'+t('Processing date','প্রসেসিং তারিখ')+' *</span><input type="date" id="pr_date" value="'+iso(TODAY)+'"></label><label class="f"><span>'+t('Packaging date','প্যাকেজিং তারিখ')+' *</span><input type="date" id="pr_packdate" value="'+iso(TODAY)+'"></label><label class="f full"><span>'+t('Processing facility','প্রসেসিং ফ্যাসিলিটি')+' *</span><input id="pr_facility" value="MPV Processing Unit"></label><label class="f"><span>'+t('Quantity processed','প্রসেস করা পরিমাণ')+' *</span><input id="pr_qty" type="number" min="1" value="3"></label><label class="f"><span>'+t('Total processed weight (kg)','মোট প্রসেস করা ওজন (কেজি)')+' *</span><input id="pr_weight" type="number" min="0.01" step="0.01" value="3"></label><label class="f"><span>'+t('Number of packages','প্যাকেজের সংখ্যা')+' *</span><input id="pr_count" type="number" min="1" max="500" value="3"></label><label class="f full"><span>'+t('Internal notes','অভ্যন্তরীণ নোট')+'</span><textarea id="pr_notes" placeholder="'+t('Optional processing notes','ঐচ্ছিক প্রসেসিং নোট')+'"></textarea></label></div><p class="err" id="pr_err"></p></div><div class="mf"><button class="btn btn-line" type="button" data-close>'+t('Cancel','বাতিল')+'</button><button class="btn btn-primary" type="button" id="procSave">'+t('Save & generate passports','সংরক্ষণ ও পাসপোর্ট তৈরি')+'</button></div>',true);
+}
+function saveProcessing(){
+ var batchId=$('pr_batch').value,date=$('pr_date').value,packDate=$('pr_packdate').value,facility=$('pr_facility').value.trim(),qty=Number($('pr_qty').value),weight=Number($('pr_weight').value),count=Number($('pr_count').value),err=$('pr_err');
+ if(!batchId||!date||!packDate||!facility||!qty||qty<1||!weight||weight<=0||!count||count<1||count>500){err.textContent=t('Complete all required fields. Quantity, weight and package count must be positive; package count max is 500.','সব আবশ্যক ঘর পূরণ করুন। পরিমাণ, ওজন ও প্যাকেজ সংখ্যা ধনাত্মক হতে হবে; সর্বোচ্চ ৫০০ প্যাকেজ।');return}
+ if(packDate<date){err.textContent=t('Packaging date cannot be earlier than processing date.','প্যাকেজিং তারিখ প্রসেসিং তারিখের আগে হতে পারে না।');return}
+ var year=String(new Date(date+'T00:00:00').getFullYear()),n=DB.processingRecords.length+1,id='PR-'+year+'-'+pad(n,3);while(DB.processingRecords.some(function(x){return x.id===id}))id='PR-'+year+'-'+pad(++n,3);
+ var rec={id:id,batchId:batchId,facility:facility,processingDate:date,processedQty:qty,totalWeightKg:weight,packCount:count,status:'review',notes:$('pr_notes').value.trim()};DB.processingRecords.push(rec);
+ var base=Math.floor((weight*1000/count)*100)/100;for(var i=0;i<count;i++){var seq=DB.packages.length+1,code='MPV-PKG-'+year+'-'+String(seq).padStart(6,'0');while(DB.packages.some(function(x){return x.code===code})){seq++;code='MPV-PKG-'+year+'-'+String(seq).padStart(6,'0')}DB.packages.push({id:'PKG-'+String(seq).padStart(6,'0'),code:code,processingId:id,batchId:batchId,weightG:i===count-1?Math.round(weight*1000-base*(count-1)):Math.round(base),packagedAt:packDate,status:'draft',token:'mpv-'+code.toLowerCase().replace(/[^a-z0-9-]/g,'-')})}
+ closeModal();S.view='passports';toast(t('Processing saved and package passports generated','প্রসেসিং সংরক্ষিত, প্যাকেজ পাসপোর্ট তৈরি হয়েছে'));render();
+}
+function openVerificationForm(id){var v=id?DB.farmVerifications.filter(function(x){return x.id===id})[0]:null;var opts=DB.farmers.map(function(f){return '<option value="'+esc(f.id)+'"'+((v?v.farmId:DB.farmers[0].id)===f.id?' selected':'')+'>'+esc(f.name)+' · '+esc(f.id)+'</option>'}).join('');openModal('<div class="mh"><h3>'+t(v?'Review farm verification':'Add farm verification',v?'খামার যাচাই পর্যালোচনা':'খামার যাচাই যোগ করুন')+'</h3><button class="x" type="button" data-close>×</button></div><div class="mb"><div class="form"><label class="f full"><span>'+t('Farmer / farm','কৃষক / খামার')+'</span><select id="fv_farm">'+opts+'</select></label><label class="f full"><span>'+t('Indicator / checklist item','সূচক / চেকলিস্ট')+'</span><input id="fv_indicator" value="'+esc(v?v.indicator:'Biosecurity checklist review')+'"></label><label class="f"><span>'+t('Verification date','যাচাই তারিখ')+'</span><input type="date" id="fv_date" value="'+esc(v?v.date:iso(TODAY))+'"></label><label class="f"><span>'+t('Status','অবস্থা')+'</span><select id="fv_status">'+[['pending','Pending'],['verified','Verified'],['review','Needs review']].map(function(a){return '<option value="'+a[0]+'"'+((v?v.status:'pending')===a[0]?' selected':'')+'>'+t(a[1],a[0]==='pending'?'অপেক্ষমাণ':a[0]==='verified'?'যাচাইকৃত':'পর্যালোচনা দরকার')+'</option>'}).join('')+'</select></label><label class="f"><span>'+t('Verifier','যাচাইকারী')+'</span><input id="fv_verifier" value="'+esc(v?v.verifier:'')+'"></label><label class="f full"><span>'+t('Evidence / reference','প্রমাণ / রেফারেন্স')+'</span><textarea id="fv_evidence">'+esc(v?v.evidence:'')+'</textarea></label><label class="f full"><span>'+t('Public note (optional)','পাবলিক নোট (ঐচ্ছিক)')+'</span><textarea id="fv_public">'+esc(v?v.publicNote:'')+'</textarea></label></div></div><div class="mf"><button class="btn btn-line" type="button" data-close>'+t('Cancel','বাতিল')+'</button><button class="btn btn-primary" type="button" id="verifySave" data-id="'+esc(id||'')+'">'+t('Save verification','যাচাই সংরক্ষণ')+'</button></div>',true)}
+function saveVerification(id){var farmId=$('fv_farm').value,indicator=$('fv_indicator').value.trim(),date=$('fv_date').value,status=$('fv_status').value,verifier=$('fv_verifier').value.trim(),evidence=$('fv_evidence').value.trim(),publicNote=$('fv_public').value.trim();if(!indicator||!date){toast(t('Indicator and date are required','সূচক ও তারিখ আবশ্যক'));return}var v=id?DB.farmVerifications.filter(function(x){return x.id===id})[0]:null;if(!v){v={id:'FV-'+String(DB.farmVerifications.length+1).padStart(3,'0')};DB.farmVerifications.push(v)}Object.assign(v,{farmId:farmId,indicator:indicator,date:date,status:status,verifier:verifier,evidence:evidence,publicNote:publicNote});closeModal();toast(t('Farm verification saved in prototype','প্রোটোটাইপে খামার যাচাই সংরক্ষিত'));render()}
+function publicPassportModal(id){var p=packageFor(id);if(!p)return;var b=batchFor(p.batchId),far=farmerForBatch(p.batchId),pr=processingFor(p.processingId),fv=DB.farmVerifications.filter(function(x){return far&&x.farmId===far.id&&x.status==='verified'}),pub=p.status==='published';var url='https://mpv.example.org/passport/'+encodeURIComponent(p.code);openModal('<div class="mh"><h3>'+t('Public Chicken Passport preview','পাবলিক চিকেন পাসপোর্ট প্রিভিউ')+'</h3><button class="x" type="button" data-close>×</button></div><div class="mb"><div class="passport-hero"><span class="chip '+(pub?'ok':'watch')+'">'+(pub?t('Published','প্রকাশিত'):t('Preview only','শুধু প্রিভিউ'))+'</span><h2>MPV Chicken Passport</h2><p>'+esc(p.code)+'</p><p class="hint">'+t('Individual package linked to batch','ব্যাচের সঙ্গে যুক্ত পৃথক প্যাকেজ')+': '+esc(p.batchId)+'</p></div><div class="grid g2"><div class="inv-box"><strong>'+t('Farm & farmer','খামার ও কৃষক')+'</strong><dl class="dl"><dt>'+t('Farmer','কৃষক')+'</dt><dd>'+esc(far?far.name:'—')+'</dd><dt>'+t('Village / upazila','গ্রাম / উপজেলা')+'</dt><dd>'+esc(far?place(far.upazila):'—')+'</dd><dt>'+t('District','জেলা')+'</dt><dd>'+esc(far?place(far.district):'—')+'</dd><dt>'+t('Batch','ব্যাচ')+'</dt><dd>'+esc(p.batchId)+'</dd></dl></div><div class="inv-box"><strong>'+t('Package details','প্যাকেজের তথ্য')+'</strong><dl class="dl"><dt>'+t('Production date','উৎপাদন তারিখ')+'</dt><dd>'+dstr(b?b.date:'')+'</dd><dt>'+t('Processing date','প্রসেসিং তারিখ')+'</dt><dd>'+dstr(pr?pr.processingDate:'')+'</dd><dt>'+t('Packaging date','প্যাকেজিং তারিখ')+'</dt><dd>'+dstr(p.packagedAt)+'</dd><dt>'+t('Net weight','নেট ওজন')+'</dt><dd>'+num(p.weightG)+' g</dd></dl></div></div><div class="card" style="margin-top:12px"><h3>'+t('Traceability timeline','ট্রেসেবিলিটি টাইমলাইন')+'</h3><div class="timeline"><div class="timeline-item"><strong>'+t('Farm & farmer','খামার ও কৃষক')+'</strong><div class="sub">'+t('Farm record associated with this batch','এই ব্যাচের সঙ্গে খামারের রেকর্ড যুক্ত')+'</div></div><div class="timeline-item"><strong>'+t('Production batch recorded','প্রোডাকশন ব্যাচ রেকর্ড')+'</strong><div class="sub">'+dstr(b?b.date:'')+' · '+esc(p.batchId)+'</div></div><div class="timeline-item"><strong>'+t('Processing','প্রসেসিং')+'</strong><div class="sub">'+dstr(pr?pr.processingDate:'')+' · '+esc(pr?pr.facility:'')+'</div></div><div class="timeline-item"><strong>'+t('Package created','প্যাকেজ তৈরি')+'</strong><div class="sub">'+dstr(p.packagedAt)+' · '+num(p.weightG)+' g</div></div></div></div><div class="card" style="margin-top:12px"><h3>'+t('Farm verification','খামার যাচাই')+'</h3>'+(fv.length?fv.map(function(v){return '<p><span class="chip ok">'+t('Verified','যাচাইকৃত')+'</span> '+esc(v.indicator)+' · '+dstr(v.date)+'</p>'+(v.publicNote?'<p class="hint">'+esc(v.publicNote)+'</p>':'')}).join(''):'<p class="hint">'+t('No approved public verification record is available for this farm.','এই খামারের জন্য অনুমোদিত পাবলিক যাচাই রেকর্ড নেই।')+'</p>')+'</div><p class="hint" style="margin-top:12px">'+t('Demo data only. Public production-practice claims should be backed by approved evidence.','শুধু ডেমো ডেটা। উৎপাদন পদ্ধতি সম্পর্কে পাবলিক দাবি অনুমোদিত প্রমাণের ভিত্তিতে হওয়া উচিত।')+'</p></div><div class="mf"><button class="btn btn-line" type="button" data-close>'+t('Close','বন্ধ')+'</button><button class="btn btn-primary" type="button" data-qr="'+esc(p.id)+'">'+t('QR / Label','QR / লেবেল')+'</button></div>',true)}
+function qrLabelModal(id){var p=packageFor(id);if(!p)return;var url='https://mpv.example.org/passport/'+encodeURIComponent(p.code),qr='https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data='+encodeURIComponent(url);openModal('<div class="mh"><h3>'+t('QR code & package label','QR কোড ও প্যাকেজ লেবেল')+'</h3><button class="x" type="button" data-close>×</button></div><div class="mb"><div class="qr-preview"><img src="'+qr+'" alt="QR code for '+esc(p.code)+'"><div><strong>MPV Chicken Passport</strong><p style="margin:6px 0"><strong>'+esc(p.code)+'</strong></p><p class="hint">'+t('Linked batch','সংযুক্ত ব্যাচ')+': '+esc(p.batchId)+'</p><p class="hint">'+num(p.weightG)+' g · '+dstr(p.packagedAt)+'</p><p class="hint" style="overflow-wrap:anywhere">'+esc(url)+'</p></div></div><p class="hint" style="margin-top:12px">'+t('The QR image is fetched from a QR service and requires internet access. Replace mpv.example.org with the real MPV domain before printing production labels.','QR ছবিটি একটি QR সার্ভিস থেকে আসে, তাই ইন্টারনেট লাগবে। বাস্তব লেবেল প্রিন্টের আগে mpv.example.org-এর বদলে MPV-এর আসল ডোমেইন দিন।')+'</p></div><div class="mf"><button class="btn btn-line" type="button" data-close>'+t('Close','বন্ধ')+'</button><button class="btn btn-primary" type="button" id="printLabel" data-id="'+esc(p.id)+'">'+t('Print label','লেবেল প্রিন্ট')+'</button></div>',true)}
+function printPackageLabel(id){var p=packageFor(id);if(!p)return;var url='https://mpv.example.org/passport/'+encodeURIComponent(p.code),qr='https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data='+encodeURIComponent(url);$('print').innerHTML='<div style="font-family:Arial,sans-serif;border:1px solid #bbb;border-radius:12px;padding:16px;max-width:440px"><div style="display:flex;gap:16px;align-items:center"><img src="'+qr+'" style="width:140px;height:140px" alt="QR"><div><h2 style="margin:0 0 8px">MPV Chicken Passport</h2><strong>'+esc(p.code)+'</strong><p style="margin:8px 0">Batch: '+esc(p.batchId)+'</p><p>Net weight: '+num(p.weightG)+' g</p><p>Packaged: '+dstr(p.packagedAt)+'</p></div></div><p style="font-size:11px;overflow-wrap:anywhere">'+esc(url)+'</p></div>';window.print()}
+function togglePackagePublish(id){var p=packageFor(id);if(!p)return;if(p.status==='recalled'){toast(t('Recalled packages cannot be published','প্রত্যাহার করা প্যাকেজ প্রকাশ করা যাবে না'));return}p.status=p.status==='published'?'draft':'published';p.publishedAt=p.status==='published'?iso(TODAY):'';toast(p.status==='published'?t('Passport published in prototype','প্রোটোটাইপে পাসপোর্ট প্রকাশিত'):t('Passport moved to draft','পাসপোর্ট খসড়ায় নেওয়া হয়েছে'));render()}
+function processingPackages(id){S.view='passports';S.packageProcessingFilter=id;render();toast(t('Filtered to processing record ','প্রসেসিং রেকর্ড অনুযায়ী ফিল্টার করা হয়েছে ')+id)}
+function editPackageWeight(id){var p=packageFor(id);if(!p)return;openModal('<div class="mh"><h3>'+t('Edit package weight','প্যাকেজের ওজন সম্পাদনা')+'</h3><button class="x" type="button" data-close>×</button></div><div class="mb"><p><strong>'+esc(p.code)+'</strong></p><label class="f" style="margin-top:12px"><span>'+t('Net weight (grams)','নেট ওজন (গ্রাম)')+'</span><input id="pkgWeight" type="number" min="1" step="1" value="'+esc(p.weightG)+'"></label><p class="hint" style="margin-top:8px">'+t('Prototype only. In production, weight changes should be recorded in an audit log.','শুধু প্রোটোটাইপ। বাস্তব ব্যবস্থায় ওজন পরিবর্তন অডিট লগে রাখতে হবে।')+'</p><p class="err" id="pkgWeightErr"></p></div><div class="mf"><button class="btn btn-line" type="button" data-close>'+t('Cancel','বাতিল')+'</button><button class="btn btn-primary" type="button" id="savePkgWeight" data-id="'+esc(p.id)+'">'+t('Save weight','ওজন সংরক্ষণ')+'</button></div>')}
+
+/* ================= SHOP: PRODUCTS ================= */
+function vProducts(){
+  var f=F('products');
+  return head(t('Products','পণ্য'),t('Add, edit, hide or remove what customers can buy.','ক্রেতারা যা কিনতে পারবেন তা যোগ, সম্পাদনা, লুকানো বা মুছুন।'),addBtn('products'))+
+  '<div class="toolbar">'+search()+'<select data-a="1" aria-label="'+t('Category','ক্যাটাগরি')+'"><option value="all">'+t('All categories','সব ক্যাটাগরি')+'</option>'+DB.categories.map(function(c){return '<option value="'+c.id+'"'+(f.a===c.id?' selected':'')+'>'+esc(t(c.en,c.bn))+'</option>'}).join('')+'</select><select data-b="1" aria-label="'+t('Visibility','দৃশ্যমানতা')+'"><option value="all">'+t('All','সব')+'</option><option value="active"'+(f.b==='active'?' selected':'')+'>'+t('Visible','দৃশ্যমান')+'</option><option value="hidden"'+(f.b==='hidden'?' selected':'')+'>'+t('Hidden','লুকানো')+'</option><option value="low"'+(f.b==='low'?' selected':'')+'>'+t('Low stock','কম স্টক')+'</option></select></div><div id="tbl">'+tProducts()+'</div>';
+}
+function tProducts(){
+  var f=F('products'),q=f.q.toLowerCase();
+  var rows=DB.products.filter(function(p){return (f.a==='all'||p.cat===f.a)&&(f.b==='all'||(f.b==='low'?p.stock<=SET.lowStock:p.status===f.b))&&(!q||(p.en+' '+p.bn+' '+p.id+' '+p.batch).toLowerCase().indexOf(q)>-1)}).map(function(p,i){
+    var c=cat(p.cat),low=p.stock<=SET.lowStock;
+    return ['<div class="cellrow"><span class="thumb" style="'+(p.img?'background-image:url('+p.img+')':'')+'"></span><span><strong>'+esc(t(p.en,p.bn))+'</strong><span class="sub">'+esc(p.id)+(p.batch?' · '+esc(p.batch):'')+'</span></span></div>',esc(c?t(c.en,c.bn):'—'),tk(p.price)+t(' / kg',' / কেজি'),num(p.stock,p.stock%1?1:0)+t(' kg',' কেজি')+(low?' <span class="chip bad">'+t('Low','কম')+'</span>':''),'<span class="chip '+(p.status==='active'?'ok':'')+'">'+(p.status==='active'?t('Visible','দৃশ্যমান'):t('Hidden','লুকানো'))+'</span>',
+      '<div class="acts"><button class="btn btn-line btn-sm" type="button" data-stock="'+p.id+'">'+t('Stock','স্টক')+'</button><button class="btn btn-line btn-sm" type="button" data-vis="'+p.id+'">'+(p.status==='active'?t('Hide','লুকান'):t('Show','দেখান'))+'</button><button class="btn btn-line btn-sm" type="button" data-edit="products:'+p.id+'">'+t('Edit','সম্পাদনা')+'</button><button class="btn btn-danger btn-sm" type="button" data-del="products:'+p.id+'">'+t('Delete','মুছুন')+'</button></div>']});
+  return tbl([[t('Product','পণ্য')],[t('Category','ক্যাটাগরি')],[t('Price','দাম'),1],[t('Stock','স্টক'),1],[t('Visibility','দৃশ্যমানতা')],['']],rows);
+}
+function vCategories(){
+  return head(t('Categories','ক্যাটাগরি'),'',addBtn('categories'))+tbl([[t('Name','নাম')],[t('Products','পণ্য'),1],['']],DB.categories.map(function(c){return ['<strong>'+esc(t(c.en,c.bn))+'</strong><span class="sub">'+esc(c.en)+' · '+esc(c.bn)+'</span>',num(DB.products.filter(function(p){return p.cat===c.id}).length),actBtns('categories',c.id)]}));
+}
+
+/* ================= SHOP: ORDERS ================= */
+var STAT=[['pending','Pending','অপেক্ষমাণ','watch'],['confirmed','Confirmed','নিশ্চিত','blue'],['processing','Processing','প্রস্তুত হচ্ছে','blue'],['out','Out for delivery','ডেলিভারিতে','blue'],['delivered','Delivered','পৌঁছেছে','ok'],['cancelled','Cancelled','বাতিল','bad']];
+function stLbl(k){var s=STAT.filter(function(x){return x[0]===k})[0];return '<span class="chip '+s[3]+'">'+t(s[1],s[2])+'</span>'}
+var PAYL={bkash:['bKash','বিকাশ'],nagad:['Nagad','নগদ'],rocket:['Rocket','রকেট'],bank:['Bank transfer','ব্যাংক ট্রান্সফার'],cod:['Cash on delivery','ক্যাশ অন ডেলিভারি']};
+function vOrders(){
+  var live=DB.orders.filter(function(o){return o.status!=='cancelled'}),sum=function(from){return live.filter(function(o){return o.date>=from}).reduce(function(a,o){return a+orderTotals(o).total},0)};
+  var cnt={all:DB.orders.length};STAT.forEach(function(s){cnt[s[0]]=DB.orders.filter(function(o){return o.status===s[0]}).length});
+  return head(t('Orders','অর্ডার'),t('Confirm, prepare, deliver and track payment.','নিশ্চিত করুন, প্রস্তুত করুন, ডেলিভারি দিন এবং পেমেন্ট দেখুন।'))+
+  '<div class="kpis" style="grid-template-columns:repeat(2,1fr)">'+kpi(t('Sales today','আজকের বিক্রি'),tk(sum(iso(TODAY))))+kpi(t('Last 7 days','গত ৭ দিন'),tk(sum(iso(daysAgo(6)))))+kpi(t('All time','সর্বমোট'),tk(sum('0000')))+kpi(t('Awaiting payment','পেমেন্ট বাকি'),num(live.filter(function(o){return !o.paid}).length)+t(' orders',' অর্ডার'))+'</div>'+
+  '<div class="chips"><button class="fchip" type="button" data-os="all" aria-pressed="'+(S.orderStatus==='all')+'">'+t('All','সব')+' ('+num(cnt.all)+')</button>'+STAT.map(function(s){return '<button class="fchip" type="button" data-os="'+s[0]+'" aria-pressed="'+(S.orderStatus===s[0])+'">'+t(s[1],s[2])+' ('+num(cnt[s[0]])+')</button>'}).join('')+'</div>'+
+  '<div class="toolbar">'+search()+'</div><div id="tbl">'+tOrders()+'</div>';
+}
+function tOrders(){
+  var f=F('orders'),q=f.q.toLowerCase();
+  var rows=DB.orders.slice().reverse().filter(function(o){return (S.orderStatus==='all'||o.status===S.orderStatus)&&(!q||(o.id+' '+o.cname+' '+o.mobile).toLowerCase().indexOf(q)>-1)}).map(function(o){
+    var tot=orderTotals(o);
+    return ['<strong>'+esc(o.id)+'</strong><span class="sub">'+dstr(o.date)+'</span>','<strong>'+esc(o.cname)+'</strong><span class="sub">'+esc(o.mobile)+' · '+esc(place(o.district))+'</span>',num(o.items.length)+t(' items',' পণ্য'),'<strong>'+tk(tot.total)+'</strong>',esc(t(PAYL[o.method][0],PAYL[o.method][1]))+'<span class="sub"><span class="chip '+(o.paid?'ok':'watch')+'">'+(o.paid?t('Paid','পরিশোধিত'):t('Unpaid','অপরিশোধিত'))+'</span></span>',stLbl(o.status),'<div class="acts"><button class="btn btn-line btn-sm" type="button" data-order="'+o.id+'">'+t('Open','খুলুন')+'</button></div>']});
+  return tbl([[t('Order','অর্ডার')],[t('Customer','ক্রেতা')],[t('Items','পণ্য')],[t('Total','মোট'),1],[t('Payment','পেমেন্ট')],[t('Status','অবস্থা')],['']],rows);
+}
+function vCustomers(){
+  var m={};DB.orders.forEach(function(o){var c=m[o.mobile]||(m[o.mobile]={name:o.cname,mobile:o.mobile,district:o.district,n:0,spent:0,last:''});c.n++;if(o.status!=='cancelled')c.spent+=orderTotals(o).total;if(o.date>c.last)c.last=o.date});
+  var rows=Object.keys(m).map(function(k){var c=m[k];return ['<strong>'+esc(c.name)+'</strong>',esc(c.mobile),esc(place(c.district)),num(c.n),tk(c.spent),dstr(c.last)]});
+  return head(t('Customers','ক্রেতা'),t('Built automatically from orders.','অর্ডার থেকে স্বয়ংক্রিয়ভাবে তৈরি।'))+tbl([[t('Name','নাম')],[t('Mobile','মোবাইল')],[t('District','জেলা')],[t('Orders','অর্ডার'),1],[t('Total spent','মোট খরচ'),1],[t('Last order','শেষ অর্ডার')]],rows);
+}
+function vCoupons(){
+  return head(t('Coupons','কুপন'),t('Discount codes customers can enter at checkout.','চেকআউটে ক্রেতারা যে ডিসকাউন্ট কোড দিতে পারবেন।'),addBtn('coupons'))+tbl([[t('Code','কোড')],[t('Discount','ছাড়')],[t('Minimum order','সর্বনিম্ন অর্ডার'),1],[t('Status','অবস্থা')],['']],DB.coupons.map(function(c){return ['<strong>'+esc(c.code)+'</strong>',c.type==='percent'?num(c.value)+'%':tk(c.value),tk(c.min),'<span class="chip '+(c.active?'ok':'')+'">'+(c.active?t('Active','চালু'):t('Off','বন্ধ'))+'</span>',actBtns('coupons',c.id)]}));
+}
+function vShopSet(){
+  function tog(id,l,on){return '<label class="tog"><input type="checkbox" id="'+id+'"'+(on?' checked':'')+'>'+l+'</label>'}
+  return head(t('Shop settings','দোকান সেটিংস'),t('Delivery, payment methods and stock alerts.','ডেলিভারি, পেমেন্ট পদ্ধতি ও স্টক সতর্কতা।'))+
+  '<div class="grid g2"><div class="card"><h3>'+t('Shop and delivery','দোকান ও ডেলিভারি')+'</h3><div class="form">'+
+  '<div class="full">'+tog('sOpen',t('Shop is open for orders','দোকান অর্ডার নেওয়ার জন্য খোলা'),SET.shopOpen)+'</div>'+
+  '<label class="f"><span>'+t('Delivery charge (৳)','ডেলিভারি চার্জ (৳)')+'</span><input id="sDel" inputmode="numeric" value="'+SET.delivery+'"></label>'+
+  '<label class="f"><span>'+t('Free delivery above (৳)','এর বেশি অর্ডারে ডেলিভারি ফ্রি (৳)')+'</span><input id="sFree" inputmode="numeric" value="'+SET.freeOver+'"></label>'+
+  '<label class="f"><span>'+t('Low-stock alert at (kg)','স্টক কম সতর্কতা (কেজি)')+'</span><input id="sLow" inputmode="numeric" value="'+SET.lowStock+'"></label></div><p class="hint" style="margin-top:8px">'+t('The delivery rules are placeholders. Ask the client for the real ones.','ডেলিভারির নিয়ম নমুনা। ক্লায়েন্টের কাছ থেকে আসল নিয়ম নিন।')+'</p></div>'+
+  '<div class="card"><h3>'+t('Payment methods','পেমেন্ট পদ্ধতি')+'</h3>'+Object.keys(PAYL).map(function(k){return tog('sp_'+k,t(PAYL[k][0],PAYL[k][1]),SET.pay[k])}).join('')+
+  '<label class="f" style="margin-top:8px"><span>'+t('Bank transfer details (shown after checkout)','ব্যাংক ট্রান্সফারের তথ্য (চেকআউটের পর দেখানো হবে)')+'</span><textarea id="sBank">'+esc(SET.bank)+'</textarea></label></div></div>'+
+  '<div style="margin-top:14px"><button class="btn btn-primary" type="button" id="saveSet">'+t('Save settings','সেটিংস সংরক্ষণ')+'</button></div>';
+}
+
+/* ================= CONTENT ================= */
+function vNotices(){
+  var rows=DB.notices.slice().sort(function(a,b){return a.date<b.date?1:-1}).map(function(n){return ['<strong>'+esc(t(n.en,n.bn))+'</strong>'+(n.pinned?' <span class="chip dark">'+t('Pinned','স্থির')+'</span>':''),dstr(n.date),esc(n.cat),'<span class="chip '+(n.published?'ok':'')+'">'+(n.published?t('Published','প্রকাশিত'):t('Draft','খসড়া'))+'</span>',actBtns('notices',n.id)]});
+  return head(t('Notices','নোটিশ'),t('Publish, edit or delete announcements. Each has an English and a Bangla version.','ঘোষণা প্রকাশ, সম্পাদনা বা মুছুন। প্রতিটির ইংরেজি ও বাংলা সংস্করণ থাকে।'),addBtn('notices'))+tbl([[t('Title','শিরোনাম')],[t('Date','তারিখ')],[t('Category','ক্যাটাগরি')],[t('Status','অবস্থা')],['']],rows);
+}
+function vPubs(){
+  return head(t('Publications','প্রকাশনা'),t('Scientific articles and other publications shown on the website.','ওয়েবসাইটে দেখানো বৈজ্ঞানিক প্রবন্ধ ও অন্যান্য প্রকাশনা।'),addBtn('pubs'))+tbl([[t('Title','শিরোনাম')],[t('Segment','বিভাগ')],[t('Year','সাল'),1],[t('PDF','পিডিএফ')],['']],DB.pubs.map(function(p){return ['<strong>'+esc(t(p.en,p.bn))+'</strong><span class="sub">'+esc(p.authors)+' · '+esc(p.venue)+'</span>',p.sec==='sci'?t('Scientific','বৈজ্ঞানিক'):t('Other','অন্যান্য'),num(p.year).replace(/,/g,''),p.pdf?esc(p.pdf):'—',actBtns('pubs',p.id)]}));
+}
+function vGallery(){
+  return head(t('Gallery','গ্যালারি'),t('Photos and YouTube videos shown in the gallery.','গ্যালারিতে দেখানো ছবি ও ইউটিউব ভিডিও।'),addBtn('gallery'))+tbl([[t('Item','আইটেম')],[t('Type','ধরন')],[t('Category','ক্যাটাগরি')],['']],DB.gallery.map(function(g){return ['<div class="cellrow"><span class="thumb" style="'+(g.img?'background-image:url('+g.img+')':'background:linear-gradient(135deg,#2E7D4F,#1c4a3c)')+'"></span><strong>'+esc(t(g.en,g.bn))+'</strong></div>',g.type==='video'?t('Video','ভিডিও')+(g.yt?'':' <span class="chip watch">'+t('No link yet','লিংক নেই')+'</span>'):t('Photo','ছবি'),esc(g.cat),actBtns('gallery',g.id)]}));
+}
+
+/* ================= DATA EXPORT (admin research use) ================= */
+var EXP={ds:'batches',dist:'all',from:'',to:'',anon:true};
+function exportRows(){
+  var h=[],r=[],anon=EXP.anon;
+  function inRange(d){return (!EXP.from||d>=EXP.from)&&(!EXP.to||d<=EXP.to)}
+  if(EXP.ds==='batches'){
+    h=['batch_id','farmer_id'].concat(anon?[]:['farmer_name']).concat(['district','upazila','batch_date','birds_placed','birds_died','mortality_pct','feed_kg','meat_kg','avg_weight_kg','fcr','cost_bdt','revenue_bdt','profit_bdt','profit_per_bird_bdt']);
+    DB.batches.forEach(function(b){var f=farmer(b.fid),m=bm(b);if(!f||(EXP.dist!=='all'&&f.district!==EXP.dist)||!inRange(b.date))return;
+      r.push([b.id,f.id].concat(anon?[]:[f.name]).concat([f.district,f.upazila,b.date,b.birds,b.dead,m.mort.toFixed(2),b.feedKg,b.kg,m.w.toFixed(2),m.fcr.toFixed(2),b.cost,b.revenue,m.profit,m.ppb.toFixed(2)]))});
+  }else if(EXP.ds==='farmers'){
+    h=['farmer_id'].concat(anon?[]:['name','mobile']).concat(['district','upazila','status','joined','batches','birds_placed','mortality_pct','fcr','profit_per_bird_bdt']);
+    DB.farmers.forEach(function(f){if(EXP.dist!=='all'&&f.district!==EXP.dist)return;var a=agg(fBatches(f.id));
+      r.push([f.id].concat(anon?[]:[f.name,f.mobile]).concat([f.district,f.upazila,f.status,f.joined,a.n,a.birds,a.mort.toFixed(2),a.fcr.toFixed(2),a.ppb.toFixed(2)]))});
+  }else if(EXP.ds==='orders'){
+    h=['order_id','order_date'].concat(anon?[]:['customer','mobile']).concat(['district','items','total_bdt','payment_method','paid','status']);
+    DB.orders.forEach(function(o){if((EXP.dist!=='all'&&o.district!==EXP.dist)||!inRange(o.date))return;
+      r.push([o.id,o.date].concat(anon?[]:[o.cname,o.mobile]).concat([o.district,o.items.length,orderTotals(o).total,o.method,o.paid?'yes':'no',o.status]))});
+  }
+  return {h:h,r:r};
+}
+function csv(h,r){function c(v){v=String(v==null?'':v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}return '\ufeff'+[h].concat(r).map(function(row){return row.map(c).join(',')}).join('\r\n')}
+function download(name,text){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
+function vData(){
+  var dists=[];DB.farmers.forEach(function(x){if(dists.indexOf(x.district)<0)dists.push(x.district)});
+  return head(t('Data export','ডেটা এক্সপোর্ট'),t('Download MPV data as CSV for research and analysis. Opens in Excel, SPSS, R and Stata.','গবেষণা ও বিশ্লেষণের জন্য এমপিভির ডেটা সিএসভি হিসেবে ডাউনলোড করুন। এক্সেল, এসপিএসএস, আর ও স্টাটায় খোলে।'))+
+  '<div class="grid g2"><div class="card"><h3>'+t('Choose the data','ডেটা বাছাই করুন')+'</h3><div class="form">'+
+  '<label class="f full"><span>'+t('Dataset','ডেটাসেট')+'</span><select id="eDs"><option value="batches"'+(EXP.ds==='batches'?' selected':'')+'>'+t('Batch records (production, mortality, FCR, cost, profit)','ব্যাচ রেকর্ড (উৎপাদন, মৃত্যুহার, এফসিআর, খরচ, মুনাফা)')+'</option><option value="farmers"'+(EXP.ds==='farmers'?' selected':'')+'>'+t('Farmers summary','কৃষকদের সারসংক্ষেপ')+'</option><option value="orders"'+(EXP.ds==='orders'?' selected':'')+'>'+t('Shop orders','দোকানের অর্ডার')+'</option></select></label>'+
+  '<label class="f"><span>'+t('District','জেলা')+'</span><select id="eDist"><option value="all">'+t('All districts','সব জেলা')+'</option>'+dists.map(function(d){return '<option value="'+d+'"'+(EXP.dist===d?' selected':'')+'>'+place(d)+'</option>'}).join('')+'</select></label><span></span>'+
+  '<label class="f"><span>'+t('From date','শুরুর তারিখ')+'</span><input id="eFrom" type="date" value="'+EXP.from+'"></label><label class="f"><span>'+t('To date','শেষ তারিখ')+'</span><input id="eTo" type="date" value="'+EXP.to+'"></label>'+
+  '<div class="full"><label class="tog"><input type="checkbox" id="eAnon"'+(EXP.anon?' checked':'')+'>'+t('Remove names and mobile numbers','নাম ও মোবাইল নম্বর বাদ দিন')+'</label><p class="hint">'+t('IDs are kept so records can still be linked. Date filters do not apply to the farmers summary.','আইডি রাখা হয় যাতে রেকর্ড মেলানো যায়। কৃষকদের সারসংক্ষেপে তারিখ ফিল্টার কাজ করে না।')+'</p></div></div></div>'+
+  '<div class="card"><h3>'+t('Ready to download','ডাউনলোডের জন্য প্রস্তুত')+'</h3><div id="ePrev">'+previewHTML()+'</div></div></div>';
+}
+function previewHTML(){
+  var d=exportRows(),pr=d.r.slice(0,4);
+  return '<p style="margin-bottom:8px"><strong>'+num(d.r.length)+'</strong> '+t('rows · ','সারি · ')+num(d.h.length)+t(' columns',' কলাম')+'</p>'+
+  '<div class="tw" style="margin-bottom:12px"><table style="min-width:420px;font-size:.82rem"><thead><tr>'+d.h.slice(0,6).map(function(x){return '<th>'+esc(x)+'</th>'}).join('')+'</tr></thead><tbody>'+pr.map(function(r){return '<tr>'+r.slice(0,6).map(function(x){return '<td>'+esc(x)+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>'+
+  '<button class="btn btn-primary" type="button" data-csv="data"'+(d.r.length?'':' disabled')+'>'+t('Download CSV','সিএসভি ডাউনলোড')+'</button>';
+}
+
+/* ================= MODALS ================= */
+var M=null;
+function openModal(html,wide){$('modal').innerHTML='<div class="mbox'+(wide?' wide':'')+'">'+html+'</div>';$('modal').classList.add('open');document.body.style.overflow='hidden';var f=$('modal').querySelector('input,select,textarea,button.btn');if(f&&!wide)f.focus()}
+function closeModal(){$('modal').classList.remove('open');document.body.style.overflow='';M=null}
+function fieldHTML(f,val){
+  var l=t(f.l[0],f.l[1]),id='f_'+f.k,full=f.full?' full':'';
+  if(f.type==='check')return '<div class="full"><label class="tog"><input type="checkbox" id="'+id+'"'+(val?' checked':'')+'>'+l+'</label></div>';
+  if(f.type==='select')return '<label class="f'+full+'"><span>'+l+'</span><select id="'+id+'">'+f.opts().map(function(o){return '<option value="'+esc(o[0])+'"'+(String(val)===String(o[0])?' selected':'')+'>'+esc(t(o[1],o[2]))+'</option>'}).join('')+'</select></label>';
+  if(f.type==='textarea')return '<label class="f full"><span>'+l+'</span><textarea id="'+id+'">'+esc(val)+'</textarea></label>';
+  if(f.type==='image')return '<label class="f full"><span>'+l+'</span><input type="file" id="'+id+'" accept="image/*"><img class="prev" id="pv_'+f.k+'" alt=""'+(val?' src="'+val+'" style="display:block"':'')+'></label>';
+  if(f.type==='file')return '<label class="f full"><span>'+l+'</span><input type="file" id="'+id+'" accept=".pdf,application/pdf">'+(val?'<span class="hint">'+t('Current file: ','বর্তমান ফাইল: ')+esc(val)+'</span>':'')+'</label>';
+  return '<label class="f'+full+'" data-fk="'+f.k+'"><span>'+l+(f.req?' *':'')+'</span><input id="'+id+'" type="'+(f.type==='number'?'text':f.type)+'"'+(f.type==='number'?' inputmode="decimal"':'')+' value="'+esc(val)+'"><span class="err"></span></label>';
+}
+function openForm(ent,item,extra){
+  var c=ENT[ent],isNew=!item;
+  M={ent:ent,item:item,extra:extra,files:{}};
+  var base=item||{};
+  var body=c.fields.map(function(f){var v=base[f.k];if(v==null)v=(f.type==='check'?(f.k==='published'||f.k==='active'||f.k==='cert'):f.type==='select'?f.opts()[0][0]:(f.k==='date'||f.k==='joined')?iso(TODAY):f.k==='year'?TODAY.getFullYear():'');if(ent==='trainings'&&isNew&&f.k==='seats')v=30;return fieldHTML(f,v)}).join('');
+  openModal('<div class="mh"><h3>'+(isNew?t('Add ','যোগ করুন: ')+t(c.n[0],c.n[1]):t('Edit ','সম্পাদনা: ')+t(c.n[0],c.n[1]))+'</h3><button class="x" type="button" data-close aria-label="'+t('Close','বন্ধ')+'">×</button></div><div class="mb"><div class="form">'+body+'</div></div><div class="mf"><button class="btn btn-line" type="button" data-close>'+t('Cancel','বাতিল')+'</button><button class="btn btn-primary" type="button" id="mSave">'+t('Save','সংরক্ষণ')+'</button></div>');
+}
+function saveForm(){
+  var c=ENT[M.ent],ok=true,vals={};
+  c.fields.forEach(function(f){
+    var el=$('f_'+f.k);if(!el)return;var v;
+    if(f.type==='check')v=el.checked;else if(f.type==='number')v=toNum(el.value);else if(f.type==='image')v=M.files[f.k]!==undefined?M.files[f.k]:(M.item?M.item[f.k]:'');else if(f.type==='file')v=el.files&&el.files[0]?el.files[0].name:(M.item?M.item[f.k]:'');else v=el.value.trim();
+    if(f.req){var bad=(f.type==='number'?el.value.trim()==='':!v);var lab=el.closest('label');if(lab){lab.classList.toggle('bad',bad);var er=lab.querySelector('.err');if(er)er.textContent=bad?t('Required','আবশ্যক'):''}if(bad)ok=false}
+    vals[f.k]=v;
+  });
+  if(!ok)return;
+  var list=DB[M.ent],item=M.item;
+  if(!item){item={};if(M.ent==='batches'){var fx=farmer(M.extra);var n=fBatches(fx.id).length+1;item.id='F'+fx.id.slice(-2)+'-B'+pad(n,2);item.fid=fx.id}else item.id=nextId(M.ent,list);list.push(item)}
+  Object.keys(vals).forEach(function(k){item[k]=vals[k]});
+  if(M.ent==='farmers'&&!item.upazila)item.upazila='';
+  if(M.ent==='trainings'&&item.status==='upcoming')item.people=0;
+  if(M.ent==='pubs'&&!item.pdf)item.pdf='';
+  closeModal();toast(t('Saved','সংরক্ষিত'));render();
+}
+function confirmDel(ent,id){
+  var list=DB[ent],item=list.filter(function(x){return x.id===id})[0];if(!item)return;
+  var extra='';
+  if(ent==='farmers')extra=' '+t('Its ','এর ')+num(fBatches(id).length)+t(' batches will also be deleted.',' টি ব্যাচও মুছে যাবে।');
+  if(ent==='categories'&&DB.products.some(function(p){return p.cat===id})){openModal('<div class="mh"><h3>'+t('Cannot delete','মুছা যাবে না')+'</h3><button class="x" type="button" data-close>×</button></div><div class="mb"><p>'+t('This category still has products. Move or delete them first.','এই ক্যাটাগরিতে এখনো পণ্য আছে। আগে সেগুলো সরান বা মুছুন।')+'</p></div><div class="mf"><button class="btn btn-dark" type="button" data-close>OK</button></div>');return}
+  var nm=item.name||item.en||item.code||item.id;
+  openModal('<div class="mh"><h3>'+t('Delete this ','মুছবেন? ')+t(ENT[ent].n[0],ENT[ent].n[1])+'?</h3><button class="x" type="button" data-close>×</button></div><div class="mb"><p><strong>'+esc(nm)+'</strong></p><p class="hint" style="margin-top:6px">'+t('This cannot be undone.','এটি ফেরানো যাবে না।')+extra+'</p></div><div class="mf"><button class="btn btn-line" type="button" data-close>'+t('Cancel','বাতিল')+'</button><button class="btn btn-danger" type="button" data-doDel="'+ent+':'+id+'">'+t('Delete','মুছুন')+'</button></div>');
+}
+function doDel(ent,id){
+  if(ent==='farmers')DB.batches=DB.batches.filter(function(b){return b.fid!==id});
+  if(ent==='trainings')DB.regs=DB.regs.filter(function(r){return r.tid!==id});
+  DB[ent]=DB[ent].filter(function(x){return x.id!==id});
+  var wasFarmer=ent==='farmers'&&S.view==='farmer';closeModal();toast(t('Deleted','মুছে ফেলা হয়েছে'));if(wasFarmer)S.view='farmers';render();
+}
+function stockModal(id){
+  var p=prod(id);M={stock:id};
+  openModal('<div class="mh"><h3>'+t('Adjust stock: ','স্টক সমন্বয়: ')+esc(t(p.en,p.bn))+'</h3><button class="x" type="button" data-close>×</button></div><div class="mb"><p>'+t('Current stock: ','বর্তমান স্টক: ')+'<strong>'+num(p.stock,p.stock%1?1:0)+t(' kg',' কেজি')+'</strong></p><div class="form" style="margin-top:10px"><label class="f"><span>'+t('Add (+) or remove (−) kg','যোগ (+) বা বাদ (−) কেজি')+'</span><input id="stDelta" inputmode="decimal" placeholder="+20 / -5"></label><label class="f"><span>'+t('Reason','কারণ')+'</span><select id="stWhy"><option>'+t('New stock from a batch','ব্যাচ থেকে নতুন স্টক')+'</option><option>'+t('Damaged or spoiled','নষ্ট বা পচে যাওয়া')+'</option><option>'+t('Count correction','গণনা সংশোধন')+'</option></select></label></div><p class="err" id="stErr"></p></div><div class="mf"><button class="btn btn-line" type="button" data-close>'+t('Cancel','বাতিল')+'</button><button class="btn btn-primary" type="button" id="stSave">'+t('Update stock','স্টক হালনাগাদ')+'</button></div>');
+}
+function orderModal(id){
+  var o=DB.orders.filter(function(x){return x.id===id})[0];if(!o)return;M={order:id};
+  var tot=orderTotals(o),flow=['pending','confirmed','processing','out','delivered'],idx=flow.indexOf(o.status),cancelled=o.status==='cancelled';
+  var steps='<div class="ostep">'+flow.map(function(k,i){var s=STAT.filter(function(x){return x[0]===k})[0];return '<span class="'+(cancelled?'':(i<idx?'dn':i===idx?'on':''))+'">'+t(s[1],s[2])+'</span>'}).join('')+'</div>';
+  var nextLbl=idx>-1&&idx<4?[t('Confirm order','অর্ডার নিশ্চিত করুন'),t('Start preparing','প্রস্তুত শুরু করুন'),t('Send out for delivery','ডেলিভারিতে পাঠান'),t('Mark delivered','পৌঁছেছে চিহ্নিত করুন')][idx]:'';
+  var items=o.items.map(function(it){var p=prod(it.pid);return '<tr><td>'+esc(p?t(p.en,p.bn):it.pid)+'</td><td class="n">'+num(it.kg,it.kg%1?1:0)+t(' kg',' কেজি')+'</td><td class="n">'+tk(it.unit)+'</td><td class="n">'+tk(it.kg*it.unit)+'</td></tr>'}).join('');
+  openModal('<div class="mh"><h3>'+esc(o.id)+' '+stLbl(o.status)+'</h3><button class="x" type="button" data-close aria-label="'+t('Close','বন্ধ')+'">×</button></div><div class="mb">'+(cancelled?'':steps)+
+  '<div class="grid g2" style="gap:12px"><div class="inv-box" style="margin:0"><strong>'+t('Customer','ক্রেতা')+'</strong><dl class="dl"><dt>'+t('Name','নাম')+'</dt><dd>'+esc(o.cname)+'</dd><dt>'+t('Mobile','মোবাইল')+'</dt><dd>'+esc(o.mobile)+'</dd><dt>'+t('District','জেলা')+'</dt><dd>'+esc(place(o.district))+'</dd><dt>'+t('Address','ঠিকানা')+'</dt><dd>'+esc(o.address)+'</dd><dt>'+t('Date','তারিখ')+'</dt><dd>'+dstr(o.date)+'</dd></dl></div>'+
+  '<div class="inv-box" style="margin:0"><strong>'+t('Payment','পেমেন্ট')+'</strong><dl class="dl"><dt>'+t('Method','পদ্ধতি')+'</dt><dd>'+esc(t(PAYL[o.method][0],PAYL[o.method][1]))+'</dd><dt>'+t('Status','অবস্থা')+'</dt><dd><span class="chip '+(o.paid?'ok':'watch')+'">'+(o.paid?t('Paid','পরিশোধিত'):t('Unpaid','অপরিশোধিত'))+'</span></dd></dl><button class="btn btn-line btn-sm" type="button" data-paidorder="'+o.id+'" style="margin-top:8px">'+(o.paid?t('Mark as unpaid','অপরিশোধিত করুন'):t('Mark as paid','পরিশোধিত করুন'))+'</button></div></div>'+
+  '<div class="tw" style="margin-top:12px"><table style="min-width:420px"><thead><tr><th>'+t('Item','পণ্য')+'</th><th class="n">'+t('Qty','পরিমাণ')+'</th><th class="n">'+t('Price','দর')+'</th><th class="n">'+t('Amount','টাকা')+'</th></tr></thead><tbody>'+items+'<tr><td colspan="3" class="n">'+t('Subtotal','পণ্যের মোট')+'</td><td class="n">'+tk(tot.sub)+'</td></tr>'+(tot.disc?'<tr><td colspan="3" class="n">'+t('Discount','ছাড়')+'</td><td class="n">−'+tk(tot.disc)+'</td></tr>':'')+'<tr><td colspan="3" class="n">'+t('Delivery','ডেলিভারি')+'</td><td class="n">'+tk(tot.del)+'</td></tr><tr><td colspan="3" class="n"><strong>'+t('Total','সর্বমোট')+'</strong></td><td class="n"><strong>'+tk(tot.total)+'</strong></td></tr></tbody></table></div>'+
+  '<label class="f" style="margin-top:12px"><span>'+t('Internal note','অভ্যন্তরীণ নোট')+'</span><textarea id="oNote">'+esc(o.note)+'</textarea></label></div>'+
+  '<div class="mf"><button class="btn btn-line" type="button" data-invoice="'+o.id+'">'+t('Print invoice','ইনভয়েস প্রিন্ট')+'</button><button class="btn btn-line" type="button" data-savenote="'+o.id+'">'+t('Save note','নোট সংরক্ষণ')+'</button>'+(!cancelled&&o.status!=='delivered'?'<button class="btn btn-danger" type="button" data-cancel="'+o.id+'">'+t('Cancel order','অর্ডার বাতিল')+'</button>':'')+(nextLbl?'<button class="btn btn-primary" type="button" data-next="'+o.id+'">'+nextLbl+'</button>':'')+'</div>',true);
+}
+function invoice(id){
+  var o=DB.orders.filter(function(x){return x.id===id})[0],tot=orderTotals(o);
+  $('print').innerHTML='<h1 style="font-family:Arial;margin-bottom:4px">MPV Meat – '+t('Invoice','ইনভয়েস')+'</h1><p>'+esc(o.id)+' · '+dstr(o.date)+'</p><hr style="margin:12px 0"><p><strong>'+esc(o.cname)+'</strong><br>'+esc(o.mobile)+'<br>'+esc(o.address)+', '+esc(place(o.district))+'</p><table style="width:100%;border-collapse:collapse;margin-top:14px;font-size:14px"><tr style="text-align:left;border-bottom:1px solid #000"><th>'+t('Item','পণ্য')+'</th><th>'+t('Qty (kg)','পরিমাণ (কেজি)')+'</th><th>'+t('Price','দর')+'</th><th>'+t('Amount','টাকা')+'</th></tr>'+o.items.map(function(it){var p=prod(it.pid);return '<tr><td>'+esc(p?t(p.en,p.bn):it.pid)+'</td><td>'+it.kg+'</td><td>'+tk(it.unit)+'</td><td>'+tk(it.kg*it.unit)+'</td></tr>'}).join('')+'</table><p style="margin-top:12px;text-align:right">'+t('Subtotal','পণ্যের মোট')+': '+tk(tot.sub)+'<br>'+t('Discount','ছাড়')+': '+tk(tot.disc)+'<br>'+t('Delivery','ডেলিভারি')+': '+tk(tot.del)+'<br><strong>'+t('Total','সর্বমোট')+': '+tk(tot.total)+'</strong><br>'+t('Payment','পেমেন্ট')+': '+esc(t(PAYL[o.method][0],PAYL[o.method][1]))+' ('+(o.paid?t('Paid','পরিশোধিত'):t('Unpaid','অপরিশোধিত'))+')</p>';
+  window.print();
+}
+
+/* ================= events ================= */
+document.addEventListener('click',function(e){
+  var el=e.target.closest('button');if(!el)return;var d=el.dataset;
+  if(d.set){html.setAttribute('lang',d.set);document.querySelectorAll('.lang button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.set===d.set?'true':'false')});closeModal();render();return}
+  if(el.id==='burger'){openSide();return}
+  if(d.cpadd){openCoursePageForm(null);return}
+  if(d.cpedit){openCoursePageForm(d.cpedit);return}
+  if(d.cppreview){previewCoursePage(d.cppreview);return}
+  if(d.cptoggle){var cp=DB.coursePages.filter(function(x){return x.id===d.cptoggle})[0];if(cp){cp.status=cp.status==='published'?'draft':'published';cp.updatedAt=iso(TODAY);toast(cp.status==='published'?t('Page published in prototype','প্রোটোটাইপে পেজ প্রকাশিত'):t('Page unpublished','পেজ অপ্রকাশিত'));render()}return}
+  if(d.cparchive){archiveCoursePage(d.cparchive);return}
+  if(d.procadd){openProcessingForm();return}
+  if(d.procview){processingPackages(d.procview);return}
+  if(d.pkgview){publicPassportModal(d.pkgview);return}
+  if(d.weight){editPackageWeight(d.weight);return}
+  if(d.clearprocfilter!==undefined){S.packageProcessingFilter=null;render();return}
+  if(d.qr){qrLabelModal(d.qr);return}
+  if(d.pkgstatus){togglePackagePublish(d.pkgstatus);return}
+  if(d.verifyadd){openVerificationForm(null);return}
+  if(d.verifyedit){openVerificationForm(d.verifyedit);return}
+  if(d.nav){var p=d.nav.split(':');go(p[0],p[1]);return}
+  if(d.close!==undefined){closeModal();return}
+  if(d.add){openForm(d.add,null,d.x);return}
+  if(d.edit){var q=d.edit.split(':');openForm(q[0],DB[q[0]].filter(function(x){return x.id===q[1]})[0]);return}
+  if(d.del){var w=d.del.split(':');confirmDel(w[0],w[1]);return}
+  if(d.dodel){var z=d.dodel.split(':');doDel(z[0],z[1]);return}
+  if(el.id==='mSave'){saveForm();return}
+  if(el.id==='procSave'){saveProcessing();return}
+  if(el.id==='verifySave'){saveVerification(el.dataset.id||'');return}
+  if(el.id==='savePkgWeight'){var pw=packageFor(el.dataset.id),wg=Number($('pkgWeight').value);if(!wg||wg<1||!Number.isFinite(wg)){$('pkgWeightErr').textContent=t('Enter a valid positive weight in grams.','গ্রামে সঠিক ধনাত্মক ওজন লিখুন।');return}pw.weightG=Math.round(wg);closeModal();toast(t('Package weight updated in prototype','প্রোটোটাইপে প্যাকেজের ওজন আপডেট হয়েছে'));render();return}
+  if(el.id==='printLabel'){printPackageLabel(el.dataset.id);return}
+  if(el.id==='cpSave'){saveCoursePage();return}
+  if(d.fa){F(S.view).a=d.fa;render();return}
+  if(d.os){S.orderStatus=d.os;render();return}
+  if(d.vis){var p2=prod(d.vis);p2.status=p2.status==='active'?'hidden':'active';toast(p2.status==='active'?t('Now visible in the shop','এখন দোকানে দেখা যাবে'):t('Hidden from the shop','দোকান থেকে লুকানো হয়েছে'));render();return}
+  if(d.stock){stockModal(d.stock);return}
+  if(el.id==='stSave'){var pr=prod(M.stock),dl=toNum($('stDelta').value);if(!dl){$('stErr').textContent=t('Enter a number such as 20 or -5.','২০ বা -৫ এর মতো সংখ্যা লিখুন।');return}if(pr.stock+dl<0){$('stErr').textContent=t('Stock cannot go below zero.','স্টক শূন্যের নিচে যেতে পারে না।');return}pr.stock=Math.round((pr.stock+dl)*100)/100;closeModal();toast(t('Stock updated','স্টক হালনাগাদ হয়েছে'));render();return}
+  if(d.order){orderModal(d.order);return}
+  if(d.next||d.cancel||d.paidorder||d.savenote||d.invoice){
+    var id=d.next||d.cancel||d.paidorder||d.savenote||d.invoice,o=DB.orders.filter(function(x){return x.id===id})[0];
+    if(d.next){var fl=['pending','confirmed','processing','out','delivered'];o.status=fl[fl.indexOf(o.status)+1];if(o.status==='delivered'&&o.method==='cod')o.paid=true;toast(t('Order updated','অর্ডার হালনাগাদ'));orderModal(id);render();return}
+    if(d.cancel){o.status='cancelled';o.items.forEach(function(it){var p=prod(it.pid);if(p)p.stock=Math.round((p.stock+it.kg)*100)/100});toast(t('Order cancelled and stock returned','অর্ডার বাতিল, স্টক ফেরত'));orderModal(id);render();return}
+    if(d.paidorder){o.paid=!o.paid;orderModal(id);render();return}
+    if(d.savenote){o.note=$('oNote').value;toast(t('Note saved','নোট সংরক্ষিত'));return}
+    if(d.invoice){invoice(id);return}
+  }
+  if(d.paid){DB.regs.filter(function(r){return r.id===d.paid})[0].pay='paid';toast(t('Marked as paid','পরিশোধিত চিহ্নিত'));render();return}
+  if(d.rmreg){DB.regs=DB.regs.filter(function(r){return r.id!==d.rmreg});toast(t('Registration removed','নিবন্ধন সরানো হয়েছে'));render();return}
+  if(el.id==='saveSet'){SET.shopOpen=$('sOpen').checked;SET.delivery=toNum($('sDel').value);SET.freeOver=toNum($('sFree').value);SET.lowStock=toNum($('sLow').value);Object.keys(PAYL).forEach(function(k){SET.pay[k]=$('sp_'+k).checked});SET.bank=$('sBank').value;toast(t('Settings saved','সেটিংস সংরক্ষিত'));return}
+  if(d.csv){
+    if(d.csv==='data'){var x=exportRows();download('mpv-'+EXP.ds+'-'+iso(TODAY)+'.csv',csv(x.h,x.r));toast(t('Downloading…','ডাউনলোড হচ্ছে…'))}
+    else{var tid=d.csv.split(':')[1],rs=regsOf(tid).map(function(r){return [r.id,r.name,r.mobile,r.org,r.date,r.pay]});download('registrations-'+tid+'.csv',csv(['reg_id','name','mobile','organization','registered','payment'],rs))}
+    return;
+  }
+});
+document.addEventListener('input',function(e){
+  var el=e.target;
+  if(el.dataset&&el.dataset.q){F(S.view).q=el.value;if(S.view==='passports'){render();var q=$('main').querySelector('[data-q]');if(q){q.focus();q.setSelectionRange(q.value.length,q.value.length)}return}var tb=$('tbl');if(tb){var fn=({farmers:tFarmers,products:tProducts,orders:tOrders})[S.view];if(fn)tb.innerHTML=fn()} }
+});
+document.addEventListener('change',function(e){
+  var el=e.target,id=el.id||'';
+  if(el.dataset&&(el.dataset.a||el.dataset.b)){var f=F(S.view);if(el.dataset.a)f.a=el.value;else f.b=el.value;var tb=$('tbl');if(tb)tb.innerHTML=({farmers:tFarmers,products:tProducts})[S.view]();return}
+  if(id.indexOf('f_')===0&&el.type==='file'&&M&&M.ent){var k=id.slice(2);if(el.files&&el.files[0]&&el.accept.indexOf('image')>-1){var rd=new FileReader();rd.onload=function(){M.files[k]=rd.result;var pv=$('pv_'+k);if(pv){pv.src=rd.result;pv.style.display='block'}};rd.readAsDataURL(el.files[0])}return}
+  if(id==='eDs'||id==='eDist'||id==='eFrom'||id==='eTo'||id==='eAnon'){EXP.ds=$('eDs').value;EXP.dist=$('eDist').value;EXP.from=$('eFrom').value;EXP.to=$('eTo').value;EXP.anon=$('eAnon').checked;$('ePrev').innerHTML=previewHTML()}
+});
+$('scrim').addEventListener('click',closeSide);
+$('modal').addEventListener('click',function(e){if(e.target===$('modal'))closeModal()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal();closeSide()}});
+render();
+})();
+</script>
+</body>
+</html>

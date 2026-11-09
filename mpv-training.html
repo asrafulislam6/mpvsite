@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MPV Training | এমপিভি প্রশিক্ষণ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#12332A;--paddy:#2E7D4F;--mist:#EAF1E7;--bone:#FAFBF7;--turmeric:#F2B02E;--clay:#B8432B;--line:#cfdccb;
+--display:"Bricolage Grotesque","Hind Siliguri",system-ui,sans-serif;--body:"Hind Siliguri",system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:var(--bone);line-height:1.65;font-size:17px;-webkit-font-smoothing:antialiased;padding-bottom:64px}
+body.lock{overflow:hidden}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--turmeric);outline-offset:2px;border-radius:4px}
+en,bn{display:inline}
+html[lang="bn"] en{display:none}
+html[lang="en"] bn{display:none}
+html[lang="bn"] body{line-height:1.8}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--display);line-height:1.15;letter-spacing:-.015em}
+html[lang="bn"] h1,html[lang="bn"] h2,html[lang="bn"] h3{font-family:var(--body);letter-spacing:0;line-height:1.35}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.72rem 1.3rem;border-radius:999px;font-weight:600;text-decoration:none;border:2px solid transparent;cursor:pointer;min-height:46px;background:none;transition:background .15s}
+.btn-primary{background:var(--turmeric);color:var(--ink)}
+.btn-primary:hover{background:#ffc247}
+.btn-dark{background:var(--ink);color:var(--bone)}
+.btn-line{border-color:var(--paddy);color:var(--paddy)}
+.btn-line:hover{background:var(--paddy);color:#fff}
+.btn-ghost{border-color:var(--ink)}
+.btn-ghost:hover{background:var(--ink);color:var(--bone)}
+.btn-sm{padding:.4rem 1rem;min-height:40px;font-size:.95rem}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+
+/* header */
+header.top{position:sticky;top:0;z-index:30;background:rgba(250,251,247,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:1rem;height:64px}
+.logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;font-family:var(--display);font-weight:700;font-size:1.1rem;line-height:1.1}
+html[lang="bn"] .logo{font-family:var(--body)}
+.logo small{display:block;font-family:var(--body);font-weight:500;font-size:.72rem;color:var(--paddy)}
+nav.main{margin-left:auto;display:none;gap:1.3rem}
+nav.main a{text-decoration:none;font-weight:500;padding:.4rem 0;border-bottom:2px solid transparent}
+nav.main a:hover,nav.main a[aria-current]{border-color:var(--turmeric)}
+.lang{display:flex;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden;margin-left:auto}
+.lang button{border:0;background:transparent;font-size:.9rem;font-weight:600;padding:.3rem .8rem;cursor:pointer;min-height:38px}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bone)}
+.login{display:none}
+.burger{width:44px;height:44px;border:0;background:transparent;cursor:pointer;display:grid;place-items:center}
+.burger span,.burger span::before,.burger span::after{display:block;width:22px;height:2px;background:var(--ink);content:"";position:relative}
+.burger span::before{position:absolute;top:-7px}.burger span::after{position:absolute;top:7px}
+.drawer{display:none;border-top:1px solid var(--line);background:var(--bone)}
+.drawer.open{display:block}
+.drawer a{display:block;padding:.9rem 20px;border-bottom:1px solid var(--line);text-decoration:none;font-weight:500}
+@media(min-width:980px){nav.main{display:flex}.lang{margin-left:0}.login{display:inline-flex}.burger{display:none}.drawer{display:none!important}}
+
+/* hero */
+.phero{background:linear-gradient(180deg,var(--mist),var(--bone));padding:42px 0 30px}
+.crumb{font-size:.9rem;color:#3e5e53;margin-bottom:12px}
+.crumb a{text-decoration:none}.crumb a:hover{text-decoration:underline}
+.phero h1{font-size:clamp(2.1rem,5.4vw,3.4rem);font-weight:700}
+.phero p{margin-top:12px;max-width:58ch;font-size:1.1rem;color:#27493f}
+.how{display:grid;gap:10px;margin-top:24px;list-style:none;padding:0;counter-reset:h}
+.how li{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 14px;font-weight:500}
+.how li::before{counter-increment:h;content:counter(h);flex:none;width:30px;height:30px;border-radius:50%;background:var(--paddy);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.9rem}
+.how li:last-child::before{background:var(--turmeric);color:var(--ink)}
+@media(min-width:760px){.how{grid-template-columns:repeat(3,1fr)}}
+
+/* tabs + filters */
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--line);margin-top:30px}
+.tab{border:0;background:none;padding:.7rem 1.1rem;font-weight:700;cursor:pointer;border-bottom:4px solid transparent;margin-bottom:-2px;min-height:48px;color:#3e5e53;display:flex;align-items:center;gap:.5rem}
+.tab[aria-selected="true"]{color:var(--ink);border-color:var(--turmeric)}
+.tab .n{background:var(--mist);border-radius:999px;font-size:.8rem;min-width:24px;height:24px;display:inline-grid;place-items:center;padding:0 6px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 6px}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:.35rem .95rem;cursor:pointer;font-weight:500;min-height:42px}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bone)}
+.fgap{width:1px;background:var(--line);margin:4px 4px}
+
+/* upcoming cards */
+.list{display:grid;gap:16px;padding:14px 0 50px}
+.tc{display:grid;gap:14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px}
+.date{background:var(--ink);color:var(--bone);border-radius:12px;text-align:center;padding:10px 6px;line-height:1.1;display:flex;flex-direction:row;gap:8px;align-items:baseline;justify-content:center}
+.date b{font-family:var(--display);font-size:1.7rem}
+html[lang="bn"] .date b{font-family:var(--body)}
+.date span{font-size:.85rem;opacity:.85}
+.tc h3{font-size:1.25rem;font-family:var(--body);font-weight:700;line-height:1.3}
+.tc .desc{color:#3e5e53;margin-top:4px;max-width:62ch}
+.metas{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.meta{font-size:.88rem;background:var(--mist);border-radius:999px;padding:.12rem .75rem;font-weight:500}
+.meta.mode{background:var(--ink);color:var(--bone)}
+.side{display:grid;gap:10px;align-content:space-between}
+.fee{font-weight:700;font-size:1.3rem}
+.fee.free{color:var(--paddy)}
+.seatbar{height:8px;background:var(--mist);border-radius:999px;overflow:hidden}
+.seatbar i{display:block;height:100%;background:var(--paddy);border-radius:999px}
+.seatbar.low i{background:var(--clay)}
+.seatnote{font-size:.88rem;color:#3e5e53;margin-top:4px}
+.seatnote.low{color:var(--clay);font-weight:600}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btns .btn{flex:1}
+@media(min-width:860px){.tc{grid-template-columns:96px 1fr 230px;gap:24px;align-items:start}.date{flex-direction:column;gap:2px;align-items:center;padding:14px 6px}.btns .btn{flex:none;width:100%}}
+
+/* previous rows */
+.prow{display:grid;grid-template-columns:78px 1fr;gap:14px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
+.prow .date{background:#dfe9db;color:var(--ink);flex-direction:column;gap:0;padding:8px 4px}
+.prow .date b{font-size:1.2rem}
+.prow h3{font-size:1.05rem;font-family:var(--body)}
+.prow .sub{font-size:.9rem;color:#3e5e53;margin-top:2px}
+.prow .act{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:10px}
+.done-tag{font-size:.78rem;font-weight:700;color:var(--paddy);background:var(--mist);border-radius:999px;padding:.05rem .65rem}
+@media(min-width:760px){.prow{grid-template-columns:78px 1fr auto}.prow .act{grid-column:auto;border:0;padding:0}}
+
+/* certificate verify */
+.verify{background:var(--ink);color:var(--bone);border-radius:22px;padding:28px 24px;margin:6px 0 60px;display:grid;gap:18px}
+@media(min-width:860px){.verify{grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding:34px}}
+.verify h2{font-size:1.5rem}
+.verify p{opacity:.85;margin-top:6px}
+.vrow{display:flex}
+.vrow input{flex:1;min-width:0;border:0;border-radius:14px 0 0 14px;padding:.7rem 1rem;min-height:50px;background:#fff}
+.vrow button{border:0;border-radius:0 14px 14px 0;background:var(--turmeric);color:var(--ink);font-weight:700;padding:0 1.2rem;cursor:pointer;min-height:50px}
+.vres{margin-top:12px;border-radius:12px;padding:12px 14px;font-size:.95rem}
+.vres.ok{background:rgba(46,125,79,.35);border:1px solid #5fb582}
+.vres.no{background:rgba(184,67,43,.3);border:1px solid #e0846f}
+.vhint{font-size:.85rem;opacity:.7;margin-top:8px}
+
+/* panel */
+.scrim{position:fixed;inset:0;background:rgba(10,30,24,.55);z-index:40;display:none}
+.scrim.open{display:block}
+.sheet{position:fixed;z-index:50;background:var(--bone);display:none;flex-direction:column;inset:0}
+.sheet.open{display:flex}
+@media(min-width:860px){.sheet{inset:4vh auto auto 50%;transform:translateX(-50%);width:min(900px,94vw);max-height:92vh;border-radius:20px}}
+.phead{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);gap:12px}
+.phead h2{font-size:1.25rem;font-family:var(--body);font-weight:700;line-height:1.3}
+.x{width:44px;height:44px;flex:none;border:0;background:var(--mist);border-radius:50%;cursor:pointer;font-size:1.3rem;line-height:1}
+.pbody{padding:20px;overflow-y:auto;flex:1}
+.facts{display:grid;gap:10px;margin:16px 0}
+@media(min-width:620px){.facts{grid-template-columns:1fr 1fr}}
+.fact{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.fact h3{font-size:.82rem;font-family:var(--body);color:var(--paddy);margin-bottom:3px}
+.fact p{font-weight:600}
+.steps3{display:flex;gap:6px;margin-bottom:22px}
+.steps3 div{flex:1;text-align:center;font-size:.88rem;font-weight:600;padding:8px 4px;border-bottom:4px solid var(--line);color:#5b7a6e}
+.steps3 div.on{border-color:var(--turmeric);color:var(--ink)}
+.steps3 div.dn{border-color:var(--paddy);color:var(--paddy)}
+.form{display:grid;gap:14px}
+@media(min-width:560px){.form{grid-template-columns:1fr 1fr}.form .full{grid-column:1/-1}}
+label.f{display:grid;gap:4px;font-weight:600;font-size:.93rem}
+label.f input{border:1.5px solid var(--line);border-radius:12px;padding:.6rem .85rem;background:#fff;min-height:46px;font-weight:400}
+label.f input:focus{border-color:var(--paddy);outline:none;box-shadow:0 0 0 3px rgba(46,125,79,.2)}
+label.f.bad input{border-color:var(--clay)}
+.err{color:var(--clay);font-size:.85rem;font-weight:500}
+.pays{display:grid;gap:10px}
+.pay{display:flex;gap:12px;align-items:center;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;cursor:pointer;min-height:58px}
+.pay input{accent-color:var(--paddy);width:20px;height:20px}
+.pay:has(input:checked){border-color:var(--paddy);box-shadow:0 0 0 3px rgba(46,125,79,.18)}
+.pay .lb{width:44px;height:30px;border-radius:6px;display:grid;place-items:center;font-size:.7rem;font-weight:700;color:#fff;flex:none}
+.pay b{display:block}.pay small{color:#3e5e53}
+.box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
+.box+.box{margin-top:10px}
+.box h3{font-size:.9rem;font-family:var(--body);color:var(--paddy);margin-bottom:6px}
+.nav2{display:flex;gap:10px;justify-content:space-between;margin-top:22px;flex-wrap:wrap}
+.hint{font-size:.9rem;color:#3e5e53}
+.ok{text-align:center;padding:10px 0}
+.ok .tick{width:64px;height:64px;border-radius:50%;background:var(--paddy);color:#fff;display:grid;place-items:center;margin:0 auto 14px;font-size:2rem}
+.oid{display:inline-block;font-family:var(--display);font-weight:700;letter-spacing:.05em;background:var(--ink);color:var(--turmeric);border-radius:10px;padding:.35rem .9rem;margin:8px 0}
+.empty{text-align:center;padding:40px 10px;color:#3e5e53}
+
+footer{background:#0c241d;color:#d7e4d8;padding:30px 0;font-size:.92rem}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer a{text-decoration:none}footer a:hover{text-decoration:underline}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:35;background:var(--ink);display:grid;grid-template-columns:repeat(3,1fr);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+.dock a{color:var(--bone);text-decoration:none;text-align:center;font-size:.9rem;font-weight:600;padding:10px 4px;border-radius:10px;min-height:48px;display:grid;place-items:center}
+.dock a.hot{background:var(--turmeric);color:var(--ink)}
+@media(min-width:980px){.dock{display:none}body{padding-bottom:0}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap bar">
+    <a class="logo" href="#" aria-label="MPV home">
+      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#12332A"/><path d="M8 27c4-9 8-12 12-12s8 3 12 12" fill="none" stroke="#2E7D4F" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="14" r="4.2" fill="#F2B02E"/><path d="M8 31h24" stroke="#EAF1E7" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <span><en>Model Poultry Village</en><bn>মডেল পোল্ট্রি ভিলেজ</bn><small><en>MPV · Antibiotic-free broilers</en><bn>এমপিভি · অ্যান্টিবায়োটিকমুক্ত ব্রয়লার</bn></small></span>
+    </a>
+    <nav class="main" aria-label="Main">
+      <a href="mpv-about-enhanced_final_.html"><en>About MPV</en><bn>এমপিভি পরিচিতি</bn></a>
+      <a href="mpv-training.html" aria-current="page"><en>Training</en><bn>প্রশিক্ষণ</bn></a>
+      <a href="mpv-publications-reference-layout.html"><en>Publications</en><bn>প্রকাশনা</bn></a>
+      <a href="mpv-meat-shop.html"><en>MPV Meat</en><bn>এমপিভি মাংস</bn></a>
+      <a href="index.html#notice"><en>Notice</en><bn>নোটিশ</bn></a>
+      <a href="index.html#gallery"><en>Gallery</en><bn>গ্যালারি</bn></a>
+    </nav>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-set="en" aria-pressed="true">EN</button>
+      <button type="button" data-set="bn" aria-pressed="false">বাংলা</button>
+    </div>
+    <a class="btn btn-ghost btn-sm login" href="#"><en>Log in</en><bn>লগ ইন</bn></a>
+    <button class="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="drawer"><span></span></button>
+  </div>
+  <div class="drawer" id="drawer">
+    <a href="mpv-about-enhanced_final_.html"><en>About MPV</en><bn>এমপিভি পরিচিতি</bn></a>
+    <a href="mpv-training.html"><en>Training</en><bn>প্রশিক্ষণ</bn></a>
+    <a href="mpv-publications-reference-layout.html"><en>Publications</en><bn>প্রকাশনা</bn></a>
+    <a href="mpv-meat-shop.html"><en>MPV Meat</en><bn>এমপিভি মাংস</bn></a>
+    <a href="index.html#notice"><en>Notice</en><bn>নোটিশ</bn></a>
+    <a href="index.html#gallery"><en>Gallery</en><bn>গ্যালারি</bn></a>
+    <a href="#"><en>Log in</en><bn>লগ ইন</bn></a>
+  </div>
+</header>
+
+<main>
+  <div class="phero"><div class="wrap">
+    <p class="crumb"><a href="index.html"><en>Home</en><bn>হোম</bn></a> / <en>Training</en><bn>প্রশিক্ষণ</bn></p>
+    <h1><en>MPV Training</en><bn>এমপিভি প্রশিক্ষণ</bn></h1>
+    <p><en>Learn antibiotic-free broiler farming from the farmers and researchers who built the MPV model. Register online for free or paid courses.</en><bn>যে কৃষক ও গবেষকেরা এমপিভি মডেল গড়েছেন, তাঁদের কাছ থেকে অ্যান্টিবায়োটিকমুক্ত ব্রয়লার পালন শিখুন। বিনামূল্যে বা ফি-সহ কোর্সে অনলাইনে নিবন্ধন করুন।</bn></p>
+    <ol class="how">
+      <li><en>Choose a training</en><bn>প্রশিক্ষণ বেছে নিন</bn></li>
+      <li><en>Register online</en><bn>অনলাইনে নিবন্ধন করুন</bn></li>
+      <li><en>Complete it and get a verifiable certificate</en><bn>সম্পন্ন করে যাচাইযোগ্য সনদ পান</bn></li>
+    </ol>
+  </div></div>
+
+  <div class="wrap">
+    <div class="tabs" role="tablist" aria-label="Trainings">
+      <button class="tab" role="tab" id="tabUp" data-tab="up" aria-selected="true"><en>Upcoming</en><bn>আসন্ন</bn> <span class="n" id="nUp"></span></button>
+      <button class="tab" role="tab" id="tabPast" data-tab="past" aria-selected="false"><en>Previous</en><bn>পূর্ববর্তী</bn> <span class="n" id="nPast"></span></button>
+    </div>
+    <div class="filters" id="filters" role="group" aria-label="Filters"></div>
+    <div class="list" id="list" role="tabpanel" aria-live="polite"></div>
+
+    <section class="verify" id="verify" aria-labelledby="vTitle">
+      <div>
+        <h2 id="vTitle"><en>Verify a certificate</en><bn>সনদ যাচাই করুন</bn></h2>
+        <p><en>Enter the certificate number printed on an MPV certificate to confirm it is genuine.</en><bn>এমপিভি সনদে ছাপা সনদ নম্বর লিখে সেটি আসল কি না যাচাই করুন।</bn></p>
+      </div>
+      <div>
+        <div class="vrow"><input id="certIn" type="text" autocomplete="off" spellcheck="false" aria-label="Certificate number"><button id="certBtn" type="button"><en>Verify</en><bn>যাচাই</bn></button></div>
+        <div id="certRes" aria-live="polite"></div>
+        <p class="vhint"><en>Try the sample: MPV-CERT-2026-0001</en><bn>নমুনা দিয়ে দেখুন: MPV-CERT-2026-0001</bn></p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer><div class="wrap">
+  <span>© 2026 Model Poultry Village</span>
+  <span><a href="#">Facebook</a> · <a href="#">LinkedIn</a> · <a href="#">YouTube</a></span>
+</div></footer>
+
+
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sTitle"></div>
+
+<script>
+(function(){
+var html=document.documentElement;
+function L(){return html.lang}
+function t(en,bn){return L()==='bn'?bn:en}
+function num(n){return n.toLocaleString(L()==='bn'?'bn-BD':'en-US')}
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function $(id){return document.getElementById(id)}
+
+/* ---------- sample data (replace from admin panel) ---------- */
+var T=[
+ {id:'u1',up:true,en:'Antibiotic-free broiler farming: basic course',bn:'অ্যান্টিবায়োটিকমুক্ত ব্রয়লার পালন: প্রাথমিক কোর্স',
+  dEn:'A practical two-day course on raising broilers without routine antibiotics: housing, feed, water, vaccination and daily observation.',dBn:'নিয়মিত অ্যান্টিবায়োটিক ছাড়া ব্রয়লার পালনের দুই দিনের ব্যবহারিক কোর্স: ঘর, খাদ্য, পানি, টিকা ও দৈনিক পর্যবেক্ষণ।',
+  day:18,mon:{en:'Oct',bn:'অক্টোবর'},full:{en:'18 Oct 2026',bn:'১৮ অক্টোবর ২০২৬'},mode:'in',durEn:'2 days',durBn:'২ দিন',
+  target:{en:'New and prospective broiler farmers',bn:'নতুন ও সম্ভাব্য ব্রয়লার খামারি'},trainer:{en:'Trainer name',bn:'প্রশিক্ষকের নাম'},fee:0,total:30,left:12,cert:true},
+ {id:'u2',up:true,en:'Biosecurity on small farms: the 12 indicators',bn:'ছোট খামারে জৈব নিরাপত্তা: ১২টি সূচক',
+  dEn:'Learn the 12 MPV biosecurity indicators and how to put each one in place on a small farm.',dBn:'এমপিভির ১২টি জৈব নিরাপত্তা সূচক এবং ছোট খামারে প্রতিটি কীভাবে বাস্তবায়ন করবেন তা শিখুন।',
+  day:2,mon:{en:'Nov',bn:'নভেম্বর'},full:{en:'2 Nov 2026',bn:'২ নভেম্বর ২০২৬'},mode:'on',durEn:'3 sessions',durBn:'৩টি সেশন',
+  target:{en:'Farmers, field workers and students',bn:'কৃষক, মাঠকর্মী ও শিক্ষার্থী'},trainer:{en:'Trainer name',bn:'প্রশিক্ষকের নাম'},fee:500,total:60,left:40,cert:true},
+ {id:'u3',up:true,en:'Farm records and profit tracking',bn:'খামারের হিসাব ও লাভ-ক্ষতি নির্ণয়',
+  dEn:'Record feed, mortality and costs every day and read your own FCR, mortality and profit per bird.',dBn:'প্রতিদিন খাদ্য, মৃত্যু ও খরচের হিসাব রেখে নিজের এফসিআর, মৃত্যুহার ও প্রতি মুরগির মুনাফা বুঝুন।',
+  day:16,mon:{en:'Nov',bn:'নভেম্বর'},full:{en:'16 Nov 2026',bn:'১৬ নভেম্বর ২০২৬'},mode:'on',durEn:'1 day',durBn:'১ দিন',
+  target:{en:'MPV farmers and new farmers',bn:'এমপিভি কৃষক ও নতুন কৃষক'},trainer:{en:'Trainer name',bn:'প্রশিক্ষকের নাম'},fee:0,total:40,left:25,cert:true},
+ {id:'p1',up:false,en:'Farmer-led learning: facilitator training',bn:'কৃষকের নেতৃত্বে শিক্ষা: সহায়ক প্রশিক্ষণ',
+  day:12,mon:{en:'Aug',bn:'আগস্ট'},full:{en:'12 Aug 2026',bn:'১২ আগস্ট ২০২৬'},mode:'in',durEn:'2 days',durBn:'২ দিন',people:28},
+ {id:'p2',up:false,en:'Introduction to MPV for students',bn:'শিক্ষার্থীদের জন্য এমপিভি পরিচিতি',
+  day:20,mon:{en:'Jun',bn:'জুন'},full:{en:'20 Jun 2026',bn:'২০ জুন ২০২৬'},mode:'on',durEn:'1 day',durBn:'১ দিন',people:64},
+ {id:'p3',up:false,en:'Antibiotic-free broiler farming: basic course (first cohort)',bn:'অ্যান্টিবায়োটিকমুক্ত ব্রয়লার পালন: প্রাথমিক কোর্স (প্রথম ব্যাচ)',
+  day:14,mon:{en:'Mar',bn:'মার্চ'},full:{en:'14 Mar 2026',bn:'১৪ মার্চ ২০২৬'},mode:'in',durEn:'2 days',durBn:'২ দিন',people:30}
+];
+var CERTS={'MPV-CERT-2026-0001':{name:{en:'Participant name',bn:'অংশগ্রহণকারীর নাম'},tid:'p3'}};
+var PAY=[
+ {id:'bkash',en:'bKash',bn:'বিকাশ',c:'#D12053'},{id:'nagad',en:'Nagad',bn:'নগদ',c:'#E2531F'},
+ {id:'rocket',en:'Rocket',bn:'রকেট',c:'#8C3494'},{id:'bank',en:'Bank transfer',bn:'ব্যাংক ট্রান্সফার',c:'#12332A'}
+];
+
+/* ---------- state ---------- */
+var tab='up',fMode='all',fFee='all';
+var S={id:null,view:'detail',info:{},pay:'bkash',rid:null};
+function get(id){return T.filter(function(x){return x.id===id})[0]}
+function modeTxt(m){return m==='in'?t('In person','সরাসরি'):t('Online','অনলাইন')}
+function feeTxt(f){return f?'৳'+num(f):t('Free','বিনামূল্যে')}
+
+/* ---------- list ---------- */
+function renderFilters(){
+  if(tab==='past'){$('filters').innerHTML='';return}
+  function chip(kind,val,en,bn,cur){return '<button class="chip" type="button" data-f="'+kind+':'+val+'" aria-pressed="'+(cur===val)+'">'+t(en,bn)+'</button>'}
+  $('filters').innerHTML=chip('mode','all','All formats','সব ধরন',fMode)+chip('mode','in','In person','সরাসরি',fMode)+chip('mode','on','Online','অনলাইন',fMode)+'<span class="fgap"></span>'+chip('fee','all','Any fee','যেকোনো ফি',fFee)+chip('fee','free','Free','বিনামূল্যে',fFee)+chip('fee','paid','Paid','ফি সহ',fFee);
+}
+function renderList(){
+  var up=T.filter(function(x){return x.up}),past=T.filter(function(x){return !x.up});
+  $('nUp').textContent=num(up.length);$('nPast').textContent=num(past.length);
+  var out='';
+  if(tab==='up'){
+    var l=up.filter(function(x){return (fMode==='all'||x.mode===fMode)&&(fFee==='all'||(fFee==='free'?x.fee===0:x.fee>0))});
+    if(!l.length)out='<p class="empty">'+t('No upcoming training matches these filters.','এই ফিল্টারে কোনো আসন্ন প্রশিক্ষণ নেই।')+'</p>';
+    out+=l.map(function(x){
+      var pct=Math.round((x.total-x.left)/x.total*100),low=x.left<=5&&x.left>0;
+      return '<article class="tc"><div class="date"><b>'+num(x.day)+'</b><span>'+t(x.mon.en,x.mon.bn)+'</span></div>'+
+      '<div><h3>'+t(x.en,x.bn)+'</h3><p class="desc">'+t(x.dEn,x.dBn)+'</p><div class="metas"><span class="meta mode">'+modeTxt(x.mode)+'</span><span class="meta">'+t(x.durEn,x.durBn)+'</span><span class="meta">'+t('Trainer','প্রশিক্ষক')+': '+t(x.trainer.en,x.trainer.bn)+'</span>'+(x.cert?'<span class="meta">'+t('Certificate','সনদ')+'</span>':'')+'</div></div>'+
+      '<div class="side"><div><div class="fee'+(x.fee?'':' free')+'">'+feeTxt(x.fee)+'</div>'+
+      '<div class="seatbar'+(low?' low':'')+'" style="margin-top:8px"><i style="width:'+pct+'%"></i></div><div class="seatnote'+(low?' low':'')+'">'+(x.left?num(x.left)+' '+t('of','/')+' '+num(x.total)+' '+t('seats left','আসন বাকি'):t('Fully booked','আসন পূর্ণ'))+'</div></div>'+
+      '<div class="btns"><button class="btn btn-primary" type="button" data-reg="'+x.id+'"'+(x.left?'':' disabled')+'>'+t('Register','নিবন্ধন করুন')+'</button><button class="btn btn-line" type="button" data-det="'+x.id+'">'+t('Details','বিস্তারিত')+'</button></div></div></article>';
+    }).join('');
+  }else{
+    out=past.map(function(x){
+      return '<article class="prow"><div class="date"><b>'+num(x.day)+'</b><span>'+t(x.mon.en,x.mon.bn)+'</span></div>'+
+      '<div><h3>'+t(x.en,x.bn)+'</h3><p class="sub"><span class="done-tag">'+t('Completed','সম্পন্ন')+'</span> '+modeTxt(x.mode)+' · '+t(x.durEn,x.durBn)+' · '+num(x.people)+' '+t('participants','অংশগ্রহণকারী')+'</p></div>'+
+      '<div class="act"><a class="btn btn-line btn-sm" href="#">'+t('Photos','ছবি')+'</a><a class="btn btn-line btn-sm" href="#">'+t('Report','প্রতিবেদন')+'</a></div></article>';
+    }).join('');
+  }
+  $('list').innerHTML=out;
+}
+
+/* ---------- sheet ---------- */
+var scrim=$('scrim'),sheet=$('sheet'),lastFocus=null;
+function openSheet(){lastFocus=document.activeElement;sheet.classList.add('open');scrim.classList.add('open');document.body.classList.add('lock');renderSheet();var f=sheet.querySelector('input,button');if(f)f.focus()}
+function closeSheet(){sheet.classList.remove('open');scrim.classList.remove('open');document.body.classList.remove('lock');if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+scrim.addEventListener('click',closeSheet);
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&sheet.classList.contains('open'))closeSheet()});
+
+function fld(name,label,val,type,cls,ph){return '<label class="f '+(cls||'')+'" data-f="'+name+'"><span>'+label+'</span><input name="'+name+'" type="'+type+'" value="'+esc(val||'')+'"'+(ph?' placeholder="'+ph+'"':'')+' autocomplete="off"><span class="err"></span></label>'}
+function stepsBar(cur,paid){
+  var s=[t('Your details','আপনার তথ্য')];if(paid)s.push(t('Payment','পেমেন্ট'));s.push(t('Confirm','নিশ্চিত করুন'));
+  return '<div class="steps3">'+s.map(function(x,i){return '<div class="'+(i+1===cur?'on':i+1<cur?'dn':'')+'">'+(i+1)+'. '+x+'</div>'}).join('')+'</div>';
+}
+function renderSheet(){
+  var x=get(S.id),v=S.view,paid=x.fee>0,I=S.info,body='',title=t(x.en,x.bn);
+  if(v==='detail'){
+    body='<p>'+t(x.dEn,x.dBn)+'</p><div class="facts">'+
+    f4(t('Date','তারিখ'),t(x.full.en,x.full.bn))+f4(t('Format','ধরন'),modeTxt(x.mode))+f4(t('Duration','সময়কাল'),t(x.durEn,x.durBn))+f4(t('Trainer','প্রশিক্ষক'),t(x.trainer.en,x.trainer.bn))+
+    f4(t('Who it is for','কাদের জন্য'),t(x.target.en,x.target.bn))+f4(t('Fee','ফি'),feeTxt(x.fee))+f4(t('Seats left','বাকি আসন'),num(x.left)+' / '+num(x.total))+
+    f4(t('Certificate','সনদ'),x.cert?t('Issued on completion, verifiable online','সম্পন্ন করলে দেওয়া হবে, অনলাইনে যাচাইযোগ্য'):t('Not issued','দেওয়া হয় না'))+'</div>'+
+    '<button class="btn btn-primary" type="button" data-go="form"'+(x.left?'':' disabled')+'>'+t('Register for this training','এই প্রশিক্ষণে নিবন্ধন করুন')+'</button>';
+  }else if(v==='form'){
+    body=stepsBar(1,paid)+'<div class="form" id="infoForm">'+
+    fld('name',t('Full name','পুরো নাম'),I.name,'text','full')+fld('mobile',t('Mobile number','মোবাইল নম্বর'),I.mobile,'tel','','01XXXXXXXXX')+fld('email',t('Email (optional)','ইমেইল (ঐচ্ছিক)'),I.email,'email')+
+    fld('org',t('Organization / institution','প্রতিষ্ঠান'),I.org,'text')+fld('desig',t('Designation','পদবি'),I.desig,'text')+fld('prof',t('Profession','পেশা'),I.prof,'text','full')+fld('district',t('District','জেলা'),I.district,'text')+fld('upazila',t('Upazila','উপজেলা'),I.upazila,'text')+'</div>'+
+    '<div class="box" style="margin-top:14px"><h3>'+t('Training selected','নির্বাচিত প্রশিক্ষণ')+'</h3><p><strong>'+t(x.en,x.bn)+'</strong><br><span class="hint">'+t(x.full.en,x.full.bn)+' · '+feeTxt(x.fee)+'</span></p></div>'+
+    '<div class="nav2"><button class="btn btn-ghost" type="button" data-go="detail">'+t('Back','পেছনে')+'</button><button class="btn btn-primary" type="button" data-go="next1">'+(paid?t('Continue to payment','পেমেন্টে যান'):t('Review','দেখে নিন'))+'</button></div>';
+  }else if(v==='pay'){
+    body=stepsBar(2,true)+'<h3 style="margin-bottom:12px;font-family:var(--body)">'+t('Pay the training fee: ','প্রশিক্ষণ ফি দিন: ')+feeTxt(x.fee)+'</h3><div class="pays">'+PAY.map(function(m){return '<label class="pay"><input type="radio" name="pay" value="'+m.id+'"'+(S.pay===m.id?' checked':'')+'><span class="lb" style="background:'+m.c+'" aria-hidden="true">'+(m.id==='bank'?'BANK':m.en.slice(0,3).toUpperCase())+'</span><span><b>'+t(m.en,m.bn)+'</b><small>'+(m.id==='bank'?t('Bank details are shown after you register','নিবন্ধনের পর ব্যাংকের তথ্য দেখানো হবে'):t('Pay on the payment page after you confirm','নিশ্চিত করার পর পেমেন্ট পেজে মূল্য দিন'))+'</small></span></label>'}).join('')+'</div>'+
+    '<div class="nav2"><button class="btn btn-ghost" type="button" data-go="form">'+t('Back','পেছনে')+'</button><button class="btn btn-primary" type="button" data-go="review">'+t('Review','দেখে নিন')+'</button></div>';
+  }else if(v==='review'){
+    var m=PAY.filter(function(p){return p.id===S.pay})[0];
+    body=stepsBar(paid?3:2,paid)+'<div class="box"><h3>'+t('Training','প্রশিক্ষণ')+'</h3><p><strong>'+t(x.en,x.bn)+'</strong><br><span class="hint">'+t(x.full.en,x.full.bn)+' · '+modeTxt(x.mode)+'</span></p></div>'+
+    '<div class="box"><h3>'+t('Participant','অংশগ্রহণকারী')+'</h3><p><strong>'+esc(I.name)+'</strong> · '+esc(I.mobile)+'<br>'+esc(I.desig)+', '+esc(I.org)+'<br>'+esc(I.prof)+' · '+esc(I.upazila)+', '+esc(I.district)+'</p></div>'+
+    '<div class="box"><h3>'+t('Fee','ফি')+'</h3><p><strong>'+feeTxt(x.fee)+'</strong>'+(paid?' · '+t(m.en,m.bn):'')+'</p></div>'+
+    '<div class="nav2"><button class="btn btn-ghost" type="button" data-go="'+(paid?'pay':'form')+'">'+t('Back','পেছনে')+'</button><button class="btn btn-primary" type="button" data-go="place">'+t('Confirm registration','নিবন্ধন নিশ্চিত করুন')+'</button></div>';
+  }else{
+    title=t('Registration complete','নিবন্ধন সম্পন্ন');
+    body='<div class="ok"><div class="tick" aria-hidden="true">✓</div><h3 style="font-family:var(--body)">'+t(x.en,x.bn)+'</h3><p>'+t('Your registration ID','আপনার নিবন্ধন আইডি')+'</p><div class="oid">'+S.rid+'</div><p class="hint" style="max-width:46ch;margin:0 auto">'+t('Keep this ID. ','এই আইডি সংরক্ষণ করুন। ')+(paid?t('Complete your payment to hold your seat.','আসন নিশ্চিত রাখতে পেমেন্ট সম্পন্ন করুন।'):t('Your seat is confirmed.','আপনার আসন নিশ্চিত।'))+'</p></div><div class="nav2" style="justify-content:center"><button class="btn btn-dark" type="button" data-close>'+t('Back to trainings','প্রশিক্ষণ তালিকায় ফিরুন')+'</button></div>';
+  }
+  sheet.innerHTML='<div class="phead"><h2 id="sTitle">'+title+'</h2><button class="x" type="button" data-close aria-label="Close">×</button></div><div class="pbody">'+body+'</div>';
+}
+function f4(h,p){return '<div class="fact"><h3>'+h+'</h3><p>'+p+'</p></div>'}
+function readInfo(){
+  var f=$('infoForm');if(!f)return S.info;var o={};
+  ['name','mobile','email','org','desig','prof','district','upazila'].forEach(function(k){o[k]=f.querySelector('[name="'+k+'"]').value.trim()});return o;
+}
+function validate(){
+  var o=readInfo(),ok=true;o.mobile=o.mobile.replace(/[\s-]/g,'');
+  var r={name:o.name.length>1,mobile:/^01\d{9}$/.test(o.mobile),org:!!o.org,desig:!!o.desig,prof:!!o.prof,district:!!o.district,upazila:!!o.upazila};
+  var m={name:t('Enter your full name.','পুরো নাম লিখুন।'),mobile:t('Enter an 11-digit mobile number starting with 01.','০১ দিয়ে শুরু ১১ সংখ্যার মোবাইল নম্বর লিখুন।'),org:t('Enter your organization.','প্রতিষ্ঠানের নাম লিখুন।'),desig:t('Enter your designation.','পদবি লিখুন।'),prof:t('Enter your profession.','পেশা লিখুন।'),district:t('Enter your district.','জেলার নাম লিখুন।'),upazila:t('Enter your upazila.','উপজেলার নাম লিখুন।')};
+  Object.keys(r).forEach(function(k){var lab=$('infoForm').querySelector('[data-f="'+k+'"]');lab.classList.toggle('bad',!r[k]);lab.querySelector('.err').textContent=r[k]?'':m[k];if(!r[k])ok=false});
+  S.info=o;return ok;
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;var d=b.dataset;
+  if(d.tab){tab=d.tab;document.querySelectorAll('.tab').forEach(function(x){x.setAttribute('aria-selected',x===b?'true':'false')});renderFilters();renderList();return}
+  if(d.f){var p=d.f.split(':');if(p[0]==='mode')fMode=p[1];else fFee=p[1];renderFilters();renderList();return}
+  if(d.det){S.id=d.det;S.view='detail';openSheet();return}
+  if(d.reg){S.id=d.reg;S.view='form';openSheet();return}
+  if(d.close!==undefined){closeSheet();return}
+  if(d.go){
+    var x=get(S.id),g=d.go;
+    if(g==='next1'){if(!validate())return;g=x.fee>0?'pay':'review'}
+    if(g==='review'){var r=document.querySelector('input[name="pay"]:checked');if(r)S.pay=r.value}
+    if(g==='place'){S.rid='MPV-REG-'+String(Math.floor(Math.random()*90000)+10000);x.left=Math.max(0,x.left-1);S.view='done';renderSheet();renderList();return}
+    S.view=g;renderSheet();var f=sheet.querySelector('input,button');if(f)f.focus();return;
+  }
+  if(b.id==='certBtn')verify();
+});
+$('certIn').addEventListener('keydown',function(e){if(e.key==='Enter')verify()});
+function verify(){
+  var v=$('certIn').value.trim().toUpperCase(),res=$('certRes');
+  if(!v){$('certIn').focus();return}
+  var c=CERTS[v];
+  if(c){var x=get(c.tid);res.innerHTML='<div class="vres ok"><strong>✓ '+t('Genuine MPV certificate','আসল এমপিভি সনদ')+'</strong><br>'+t(c.name.en,c.name.bn)+'<br>'+t(x.en,x.bn)+' · '+t(x.full.en,x.full.bn)+'</div>'}
+  else res.innerHTML='<div class="vres no"><strong>'+t('Certificate not found','সনদ পাওয়া যায়নি')+'</strong><br>'+t('Check the number on the certificate and try again.','সনদে ছাপা নম্বর আবার দেখে চেষ্টা করুন।')+'</div>';
+}
+document.addEventListener('change',function(e){if(e.target.name==='pay')S.pay=e.target.value});
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){
+  if(sheet.classList.contains('open')&&S.view==='form')S.info=readInfo();
+  html.setAttribute('lang',b.dataset.set);
+  document.querySelectorAll('.lang button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+  $('certIn').placeholder='MPV-CERT-2026-0001';$('certRes').innerHTML='';
+  renderFilters();renderList();if(sheet.classList.contains('open'))renderSheet();
+});});
+var burger=document.querySelector('.burger');
+burger.addEventListener('click',function(){var o=$('drawer').classList.toggle('open');burger.setAttribute('aria-expanded',o)});
+
+$('certIn').placeholder='MPV-CERT-2026-0001';
+renderFilters();renderList();
+})();
+</script>
+</body>
+</html>

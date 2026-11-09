@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MPV Farmer Portal | এমপিভি কৃষক পোর্টাল</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#12332A;--paddy:#2E7D4F;--mist:#EAF1E7;--bone:#FAFBF7;--turmeric:#F2B02E;--clay:#B8432B;--line:#cfdccb;--amber:#8a5a00;
+--display:"Bricolage Grotesque","Hind Siliguri",system-ui,sans-serif;--body:"Hind Siliguri",system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:var(--bone);line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--turmeric);outline-offset:2px;border-radius:6px}
+[hidden]{display:none!important}
+en,bn{display:inline}
+html[lang="bn"] en{display:none}
+html[lang="en"] bn{display:none}
+html[lang="bn"] body{line-height:1.75}
+h1,h2,h3{font-family:var(--display);line-height:1.2;letter-spacing:-.01em}
+html[lang="bn"] h1,html[lang="bn"] h2,html[lang="bn"] h3{font-family:var(--body);letter-spacing:0;line-height:1.35}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.7rem 1.3rem;border-radius:999px;font-weight:700;border:2px solid transparent;min-height:50px;background:none;text-decoration:none;transition:background .15s}
+.btn-primary{background:var(--turmeric);color:var(--ink)}
+.btn-primary:hover{background:#ffc247}
+.btn-dark{background:var(--ink);color:var(--bone)}
+.btn-line{border-color:var(--paddy);color:var(--paddy);background:transparent}
+.btn-line:hover{background:var(--paddy);color:#fff}
+.btn-ghost{border-color:var(--ink)}
+.btn-sm{min-height:42px;padding:.35rem 1rem;font-size:.95rem}
+.btn-block{width:100%}
+.lang{display:flex;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden}
+.lang button{border:0;background:transparent;font-size:.88rem;font-weight:700;padding:.2rem .75rem;min-height:36px}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bone)}
+
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(180deg,var(--mist),var(--bone))}
+.lbox{width:100%;max-width:420px;background:#fff;border:1px solid var(--line);border-radius:24px;padding:28px 24px;display:grid;gap:16px}
+.lbox .top{display:flex;justify-content:space-between;align-items:center}
+.lbox h1{font-size:1.7rem}
+.lbox p.s{color:#3e5e53}
+.mark{display:flex;align-items:center;gap:.55rem;font-family:var(--display);font-weight:700}
+html[lang="bn"] .mark{font-family:var(--body)}
+
+/* fields */
+label.f{display:grid;gap:5px;font-weight:600;font-size:.95rem}
+.in,label.f input,label.f select,label.f textarea,.in2{border:1.5px solid var(--line);border-radius:14px;padding:.65rem .9rem;background:#fff;min-height:52px;font-weight:400;width:100%;font-size:1.05rem}
+textarea.in{min-height:96px;resize:vertical}
+label.f input:focus,label.f select:focus,label.f textarea:focus,.in:focus{border-color:var(--paddy);outline:none;box-shadow:0 0 0 3px rgba(46,125,79,.2)}
+.err{color:var(--clay);font-size:.88rem;font-weight:600}
+.hint{font-size:.9rem;color:#3e5e53}
+
+/* app shell */
+.app-top{position:sticky;top:0;z-index:30;background:rgba(250,251,247,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.app-top .in-bar{max-width:1180px;margin:0 auto;padding:0 16px;height:60px;display:flex;align-items:center;gap:10px}
+.farmchip{margin-left:auto;background:var(--mist);border-radius:999px;padding:.1rem .8rem;font-weight:700;font-size:.9rem;white-space:nowrap}
+.iconbtn{width:44px;height:44px;border:0;background:var(--mist);border-radius:50%;display:grid;place-items:center}
+.iconbtn svg{width:20px;height:20px;stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.shell{max-width:1180px;margin:0 auto;padding:0 16px}
+main{padding:18px 0 150px}
+.side{display:none}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:35;background:var(--ink);display:grid;grid-template-columns:repeat(5,1fr);padding:6px 6px calc(6px + env(safe-area-inset-bottom));align-items:end}
+.tabbar button{background:none;border:0;color:rgba(255,255,255,.75);display:grid;justify-items:center;gap:1px;font-size:.78rem;font-weight:600;padding:6px 2px;min-height:54px;border-radius:12px}
+.tabbar svg,.side svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button[aria-current="page"]{color:var(--turmeric)}
+.tabbar button.fab{color:var(--ink);margin-top:-20px}
+.tabbar button.fab span.c{width:56px;height:56px;border-radius:50%;background:var(--turmeric);display:grid;place-items:center;border:4px solid var(--ink)}
+.tabbar button.fab small{color:#fff}
+.tabbar small{font-size:.78rem}
+@media(min-width:900px){
+  .tabbar{display:none}
+  .shell{display:grid;grid-template-columns:230px 1fr;gap:34px}
+  .side{display:grid;align-content:start;gap:6px;position:sticky;top:76px;height:max-content;padding-top:18px}
+  .side button{display:flex;gap:.7rem;align-items:center;border:0;background:none;text-align:left;font-weight:600;padding:.7rem .9rem;border-radius:14px;min-height:50px}
+  .side button:hover{background:var(--mist)}
+  .side button[aria-current="page"]{background:var(--ink);color:var(--bone)}
+  .side button.add{background:var(--turmeric);color:var(--ink);margin-bottom:8px;justify-content:center}
+  main{padding-bottom:60px}
+}
+
+/* generic */
+.eyebrow{font-weight:700;color:var(--paddy);font-size:.9rem}
+.pagehead{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.pagehead h1{font-size:clamp(1.5rem,4vw,2.1rem)}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px}
+.card+.card{margin-top:14px}
+.card>h2,.card>h3.ch{font-size:1.05rem;margin-bottom:10px;font-family:var(--body);font-weight:700}
+.grid2{display:grid;gap:14px}
+@media(min-width:760px){.grid2{grid-template-columns:1fr 1fr}}
+.chip{display:inline-flex;align-items:center;gap:.3rem;font-size:.82rem;font-weight:700;border-radius:999px;padding:.05rem .65rem;background:var(--mist)}
+.chip.ok{background:#d8efe0;color:#1d6a3a}
+.chip.watch{background:#fdeec8;color:var(--amber)}
+.chip.high{background:#f8d9d1;color:#9a2f19}
+.chip.dark{background:var(--ink);color:var(--bone)}
+
+/* home */
+.today{background:var(--ink);color:var(--bone);border-radius:22px;padding:20px;display:grid;gap:12px}
+.today h2{font-size:1.2rem;font-family:var(--body)}
+.sheds{display:flex;gap:8px;flex-wrap:wrap}
+.shed{border-radius:12px;padding:.35rem .8rem;font-weight:700;border:1.5px solid rgba(255,255,255,.35);font-size:.92rem}
+.shed.done{background:var(--paddy);border-color:var(--paddy)}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+@media(min-width:900px){.kpis{grid-template-columns:repeat(4,1fr)}}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;display:grid;gap:4px;align-content:start}
+.kpi .l{font-size:.88rem;color:#3e5e53;font-weight:600}
+.kpi .v{font-family:var(--display);font-size:1.9rem;font-weight:700;line-height:1.1}
+html[lang="bn"] .kpi .v{font-family:var(--body)}
+.kpi .sub{font-size:.82rem;color:#3e5e53}
+.alerts{display:grid;gap:8px}
+.alert{display:flex;gap:10px;align-items:flex-start;border-radius:14px;padding:12px 14px;font-size:.95rem}
+.alert.warn{background:#fdeec8}
+.alert.bad{background:#f8d9d1}
+.alert.fine{background:var(--mist)}
+.segs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:12px}
+.segs button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:.3rem .95rem;font-weight:600;min-height:42px;white-space:nowrap}
+.segs button[aria-pressed="true"]{background:var(--ink);color:var(--bone);border-color:var(--ink)}
+.chartwrap svg{width:100%;height:auto;display:block}
+.chartwrap .now{font-size:.95rem;color:#3e5e53;margin-top:6px}
+.rec{display:grid;gap:6px;padding:12px 0;border-bottom:1px solid var(--line)}
+.rec:last-child{border-bottom:0}
+.rec .t{display:flex;justify-content:space-between;gap:10px;font-weight:700}
+.rec .chips{display:flex;gap:6px;flex-wrap:wrap}
+
+/* entry form */
+.sec{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px 16px 18px;display:grid;gap:14px}
+.sec+.sec{margin-top:12px}
+.sec>h2{font-size:1rem;font-family:var(--body);color:var(--paddy)}
+.q{font-weight:700;margin-bottom:6px}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.tiles.c3{grid-template-columns:repeat(3,1fr)}
+.tiles.c4{grid-template-columns:repeat(4,1fr)}
+.tile{border:2px solid var(--line);background:#fff;border-radius:14px;padding:.5rem .6rem;font-weight:700;min-height:56px;text-align:center;line-height:1.3}
+.tile[aria-pressed="true"]{border-color:var(--paddy);background:#e3f1e7;box-shadow:0 0 0 3px rgba(46,125,79,.18)}
+.tile:disabled{opacity:.45;cursor:not-allowed;background:var(--mist)}
+.tile small{display:block;font-weight:500;font-size:.78rem;color:#3e5e53}
+.step{display:grid;grid-template-columns:56px 1fr 56px;gap:8px}
+.step button{border:2px solid var(--line);background:#fff;border-radius:14px;font-size:1.5rem;font-weight:700;min-height:52px}
+.step input{text-align:center;font-weight:700;font-size:1.2rem}
+.unit{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.unit span{font-weight:700;color:#3e5e53}
+.prodrow{display:grid;gap:8px;background:var(--mist);border-radius:14px;padding:12px}
+.prodrow .two{display:grid;grid-template-columns:1fr 100px;gap:8px}
+.warn-abx{background:#f8d9d1;border-radius:12px;padding:10px 12px;font-size:.92rem}
+.warn-abx b{display:block}
+.quick{display:flex;gap:8px;flex-wrap:wrap}
+.quick button{border:1.5px dashed var(--paddy);background:#fff;color:var(--paddy);border-radius:999px;padding:.2rem .9rem;font-weight:600;min-height:40px}
+.check{display:flex;gap:12px;align-items:center;border:2px solid var(--line);background:#fff;border-radius:14px;padding:.6rem .9rem;min-height:56px;text-align:left;width:100%;font-weight:600}
+.check .box{width:26px;height:26px;border-radius:8px;border:2px solid var(--paddy);flex:none;display:grid;place-items:center;color:#fff;font-size:1rem}
+.check[aria-pressed="true"]{border-color:var(--paddy);background:#e3f1e7}
+.check[aria-pressed="true"] .box{background:var(--paddy)}
+.check[aria-pressed="false"] .box{color:transparent}
+.exprow{display:grid;grid-template-columns:1fr 110px 44px;gap:8px;align-items:center}
+.x{border:0;background:var(--mist);border-radius:50%;width:44px;height:44px;font-size:1.2rem}
+.addrow{border:2px dashed var(--paddy);background:none;color:var(--paddy);font-weight:700;border-radius:14px;min-height:48px;width:100%}
+.savebar{position:sticky;bottom:72px;z-index:20;background:rgba(250,251,247,.96);border-top:1px solid var(--line);padding:10px 0;margin-top:14px;display:grid;gap:6px}
+@media(min-width:900px){.savebar{bottom:0}}
+.okpanel{text-align:center;padding:30px 10px}
+.okpanel .tick{width:72px;height:72px;border-radius:50%;background:var(--paddy);color:#fff;display:grid;place-items:center;margin:0 auto 14px;font-size:2.2rem}
+.okpanel .row{display:grid;gap:10px;max-width:340px;margin:20px auto 0}
+
+/* records */
+.table{display:grid;gap:0}
+/* finance */
+.sum{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(min-width:900px){.sum{grid-template-columns:repeat(5,1fr)}}
+.stack{display:flex;height:16px;border-radius:999px;overflow:hidden;background:var(--mist);margin:6px 0 12px}
+.stack i{display:block;height:100%}
+.legend{display:grid;gap:6px}
+.legend div{display:flex;align-items:center;gap:8px;justify-content:space-between;font-size:.95rem}
+.legend span.d{width:12px;height:12px;border-radius:4px;flex:none}
+.legend .nm{display:flex;gap:8px;align-items:center}
+.li2{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.li2:last-child{border-bottom:0}
+.li2 small{display:block;color:#3e5e53}
+.formgrid{display:grid;gap:10px}
+@media(min-width:620px){.formgrid.c2{grid-template-columns:1fr 1fr}.formgrid.c3{grid-template-columns:repeat(3,1fr)}}
+.calc{background:var(--mist);border-radius:14px;padding:10px 14px;font-weight:700}
+.batchcard{display:grid;gap:10px}
+.batchcard .st{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.batchcard .st div{background:var(--mist);border-radius:12px;padding:8px 4px}
+.batchcard .st b{display:block;font-size:1.1rem}
+.batchcard .st small{font-size:.78rem;color:#3e5e53}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login" id="login">
+  <div class="lbox">
+    <div class="top">
+      <div class="mark"><svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#12332A"/><path d="M8 27c4-9 8-12 12-12s8 3 12 12" fill="none" stroke="#2E7D4F" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="14" r="4.2" fill="#F2B02E"/><path d="M8 31h24" stroke="#EAF1E7" stroke-width="2.4" stroke-linecap="round"/></svg><span>MPV</span></div>
+      <div class="lang" role="group" aria-label="Language"><button type="button" data-set="en" aria-pressed="false">EN</button><button type="button" data-set="bn" aria-pressed="true">বাংলা</button></div>
+    </div>
+    <h1><en>Farmer portal</en><bn>কৃষক পোর্টাল</bn></h1>
+    <p class="s"><en>Sign in to record your farm’s daily data and see how your batch is doing.</en><bn>আপনার খামারের দৈনিক তথ্য লিখতে এবং ব্যাচের অবস্থা দেখতে সাইন ইন করুন।</bn></p>
+    <label class="f"><span><en>Farm ID</en><bn>খামার আইডি</bn></span><input id="lFarm" autocomplete="off" placeholder="XYZ"></label>
+    <label class="f"><span><en>Password</en><bn>পাসওয়ার্ড</bn></span><input id="lPass" type="password" autocomplete="off"></label>
+    <p class="err" id="lErr" role="alert"></p>
+    <button class="btn btn-primary btn-block" type="button" id="lGo"><en>Sign in</en><bn>সাইন ইন</bn></button>
+    <p class="hint"><en>Forgot your password? Contact the MPV team.</en><bn>পাসওয়ার্ড ভুলে গেছেন? এমপিভি দলের সঙ্গে যোগাযোগ করুন।</bn></p>
+    <p class="hint"><en>Demo: enter any Farm ID and password.</en><bn>ডেমো: যেকোনো খামার আইডি ও পাসওয়ার্ড দিন।</bn></p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" hidden>
+  <header class="app-top"><div class="in-bar">
+    <div class="mark"><svg width="34" height="34" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#12332A"/><path d="M8 27c4-9 8-12 12-12s8 3 12 12" fill="none" stroke="#2E7D4F" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="14" r="4.2" fill="#F2B02E"/><path d="M8 31h24" stroke="#EAF1E7" stroke-width="2.4" stroke-linecap="round"/></svg><span>MPV</span></div>
+    <span class="farmchip" id="farmChip"></span>
+    <div class="lang" role="group" aria-label="Language"><button type="button" data-set="en" aria-pressed="false">EN</button><button type="button" data-set="bn" aria-pressed="true">বাংলা</button></div>
+    <button class="iconbtn" type="button" id="logout" aria-label="Sign out"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+  </div></header>
+  <div class="shell">
+    <aside class="side" id="side"></aside>
+    <main id="main" tabindex="-1"></main>
+  </div>
+  <nav class="tabbar" id="tabbar" aria-label="Main"></nav>
+</div>
+
+<script>
+(function(){
+var html=document.documentElement;
+function L(){return html.lang}
+function t(en,bn){return L()==='bn'?bn:en}
+function toNum(s){s=String(s==null?'':s).replace(/[০-৯]/g,function(c){return '০১২৩৪৫৬৭৮৯'.indexOf(c)}).replace(/,/g,'').trim();var n=parseFloat(s);return isNaN(n)?0:n}
+function num(n,d){return Number(n).toLocaleString(L()==='bn'?'bn-BD':'en-US',{minimumFractionDigits:d||0,maximumFractionDigits:d||0})}
+function tk(n){return (n<0?'−':'')+'৳'+num(Math.abs(Math.round(n)))}
+function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML}
+function $(id){return document.getElementById(id)}
+function dstr(d){return d.toLocaleDateString(L()==='bn'?'bn-BD':'en-GB',{day:'numeric',month:'short'})}
+
+/* ============ SAMPLE DATA (replace with live database) ============ */
+var START=2000,SHEDS=4,TODAY_DAY=31;
+var BATCH_ID='B-001';
+var today=new Date();
+function dayDate(d){var x=new Date(today);x.setDate(x.getDate()-(TODAY_DAY-d));return x}
+var WPTS=[[1,.045],[7,.18],[14,.48],[21,.98],[28,1.55],[35,2.2]];
+function wAt(d){for(var i=0;i<WPTS.length-1;i++){var a=WPTS[i],b=WPTS[i+1];if(d>=a[0]&&d<=b[0])return a[1]+(b[1]-a[1])*(d-a[0])/(b[0]-a[0])}return WPTS[WPTS.length-1][1]}
+var DEAD=[3,4,3,2,2,1,2,1,1,1,0,1,1,0,1,1,0,1,1,1,0,1,1,0,1,1,0,1,1,1];
+var MEAS=[1,7,10,14,17,21,24,28,30];
+var SUPP_SEED={3:'Vitamin C',18:'Orsaline'},VAC_SEED={5:'ranikhet',12:'gumboro'},PROB_SEED={22:{en:'Mild sneezing in shed 3',bn:'৩ নম্বর শেডে হালকা হাঁচি'}};
+var SEED=[],cumD=0,cumF=0;
+for(var d=1;d<=30;d++){
+  var aliveStart=START-cumD,feed=(6+5.2*d)*aliveStart/1000;
+  cumD+=DEAD[d-1];cumF+=feed;
+  SEED.push({d:d,date:dayDate(d),feed:feed,dead:DEAD[d-1],cumDead:cumD,cumFeed:cumF,
+    weight:MEAS.indexOf(d)>-1?wAt(d):null,type:d<=10?'starter':d<=24?'grower':'finisher',
+    supp:SUPP_SEED[d]||null,vac:VAC_SEED[d]||'none',prob:PROB_SEED[d]||null});
+}
+var E=[];                       /* today’s per-shed entries added in this session */
+var EXP=[
+ {cat:'chick',amt:110000,note:{en:'2,000 chicks',bn:'২,০০০ বাচ্চা'},date:dayDate(1)},
+ {cat:'labour',amt:12000,note:{en:'Monthly labour',bn:'মাসিক শ্রমিক খরচ'},date:dayDate(15)},
+ {cat:'electricity',amt:4500,note:{en:'Electricity',bn:'বিদ্যুৎ বিল'},date:dayDate(20)},
+ {cat:'medicine',amt:3800,note:{en:'Vitamins and vaccines',bn:'ভিটামিন ও ভ্যাকসিন'},date:dayDate(12)},
+ {cat:'transport',amt:3000,note:{en:'Feed transport',bn:'ফিড পরিবহন'},date:dayDate(18)}
+];
+var INC=[];
+var PRICE={feed:58,sell:170};
+var CATS=[['chick','Chicks','বাচ্চা','#12332A'],['feed','Feed','ফিড','#2E7D4F'],['labour','Labour','শ্রমিক','#F2B02E'],['electricity','Electricity','বিদ্যুৎ','#6BA586'],['medicine','Medicine','ওষুধ','#B8432B'],['transport','Transport','পরিবহন','#8aa59a'],['other','Other','অন্যান্য','#c9b27a']];
+function catLbl(k){var c=CATS.filter(function(x){return x[0]===k})[0];return c?t(c[1],c[2]):k}
+/* Placeholder targets. MPV should set the real ones. */
+var TARGET={mortWatch:3,mortHigh:5,fcrWatch:1.6,fcrHigh:1.8};
+/* Starter list only. MPV should maintain the full antibiotic list. */
+var ABX=['ciprofloxacin','amoxicillin','amoxycillin','enrofloxacin','oxytetracycline','tetracycline','doxycycline','colistin','gentamicin','tylosin','norfloxacin','levofloxacin','neomycin','tiamulin','cotrimoxazole','sulfa','azithromycin','erythromycin','florfenicol','ampicillin','streptomycin','lincomycin','সিপ্রোফ্লক্সাসিন','অ্যামোক্সিসিলিন','এনরোফ্লক্সাসিন','ডক্সিসাইক্লিন','কোলিস্টিন'];
+function isAbx(n){n=String(n||'').toLowerCase();return n.length>2&&ABX.some(function(a){return n.indexOf(a)>-1})}
+
+/* ============ derived numbers ============ */
+function agg(){
+  var s=SEED[SEED.length-1];
+  var dead=s.cumDead+E.reduce(function(a,e){return a+e.dead},0);
+  var feed=s.cumFeed+E.reduce(function(a,e){return a+e.feedKg},0);
+  var w=s.weight;E.forEach(function(e){if(e.weight>0)w=e.weight});
+  var alive=START-dead;
+  var feedCost=feed*PRICE.feed;
+  var cost=EXP.reduce(function(a,e){return a+e.amt},0)+feedCost;
+  var actual=INC.length>0,rev=actual?INC.reduce(function(a,e){return a+e.total},0):alive*w*PRICE.sell;
+  var profit=rev-cost;
+  var cats={};CATS.forEach(function(c){cats[c[0]]=0});EXP.forEach(function(e){cats[e.cat]+=e.amt});cats.feed=feedCost;
+  return {dead:dead,feed:feed,w:w,alive:alive,mort:dead/START*100,fcr:feed/(w*alive),feedCost:feedCost,cost:cost,rev:rev,actual:actual,profit:profit,ppb:profit/alive,roi:profit/cost*100,cats:cats};
+}
+function status(v,watch,high){return v>high?'high':v>watch?'watch':'ok'}
+function stLbl(s){return s==='ok'?t('On track','ঠিক আছে'):s==='watch'?t('Watch','নজর দিন'):t('High','বেশি')}
+function shedsDone(){return E.map(function(e){return e.shed})}
+function todayComplete(){return shedsDone().length>=SHEDS}
+
+/* ============ charts ============ */
+function series(kind){
+  var pts=[],a=agg();
+  if(kind==='mort'){SEED.forEach(function(s){pts.push([s.d,s.cumDead/START*100])});if(todayComplete())pts.push([TODAY_DAY,a.mort])}
+  if(kind==='weight'){SEED.forEach(function(s){if(s.weight)pts.push([s.d,s.weight])});if(todayComplete()){var ew=E.filter(function(e){return e.weight>0});if(ew.length)pts.push([TODAY_DAY,a.w])}}
+  if(kind==='fcr'){SEED.forEach(function(s){if(s.weight&&s.d>=7)pts.push([s.d,s.cumFeed/(s.weight*(START-s.cumDead))])});if(todayComplete()&&E.some(function(e){return e.weight>0}))pts.push([TODAY_DAY,a.fcr])}
+  if(kind==='feed'){SEED.forEach(function(s){pts.push([s.d,s.feed])});if(todayComplete())pts.push([TODAY_DAY,E.reduce(function(x,e){return x+e.feedKg},0)])}
+  return pts;
+}
+var CH={mort:{en:'Mortality %',bn:'মৃত্যুহার %',dec:1,unit:'%',color:'#B8432B'},weight:{en:'Weight (kg)',bn:'ওজন (কেজি)',dec:2,unit:t0(' kg',' কেজি'),color:'#2E7D4F'},fcr:{en:'FCR',bn:'এফসিআর',dec:2,unit:'',color:'#12332A'},feed:{en:'Feed per day (kg)',bn:'দৈনিক ফিড (কেজি)',dec:0,unit:t0(' kg',' কেজি'),color:'#c28a00'}};
+function t0(a,b){return {en:a,bn:b}}
+function chartSVG(kind){
+  var c=CH[kind],pts=series(kind);
+  if(pts.length<2)return '<p class="hint">'+t('Not enough data yet.','এখনো যথেষ্ট তথ্য নেই।')+'</p>';
+  var W=600,H=230,pl=46,pr=14,pt=14,pb=32;
+  var xmin=pts[0][0],xmax=pts[pts.length-1][0],ymax=Math.max.apply(null,pts.map(function(p){return p[1]}));
+  var step=Math.pow(10,Math.floor(Math.log10(ymax)))/2;step=step||1;var top=Math.ceil(ymax*1.1/step)*step;
+  function X(x){return pl+(x-xmin)/(xmax-xmin)*(W-pl-pr)}
+  function Y(y){return H-pb-y/top*(H-pt-pb)}
+  var g='',i;
+  for(i=0;i<=4;i++){var v=top*i/4,yy=Y(v);g+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+yy+'" y2="'+yy+'" stroke="#dfe9db"/><text x="'+(pl-6)+'" y="'+(yy+4)+'" text-anchor="end" font-size="11" fill="#3e5e53">'+num(v,c.dec>1?1:c.dec)+'</text>'}
+  var xs=[];for(var x=xmin;x<=xmax;x+=5)xs.push(x);if(xs.indexOf(xmax)<0&&xmax-xs[xs.length-1]>2)xs.push(xmax);
+  xs.forEach(function(x){g+='<text x="'+X(x)+'" y="'+(H-10)+'" text-anchor="middle" font-size="11" fill="#3e5e53">'+num(x)+'</text>'});
+  var d=pts.map(function(p,i){return (i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)}).join(' ');
+  var dots=pts.map(function(p){return '<circle cx="'+X(p[0]).toFixed(1)+'" cy="'+Y(p[1]).toFixed(1)+'" r="3.5" fill="'+c.color+'"/>'}).join('');
+  var last=pts[pts.length-1];
+  var unit=typeof c.unit==='object'?t(c.unit.en,c.unit.bn):c.unit;
+  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(t(c.en,c.bn))+': '+num(last[1],c.dec)+unit+'">'+g+'<path d="'+d+'" fill="none" stroke="'+c.color+'" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>'+dots+'</svg>'+
+  '<p class="now">'+t('Day','দিন')+' '+num(last[0])+': <strong>'+num(last[1],c.dec)+unit+'</strong> · '+t('x-axis: day of batch','অনুভূমিক অক্ষ: ব্যাচের দিন')+'</p>';
+}
+
+/* ============ state ============ */
+var S={view:'home',chart:'mort',finTab:'exp',saved:null,farm:'XYZ'};
+var F=null;
+function newForm(){return {shed:null,age:TODAY_DAY,feedType:null,feedKg:'',dead:'0',weight:'',supp:null,prods:[{name:'',qty:'',unit:'gm'}],vaccine:null,vaccineOther:'',problem:null,sick:'',desc:'',tasks:{},tasksOther:'',exp:[{desc:'',amt:''}]}}
+F=newForm();
+var NAV=[['home','Home','হোম','<path d="M3 11 12 3l9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'],['records','Records','রেকর্ড','<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>'],['entry','Add data','তথ্য দিন','<path d="M12 5v14M5 12h14"/>'],['finance','Money','হিসাব','<rect x="2" y="6" width="20" height="14" rx="2"/><path d="M16 13h2M2 10h20"/>'],['batches','Batches','ব্যাচ','<path d="m12 3 9 5-9 5-9-5zM3 13l9 5 9-5"/>']];
+
+/* ============ shell ============ */
+function renderNav(){
+  $('tabbar').innerHTML=NAV.map(function(n){
+    var cur=S.view===n[0]?' aria-current="page"':'';
+    if(n[0]==='entry')return '<button type="button" class="fab" data-go="entry"'+cur+'><span class="c"><svg viewBox="0 0 24 24" aria-hidden="true" style="stroke:#12332A;width:28px;height:28px">'+n[3]+'</svg></span><small>'+t(n[1],n[2])+'</small></button>';
+    return '<button type="button" data-go="'+n[0]+'"'+cur+'><svg viewBox="0 0 24 24" aria-hidden="true">'+n[3]+'</svg><small>'+t(n[1],n[2])+'</small></button>';
+  }).join('');
+  $('side').innerHTML=
+    '<button type="button" class="add" data-go="entry"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>'+t('Add today’s data','আজকের তথ্য দিন')+'</button>'+
+    NAV.filter(function(n){return n[0]!=='entry'}).map(function(n){return '<button type="button" data-go="'+n[0]+'"'+(S.view===n[0]?' aria-current="page"':'')+'><svg viewBox="0 0 24 24" aria-hidden="true">'+n[3]+'</svg>'+t(n[1],n[2])+'</button>'}).join('');
+  $('farmChip').textContent=t('Farm ','খামার ')+S.farm;
+}
+function render(){
+  renderNav();
+  var v=S.view,h='';
+  if(v==='home')h=vHome();else if(v==='entry')h=vEntry();else if(v==='records')h=vRecords();else if(v==='finance')h=vFinance();else h=vBatches();
+  $('main').innerHTML=h;
+  if(v==='entry'&&!S.saved)syncForm();
+}
+function go(v){S.view=v;if(v==='entry')S.saved=null;render();window.scrollTo(0,0)}
+
+/* ============ HOME ============ */
+function vHome(){
+  var a=agg(),done=shedsDone(),ms=status(a.mort,TARGET.mortWatch,TARGET.mortHigh),fs=status(a.fcr,TARGET.fcrWatch,TARGET.fcrHigh);
+  var sheds='';for(var i=1;i<=SHEDS;i++)sheds+='<span class="shed'+(done.indexOf(i)>-1?' done':'')+'">'+t('Shed ','শেড ')+num(i)+(done.indexOf(i)>-1?' ✓':'')+'</span>';
+  var alerts=[];
+  E.forEach(function(e){
+    e.prods.forEach(function(p){if(p.abx)alerts.push('<div class="alert bad"><span aria-hidden="true">⚠</span><div><strong>'+t('Antibiotic recorded','অ্যান্টিবায়োটিক লেখা হয়েছে')+'</strong><br>'+esc(p.name)+' · '+t('Shed ','শেড ')+num(e.shed)+'. '+t('Flagged for the MPV team to review.','এমপিভি দলের পর্যালোচনার জন্য চিহ্নিত।')+'</div></div>')});
+    if(e.problem==='yes')alerts.push('<div class="alert warn"><span aria-hidden="true">!</span><div><strong>'+t('Problem reported','সমস্যা জানানো হয়েছে')+' · '+t('Shed ','শেড ')+num(e.shed)+'</strong><br>'+esc(e.desc)+'</div></div>');
+  });
+  if(!alerts.length)alerts.push('<div class="alert fine"><span aria-hidden="true">✓</span><div>'+t('No alerts today.','আজ কোনো সতর্কতা নেই।')+'</div></div>');
+  var recent=recRows().slice(0,3).map(recHTML).join('');
+  return '<div class="pagehead"><div><span class="eyebrow">'+t('Batch ','ব্যাচ ')+BATCH_ID+' · '+t('Day ','দিন ')+num(TODAY_DAY)+' · '+dstr(today)+'</span><h1>'+t('Your farm today','আপনার খামার আজ')+'</h1></div></div>'+
+  '<div class="today"><h2>'+(todayComplete()?t('All sheds recorded today ✓','আজ সব শেডের তথ্য দেওয়া হয়েছে ✓'):t('Today’s entry: ','আজকের তথ্য: ')+num(done.length)+t(' of ',' / ')+num(SHEDS)+t(' sheds',' শেড'))+'</h2><div class="sheds">'+sheds+'</div>'+
+  (todayComplete()?'':'<button class="btn btn-primary" type="button" data-go="entry">'+t('Add today’s data','আজকের তথ্য দিন')+'</button>')+'</div>'+
+  '<div class="kpis">'+
+  kpi(t('Mortality','মৃত্যুহার'),num(a.mort,1)+'%',num(a.dead)+t(' birds lost',' টি মারা গেছে'),ms)+
+  kpi('FCR',num(a.fcr,2),t('Feed ÷ weight gain','ফিড ÷ ওজন বৃদ্ধি'),fs)+
+  kpi(t('Average weight','গড় ওজন'),num(a.w,2)+t(' kg',' কেজি'),num(a.alive)+t(' birds alive',' টি জীবিত'))+
+  kpi(a.actual?t('Profit','মুনাফা'):t('Estimated profit','আনুমানিক মুনাফা'),tk(a.profit),a.actual?t('From recorded sales','বিক্রির হিসাব থেকে'):t('If sold today at ','আজ বিক্রি হলে ')+tk(PRICE.sell)+t('/kg','/কেজি'))+
+  '</div>'+
+  '<div class="grid2"><div><div class="card"><h2>'+t('Alerts','সতর্কতা')+'</h2><div class="alerts">'+alerts.join('')+'</div></div>'+
+  '<div class="card"><h2>'+t('Latest records','সাম্প্রতিক রেকর্ড')+'</h2>'+recent+'<button class="btn btn-line btn-sm" type="button" data-go="records" style="margin-top:8px">'+t('All records','সব রেকর্ড')+'</button></div></div>'+
+  '<div class="card"><h2>'+t('Trends','ধারা')+'</h2><div class="segs" role="group" aria-label="'+t('Chart','চার্ট')+'">'+Object.keys(CH).map(function(k){return '<button type="button" data-chart="'+k+'" aria-pressed="'+(S.chart===k)+'">'+t(CH[k].en,CH[k].bn)+'</button>'}).join('')+'</div><div class="chartwrap" id="chartwrap">'+chartSVG(S.chart)+'</div></div></div>';
+}
+function kpi(l,v,sub,st){return '<div class="kpi"><span class="l">'+l+'</span><span class="v">'+v+'</span>'+(st?'<span class="chip '+st+'">'+stLbl(st)+'</span>':'')+'<span class="sub">'+sub+'</span></div>'}
+
+/* ============ RECORDS ============ */
+function recRows(){
+  var rows=[];
+  E.slice().reverse().forEach(function(e){rows.push({day:TODAY_DAY,date:today,shed:e.shed,type:e.feedType,feed:e.feedKg,dead:e.dead,supp:e.prods.map(function(p){return p.name}).join(', '),abx:e.prods.some(function(p){return p.abx}),vac:e.vaccine==='other'?e.vaccineOther:e.vaccine,prob:e.problem==='yes'?e.desc:null})});
+  SEED.slice().reverse().slice(0,14).forEach(function(s){rows.push({day:s.d,date:s.date,shed:0,type:s.type,feed:s.feed,dead:s.dead,supp:s.supp||'',abx:false,vac:s.vac,prob:s.prob?t(s.prob.en,s.prob.bn):null})});
+  return rows;
+}
+function typeLbl(k){return k==='starter'?t('Starter','স্টার্টার'):k==='grower'?t('Grower','গ্রোয়ার'):t('Finisher','ফিনিশার')}
+function vacLbl(k){return k==='ranikhet'?t('Ranikhet','রানীক্ষেত'):k==='gumboro'?t('Gumboro','গামবোরো'):k==='none'||!k?'':esc(k)}
+function recHTML(r){
+  var chips='<span class="chip dark">'+typeLbl(r.type)+' · '+num(r.feed,0)+t(' kg',' কেজি')+'</span><span class="chip">'+t('Dead ','মৃত ')+num(r.dead)+'</span>';
+  if(r.supp)chips+='<span class="chip'+(r.abx?' high':'')+'">'+(r.abx?'⚠ ':'')+esc(r.supp)+'</span>';
+  if(r.vac&&r.vac!=='none')chips+='<span class="chip ok">'+t('Vaccine: ','ভ্যাকসিন: ')+vacLbl(r.vac)+'</span>';
+  if(r.prob)chips+='<span class="chip watch">! '+esc(r.prob)+'</span>';
+  return '<div class="rec"><div class="t"><span>'+t('Day ','দিন ')+num(r.day)+' · '+dstr(r.date)+'</span><span>'+(r.shed?t('Shed ','শেড ')+num(r.shed):t('All sheds','সব শেড'))+'</span></div><div class="chips">'+chips+'</div></div>';
+}
+function vRecords(){
+  return '<div class="pagehead"><div><span class="eyebrow">'+t('Batch ','ব্যাচ ')+BATCH_ID+'</span><h1>'+t('Daily records','দৈনিক রেকর্ড')+'</h1></div></div><div class="card">'+recRows().map(recHTML).join('')+'</div>';
+}
+
+/* ============ ENTRY FORM ============ */
+function choices(key,opts,cls){
+  return '<div class="tiles '+(cls||'')+'" role="group" data-grp="'+key+'">'+opts.map(function(o){return '<button type="button" class="tile" data-ch="'+key+':'+o[0]+'" aria-pressed="false"'+(o[3]?' disabled':'')+'>'+t(o[1],o[2])+(o[3]?'<small>'+t('done','দেওয়া হয়েছে')+'</small>':'')+'</button>'}).join('')+'</div>';
+}
+function stepper(key){return '<div class="step"><button type="button" data-st="'+key+':-1" aria-label="'+t('Less','কমান')+'">−</button><input class="in" data-k="'+key+'" inputmode="numeric" autocomplete="off"><button type="button" data-st="'+key+':1" aria-label="'+t('More','বাড়ান')+'">+</button></div>'}
+function prodRows(){
+  return F.prods.map(function(p,i){
+    return '<div class="prodrow"><input class="in" data-k="prods.'+i+'.name" value="'+esc(p.name)+'" placeholder="'+t('Product name (e.g. Vitamin C)','পণ্যের নাম (যেমন: ভিটামিন সি)')+'" aria-label="'+t('Product name','পণ্যের নাম')+'">'+
+    '<div class="warn-abx" id="abx'+i+'" role="alert" hidden><b>'+t('This looks like an antibiotic.','এটি অ্যান্টিবায়োটিক মনে হচ্ছে।')+'</b>'+t('MPV farms are antibiotic-free, so this will be recorded and flagged for the MPV team to review. Please keep recording honestly, and tell the MPV team if a veterinarian advised it.','এমপিভি খামার অ্যান্টিবায়োটিকমুক্ত, তাই এটি লেখা থাকবে এবং এমপিভি দলের পর্যালোচনার জন্য চিহ্নিত হবে। সত্য তথ্য লিখতে থাকুন, আর পশুচিকিৎসক পরামর্শ দিলে এমপিভি দলকে জানান।')+'</div>'+
+    '<div class="two"><input class="in" data-k="prods.'+i+'.qty" value="'+esc(p.qty)+'" inputmode="decimal" placeholder="'+t('Quantity used (e.g. 100)','ব্যবহৃত পরিমাণ (যেমন: ১০০)')+'" aria-label="'+t('Quantity used','ব্যবহৃত পরিমাণ')+'"><select class="in" data-k="prods.'+i+'.unit" aria-label="'+t('Unit','একক')+'"><option value="gm"'+(p.unit==='gm'?' selected':'')+'>'+t('gm','গ্রাম')+'</option><option value="ml"'+(p.unit==='ml'?' selected':'')+'>'+t('ml','মি.লি.')+'</option></select></div>'+
+    (F.prods.length>1?'<button type="button" class="btn btn-sm btn-ghost" data-delprod="'+i+'">'+t('Remove','সরান')+'</button>':'')+'</div>';
+  }).join('');
+}
+function expRows(){
+  return F.exp.map(function(x,i){
+    return '<div class="exprow"><input class="in" data-k="exp.'+i+'.desc" value="'+esc(x.desc)+'" placeholder="'+t('e.g. van fare','যেমন: ভ্যান ভাড়া')+'" aria-label="'+t('What was it for','কীসের খরচ')+'"><input class="in" data-k="exp.'+i+'.amt" value="'+esc(x.amt)+'" inputmode="decimal" placeholder="৳" aria-label="'+t('Amount in taka','টাকার পরিমাণ')+'"><button type="button" class="x" data-delexp="'+i+'" aria-label="'+t('Remove','সরান')+'"'+(F.exp.length<2?' hidden':'')+'>×</button></div>';
+  }).join('');
+}
+var TASKS=[['feeder','Cleaned feeders','খাদ্য পাত্র পরিষ্কার করা'],['drinker','Cleaned water containers','পানির পাত্র পরিষ্কার করা'],['litter','Turned the litter','লিটার নাড়ানো'],['curtain','Raised/lowered the curtains','পর্দা ওঠা-নামা করানো'],['shoes','Used separate shoes inside the farm','খামারের ভেতর আলাদা জুতা ব্যবহার'],['record','Wrote the record book','রেকর্ড কিপিং খাতা লেখা']];
+function vEntry(){
+  if(S.saved){
+    var n=shedsDone().length;
+    return '<div class="okpanel card"><div class="tick" aria-hidden="true">✓</div><h1>'+t('Saved for shed ','সংরক্ষিত: শেড ')+num(S.saved)+'</h1><p class="hint" style="margin-top:6px">'+num(n)+t(' of ',' / ')+num(SHEDS)+t(' sheds recorded today.',' শেডের তথ্য আজ দেওয়া হয়েছে।')+'</p><div class="row">'+
+    (todayComplete()?'':'<button class="btn btn-primary" type="button" data-again="1">'+t('Add another shed','আরেকটি শেডের তথ্য দিন')+'</button>')+
+    '<button class="btn btn-dark" type="button" data-go="home">'+t('Back to home','হোমে ফিরুন')+'</button></div></div>';
+  }
+  var done=shedsDone(),sheds=[];for(var i=1;i<=SHEDS;i++)sheds.push([String(i),t('Shed '+i,'শেড '+num(i)),'শেড '+num(i),done.indexOf(i)>-1]);
+  sheds=sheds.map(function(s){return [s[0],'Shed '+s[0],s[2],s[3]]});
+  return '<div class="pagehead"><div><span class="eyebrow">'+t('Batch ','ব্যাচ ')+BATCH_ID+' · '+dstr(today)+'</span><h1>'+t('Today’s data','আজকের তথ্য')+'</h1></div></div><div id="formroot">'+
+  '<div class="sec"><h2>'+t('Farm and shed','খামার ও শেড')+'</h2>'+
+    '<label class="f"><span>'+t('Farm ID','খামার আইডি')+'</span><input class="in" value="'+esc(S.farm)+'" readonly></label>'+
+    '<div><div class="q">'+t('Shed number','শেড নম্বর')+'</div>'+choices('shed',sheds,'c4')+'<p class="err" data-err="shed"></p></div>'+
+    '<div><div class="q">'+t('Bird age (day number)','বাচ্চার বয়স (দিন)')+'</div>'+stepper('age')+'<p class="err" data-err="age"></p></div></div>'+
+  '<div class="sec"><h2>'+t('Feed','ফিড')+'</h2>'+
+    '<div><div class="q">'+t('Which feed did you use today?','আজ কোন ফিড ব্যবহার করেছেন?')+'</div>'+choices('feedType',[['starter','Starter','স্টার্টার'],['grower','Grower','গ্রোয়ার'],['finisher','Finisher','ফিনিশার']],'c3')+'<p class="err" data-err="feedType"></p></div>'+
+    '<label class="f"><span>'+t('Total feed used today (kg)','আজ মোট ফিড ব্যবহার হয়েছে (কেজি)')+'</span><div class="unit"><input class="in" data-k="feedKg" inputmode="decimal" placeholder="'+t('e.g. 120','যেমন: ১২০')+'"><span>'+t('kg','কেজি')+'</span></div><span class="err" data-err="feedKg"></span></label></div>'+
+  '<div class="sec"><h2>'+t('Birds','পাখি')+'</h2>'+
+    '<div><div class="q">'+t('Birds that died today','আজ মারা গেছে এমন পাখি')+'</div>'+stepper('dead')+'<p class="err" data-err="dead"></p></div>'+
+    '<label class="f"><span>'+t('Average bird weight today (kg, optional)','আজ পাখির গড় ওজন (কেজি, ঐচ্ছিক)')+'</span><div class="unit"><input class="in" data-k="weight" inputmode="decimal" placeholder="'+t('e.g. 1.75','যেমন: ১.৭৫')+'"><span>'+t('kg','কেজি')+'</span></div></label></div>'+
+  '<div class="sec"><h2>'+t('Water and medicine','পানি ও ওষুধ')+'</h2>'+
+    '<div><div class="q">'+t('Did you add any supplement, additive, medicine or vitamin to the water?','পানিতে কোনো সাপ্লিমেন্ট, অ্যাডিটিভ, ওষুধ বা ভিটামিন দিয়েছেন?')+'</div>'+choices('supp',[['yes','Yes','হ্যাঁ'],['no','No','না']])+'<p class="err" data-err="supp"></p></div>'+
+    '<div data-vis="supp=yes" hidden><div class="quick" style="margin-bottom:10px"><span class="hint">'+t('Quick pick:','দ্রুত বেছে নিন:')+'</span><button type="button" data-qp="Vitamin C">'+t('Vitamin C','ভিটামিন সি')+'</button><button type="button" data-qp="Orsaline">'+t('Orsaline','ওরস্যালাইন')+'</button></div><div id="prodrows">'+prodRows()+'</div><button type="button" class="addrow" data-addprod="1" style="margin-top:10px">+ '+t('Add another product','আরেকটি পণ্য যোগ করুন')+'</button><p class="err" data-err="prods"></p></div></div>'+
+  '<div class="sec"><h2>'+t('Vaccine','ভ্যাকসিন')+'</h2>'+
+    '<div><div class="q">'+t('Was a vaccine given today?','আজ ভ্যাকসিন দেওয়া হয়েছে?')+'</div>'+choices('vaccine',[['ranikhet','Ranikhet','রানীক্ষেত'],['gumboro','Gumboro','গামবোরো'],['none','No vaccine given','কোনো ভ্যাকসিন দেওয়া হয়নি'],['other','Other','অন্য']])+'<p class="err" data-err="vaccine"></p></div>'+
+    '<label class="f" data-vis="vaccine=other" hidden><span>'+t('Which vaccine?','কোন ভ্যাকসিন?')+'</span><input class="in" data-k="vaccineOther"><span class="err" data-err="vaccineOther"></span></label></div>'+
+  '<div class="sec"><h2>'+t('Problems','সমস্যা')+'</h2>'+
+    '<div><div class="q">'+t('Did you see anything unusual today?','আজ কোনো অস্বাভাবিক সমস্যা দেখেছেন?')+'</div>'+choices('problem',[['yes','Yes','হ্যাঁ'],['no','Saw no problem','কোনো সমস্যা দেখিনি']])+'<p class="err" data-err="problem"></p></div>'+
+    '<div data-vis="problem=yes" hidden style="display:grid;gap:12px"><label class="f"><span>'+t('Describe the problem','সমস্যার বিবরণ লিখুন')+'</span><textarea class="in" data-k="desc"></textarea><span class="err" data-err="desc"></span></label>'+
+    '<label class="f"><span>'+t('How many birds look sick? (optional)','কতগুলো পাখি অসুস্থ দেখাচ্ছে? (ঐচ্ছিক)')+'</span><input class="in" data-k="sick" inputmode="numeric"></label></div></div>'+
+  '<div class="sec"><h2>'+t('Work done today','আজকের সম্পন্ন কাজ')+'</h2><div style="display:grid;gap:8px">'+TASKS.map(function(k){return '<button type="button" class="check" data-task="'+k[0]+'" aria-pressed="false"><span class="box" aria-hidden="true">✓</span>'+t(k[1],k[2])+'</button>'}).join('')+'</div>'+
+    '<label class="f"><span>'+t('Other work (optional)','অন্য কাজ (ঐচ্ছিক)')+'</span><input class="in" data-k="tasksOther"></label></div>'+
+  '<div class="sec"><h2>'+t('Other costs today','আজকের অন্যান্য খরচ')+'</h2><p class="hint">'+t('Costs other than chicks, feed, medicine and vaccines. Example: van fare ৳50.','বাচ্চা, ফিড, ওষুধ ও ভ্যাকসিন ছাড়া অন্য খরচ। যেমন: ভ্যান ভাড়া ৫০ টাকা।')+'</p><div id="exprows" style="display:grid;gap:8px">'+expRows()+'</div><button type="button" class="addrow" data-addexp="1">+ '+t('Add another cost','আরেকটি খরচ যোগ করুন')+'</button></div>'+
+  '<div class="savebar"><button class="btn btn-primary btn-block" type="button" id="saveBtn">'+t('Save today’s data','আজকের তথ্য সংরক্ষণ করুন')+'</button><p class="err" id="saveErr" role="alert"></p></div></div>';
+}
+function getPath(k){var p=k.split('.'),o=F;for(var i=0;i<p.length;i++)o=o[p[i]];return o}
+function setPath(k,v){var p=k.split('.'),o=F;for(var i=0;i<p.length-1;i++)o=o[p[i]];o[p[p.length-1]]=v}
+function syncForm(){
+  var r=$('formroot');if(!r)return;
+  r.querySelectorAll('[data-k]').forEach(function(el){if(el.tagName==='SELECT')return;var v=getPath(el.dataset.k);el.value=v==null?'':v});
+  r.querySelectorAll('[data-ch]').forEach(function(b){var p=b.dataset.ch.split(':');b.setAttribute('aria-pressed',String(F[p[0]]===p[1]))});
+  r.querySelectorAll('[data-task]').forEach(function(b){b.setAttribute('aria-pressed',String(!!F.tasks[b.dataset.task]))});
+  r.querySelectorAll('[data-vis]').forEach(function(el){var c=el.dataset.vis.split('=');el.hidden=F[c[0]]!==c[1]});
+  F.prods.forEach(function(p,i){var w=$('abx'+i);if(w)w.hidden=!isAbx(p.name)});
+}
+function validate(){
+  var err={};
+  if(!F.shed)err.shed=t('Choose a shed.','একটি শেড বেছে নিন।');
+  if(!(toNum(F.age)>0))err.age=t('Enter the bird age in days.','বাচ্চার বয়স দিনে লিখুন।');
+  if(!F.feedType)err.feedType=t('Choose the feed type.','ফিডের ধরন বেছে নিন।');
+  if(String(F.feedKg).trim()===''||toNum(F.feedKg)<0)err.feedKg=t('Enter the total feed in kg.','মোট ফিড কেজিতে লিখুন।');
+  if(String(F.dead).trim()===''||toNum(F.dead)<0)err.dead=t('Enter 0 if none died.','কেউ না মারা গেলে ০ লিখুন।');
+  if(!F.supp)err.supp=t('Choose Yes or No.','হ্যাঁ বা না বেছে নিন।');
+  if(F.supp==='yes'&&!F.prods.some(function(p){return p.name.trim()&&toNum(p.qty)>0}))err.prods=t('Enter at least one product and its quantity.','কমপক্ষে একটি পণ্য ও তার পরিমাণ লিখুন।');
+  if(!F.vaccine)err.vaccine=t('Choose an option.','একটি অপশন বেছে নিন।');
+  if(F.vaccine==='other'&&!F.vaccineOther.trim())err.vaccineOther=t('Write the vaccine name.','ভ্যাকসিনের নাম লিখুন।');
+  if(!F.problem)err.problem=t('Choose an option.','একটি অপশন বেছে নিন।');
+  if(F.problem==='yes'&&!F.desc.trim())err.desc=t('Describe the problem.','সমস্যার বিবরণ লিখুন।');
+  document.querySelectorAll('[data-err]').forEach(function(el){el.textContent=err[el.dataset.err]||''});
+  var keys=Object.keys(err);
+  if(keys.length){$('saveErr').textContent=t('Please fix the highlighted questions.','চিহ্নিত প্রশ্নগুলো ঠিক করুন।');var el=document.querySelector('[data-err="'+keys[0]+'"]');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});return false}
+  $('saveErr').textContent='';return true;
+}
+function save(){
+  if(!validate())return;
+  var prods=F.supp==='yes'?F.prods.filter(function(p){return p.name.trim()&&toNum(p.qty)>0}).map(function(p){return {name:p.name.trim(),qty:toNum(p.qty),unit:p.unit,abx:isAbx(p.name)}}):[];
+  var entry={shed:+F.shed,age:toNum(F.age),feedType:F.feedType,feedKg:toNum(F.feedKg),dead:toNum(F.dead),weight:toNum(F.weight),prods:prods,vaccine:F.vaccine,vaccineOther:F.vaccineOther.trim(),problem:F.problem,desc:F.desc.trim(),sick:toNum(F.sick),tasks:Object.keys(F.tasks).filter(function(k){return F.tasks[k]}),tasksOther:F.tasksOther.trim()};
+  E.push(entry);
+  F.exp.forEach(function(x){if(x.desc.trim()&&toNum(x.amt)>0)EXP.push({cat:'other',amt:toNum(x.amt),note:{en:x.desc.trim(),bn:x.desc.trim()},date:today})});
+  S.saved=entry.shed;var keepAge=F.age;F=newForm();F.age=keepAge;render();window.scrollTo(0,0);
+}
+
+/* ============ FINANCE ============ */
+function vFinance(){
+  var a=agg(),tot=a.cost;
+  var stack=CATS.map(function(c){var v=a.cats[c[0]];return v>0?'<i style="width:'+(v/tot*100).toFixed(1)+'%;background:'+c[3]+'" title="'+c[1]+'"></i>':''}).join('');
+  var legend=CATS.map(function(c){var v=a.cats[c[0]];return v>0?'<div><span class="nm"><span class="d" style="background:'+c[3]+'"></span>'+t(c[1],c[2])+'</span><strong>'+tk(v)+'</strong></div>':''}).join('');
+  var list,form;
+  if(S.finTab==='exp'){
+    var rows=EXP.slice().reverse().map(function(e){return '<div class="li2"><div><strong>'+catLbl(e.cat)+'</strong><small>'+esc(t(e.note.en,e.note.bn))+' · '+dstr(e.date)+'</small></div><strong>'+tk(e.amt)+'</strong></div>'}).join('');
+    list='<div class="li2"><div><strong>'+t('Feed','ফিড')+'</strong><small>'+num(a.feed,0)+t(' kg used × ',' কেজি × ')+tk(PRICE.feed)+t('/kg (automatic)','/কেজি (স্বয়ংক্রিয়)')+'</small></div><strong>'+tk(a.feedCost)+'</strong></div>'+rows;
+    form='<div class="formgrid c3"><label class="f"><span>'+t('Category','ধরন')+'</span><select id="xCat">'+CATS.filter(function(c){return c[0]!=='feed'}).map(function(c){return '<option value="'+c[0]+'">'+t(c[1],c[2])+'</option>'}).join('')+'</select></label><label class="f"><span>'+t('Amount (৳)','টাকা (৳)')+'</span><input id="xAmt" inputmode="decimal"></label><label class="f"><span>'+t('Note','নোট')+'</span><input id="xNote"></label></div><p class="err" id="xErr"></p><button class="btn btn-primary" type="button" id="xAdd">'+t('Add expense','খরচ যোগ করুন')+'</button>';
+  }else{
+    list=INC.length?INC.slice().reverse().map(function(e){return '<div class="li2"><div><strong>'+num(e.birds)+t(' birds sold',' পাখি বিক্রি')+'</strong><small>'+num(e.kg,1)+t(' kg × ',' কেজি × ')+tk(e.price)+' · '+dstr(e.date)+'</small></div><strong>'+tk(e.total)+'</strong></div>'}).join(''):'<p class="hint">'+t('No sales recorded yet. Profit shown on Home is an estimate until you record a sale.','এখনো বিক্রির হিসাব নেই। বিক্রি লেখার আগ পর্যন্ত হোমের মুনাফা একটি আনুমানিক হিসাব।')+'</p>';
+    form='<div class="formgrid c3"><label class="f"><span>'+t('Birds sold','বিক্রিত পাখি')+'</span><input id="iBirds" inputmode="numeric"></label><label class="f"><span>'+t('Total weight (kg)','মোট ওজন (কেজি)')+'</span><input id="iKg" inputmode="decimal"></label><label class="f"><span>'+t('Price per kg (৳)','প্রতি কেজি দর (৳)')+'</span><input id="iPrice" inputmode="decimal" value="'+PRICE.sell+'"></label></div><div class="calc" id="iCalc">'+t('Total: ','মোট: ')+'৳0</div><p class="err" id="iErr"></p><button class="btn btn-primary" type="button" id="iAdd">'+t('Add sale','বিক্রি যোগ করুন')+'</button>';
+  }
+  return '<div class="pagehead"><div><span class="eyebrow">'+t('Batch ','ব্যাচ ')+BATCH_ID+'</span><h1>'+t('Income and costs','আয় ও খরচ')+'</h1></div></div>'+
+  '<div class="sum">'+kpi(a.actual?t('Revenue','আয়'):t('Estimated revenue','আনুমানিক আয়'),tk(a.rev),a.actual?t('Recorded sales','বিক্রির হিসাব'):num(a.alive)+' × '+num(a.w,2)+t(' kg × ',' কেজি × ')+tk(PRICE.sell))+kpi(t('Total cost','মোট খরচ'),tk(a.cost),'')+kpi(t('Profit','মুনাফা'),tk(a.profit),'')+kpi(t('Profit per bird','প্রতি পাখি মুনাফা'),tk(a.ppb),'')+kpi('ROI',num(a.roi,1)+'%','')+'</div>'+
+  '<div class="grid2" style="margin-top:14px"><div class="card"><h2>'+t('Where the money goes','খরচ কোথায় যাচ্ছে')+'</h2><div class="stack" role="img" aria-label="'+t('Cost breakdown','খরচের ভাগ')+'">'+stack+'</div><div class="legend">'+legend+'</div></div>'+
+  '<div class="card"><h2>'+t('Prices used in the estimate','হিসাবে ব্যবহৃত দর')+'</h2><div class="formgrid c2"><label class="f"><span>'+t('Feed price (৳/kg)','ফিডের দাম (৳/কেজি)')+'</span><input id="pFeed" inputmode="decimal" value="'+PRICE.feed+'"></label><label class="f"><span>'+t('Expected selling price (৳/kg)','প্রত্যাশিত বিক্রয়মূল্য (৳/কেজি)')+'</span><input id="pSell" inputmode="decimal" value="'+PRICE.sell+'"></label></div><p class="hint" style="margin-top:8px">'+t('Feed cost = feed used × feed price. Change the prices to update every number.','ফিড খরচ = ব্যবহৃত ফিড × ফিডের দাম। দর বদলালে সব সংখ্যা বদলে যাবে।')+'</p></div></div>'+
+  '<div class="card"><div class="segs" role="tablist"><button type="button" data-fin="exp" aria-pressed="'+(S.finTab==='exp')+'">'+t('Expenses','খরচ')+'</button><button type="button" data-fin="inc" aria-pressed="'+(S.finTab==='inc')+'">'+t('Income','আয়')+'</button></div>'+list+'<div style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px"><h3 class="ch" style="font-family:var(--body);margin-bottom:8px">'+(S.finTab==='exp'?t('Add an expense','খরচ যোগ করুন'):t('Add a sale','বিক্রি যোগ করুন'))+'</h3>'+form+'</div></div>';
+}
+
+/* ============ BATCHES ============ */
+function vBatches(){
+  var a=agg();
+  function card(id,state,fcr,mort,profit,sub){return '<div class="card batchcard"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h3 style="font-family:var(--body)">'+t('Batch ','ব্যাচ ')+id+'</h3>'+state+'</div><p class="hint">'+sub+'</p><div class="st"><div><b>'+fcr+'</b><small>FCR</small></div><div><b>'+mort+'</b><small>'+t('Mortality','মৃত্যুহার')+'</small></div><div><b>'+profit+'</b><small>'+t('Profit','মুনাফা')+'</small></div></div></div>'}
+  return '<div class="pagehead"><div><span class="eyebrow">'+t('Batch history','ব্যাচের ইতিহাস')+'</span><h1>'+t('Your batches','আপনার ব্যাচসমূহ')+'</h1></div></div>'+
+  card(BATCH_ID,'<span class="chip ok">'+t('Running · day ','চলমান · দিন ')+num(TODAY_DAY)+'</span>',num(a.fcr,2),num(a.mort,1)+'%',tk(a.profit)+'*',num(START)+t(' chicks · ',' বাচ্চা · ')+t('Estimated until sold','বিক্রির আগ পর্যন্ত আনুমানিক'))+
+  card('B-000','<span class="chip">'+t('Completed','সম্পন্ন')+'</span>','1.52','2.1%','৳168,400',t('Sample past batch','নমুনা পুরোনো ব্যাচ'))+
+  card('B-000-1','<span class="chip">'+t('Completed','সম্পন্ন')+'</span>','1.58','2.6%','৳141,900',t('Sample past batch','নমুনা পুরোনো ব্যাচ'))+
+  '<p class="hint" style="margin-top:12px">* '+t('Estimated profit based on the expected selling price.','প্রত্যাশিত বিক্রয়মূল্যের ভিত্তিতে আনুমানিক মুনাফা।')+'</p>';
+}
+
+/* ============ events ============ */
+document.addEventListener('click',function(e){
+  var el=e.target.closest('button');if(!el)return;var d=el.dataset;
+  if(d.set){html.setAttribute('lang',d.set);document.querySelectorAll('.lang button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.set===d.set?'true':'false')});if(!$('app').hidden)render();return}
+  if(d.go){go(d.go);return}
+  if(d.chart){S.chart=d.chart;render();return}
+  if(d.fin){S.finTab=d.fin;render();return}
+  if(d.again){S.saved=null;render();window.scrollTo(0,0);return}
+  if(d.ch){var p=d.ch.split(':');F[p[0]]=p[1];syncForm();var er=document.querySelector('[data-err="'+p[0]+'"]');if(er)er.textContent='';return}
+  if(d.task){F.tasks[d.task]=!F.tasks[d.task];syncForm();return}
+  if(d.st){var q=d.st.split(':'),v=toNum(F[q[0]])+(+q[1]);if(v<0)v=0;F[q[0]]=String(v);var inp=document.querySelector('[data-k="'+q[0]+'"]');if(inp)inp.value=F[q[0]];return}
+  if(d.addprod){F.prods.push({name:'',qty:'',unit:'gm'});$('prodrows').innerHTML=prodRows();syncForm();return}
+  if(d.delprod){F.prods.splice(+d.delprod,1);$('prodrows').innerHTML=prodRows();syncForm();return}
+  if(d.addexp){F.exp.push({desc:'',amt:''});$('exprows').innerHTML=expRows();syncForm();return}
+  if(d.delexp){F.exp.splice(+d.delexp,1);$('exprows').innerHTML=expRows();syncForm();return}
+  if(d.qp){var emp=-1;F.prods.forEach(function(p,i){if(emp<0&&!p.name.trim())emp=i});if(emp<0){F.prods.push({name:'',qty:'',unit:'gm'});emp=F.prods.length-1}F.prods[emp].name=d.qp;$('prodrows').innerHTML=prodRows();syncForm();return}
+  if(el.id==='saveBtn'){save();return}
+  if(el.id==='logout'){$('app').hidden=true;$('login').hidden=false;return}
+  if(el.id==='xAdd'){var am=toNum($('xAmt').value);if(am<=0){$('xErr').textContent=t('Enter the amount.','টাকার পরিমাণ লিখুন।');return}var nt=$('xNote').value.trim()||catLbl($('xCat').value);EXP.push({cat:$('xCat').value,amt:am,note:{en:nt,bn:nt},date:today});render();return}
+  if(el.id==='iAdd'){var b=toNum($('iBirds').value),k=toNum($('iKg').value),pr=toNum($('iPrice').value);if(b<=0||k<=0||pr<=0){$('iErr').textContent=t('Enter birds sold, total weight and price.','বিক্রিত পাখি, মোট ওজন ও দর লিখুন।');return}INC.push({birds:b,kg:k,price:pr,total:k*pr,date:today});render();return}
+});
+document.addEventListener('input',function(e){
+  var el=e.target;
+  if(el.dataset&&el.dataset.k){setPath(el.dataset.k,el.value);var m=el.dataset.k.match(/^prods\.(\d+)\.name$/);if(m){var w=$('abx'+m[1]);if(w)w.hidden=!isAbx(el.value)}}
+  if(el.id==='iBirds'||el.id==='iKg'||el.id==='iPrice'){$('iCalc').textContent=t('Total: ','মোট: ')+tk(toNum($('iKg').value)*toNum($('iPrice').value))}
+});
+document.addEventListener('change',function(e){
+  var el=e.target;
+  if(el.dataset&&el.dataset.k&&el.tagName==='SELECT')setPath(el.dataset.k,el.value);
+  if(el.id==='pFeed'||el.id==='pSell'){var f=toNum($('pFeed').value),s=toNum($('pSell').value);if(f>0)PRICE.feed=f;if(s>0)PRICE.sell=s;render()}
+});
+/* login */
+function signIn(){
+  var f=$('lFarm').value.trim(),p=$('lPass').value;
+  if(!f||!p){$('lErr').textContent=t('Enter your Farm ID and password.','খামার আইডি ও পাসওয়ার্ড দিন।');return}
+  S.farm=f.toUpperCase();$('lErr').textContent='';$('login').hidden=true;$('app').hidden=false;S.view='home';render();window.scrollTo(0,0);
+}
+$('lGo').addEventListener('click',signIn);
+$('lPass').addEventListener('keydown',function(e){if(e.key==='Enter')signIn()});
+document.querySelectorAll('#login .lang button').forEach(function(b){b.addEventListener('click',function(){html.setAttribute('lang',b.dataset.set);document.querySelectorAll('.lang button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.set===b.dataset.set?'true':'false')})})});
+})();
+</script>
+</body>
+</html>
